@@ -1,0 +1,61 @@
+{
+  "name": "Questioner",
+  "version": "1.0.0",
+  "description": "api endpoints",
+  "main": "babel-node server.js",
+  "scripts": {
+    "start": "babel-node server.js",
+    "start1": "nodemon --exec npm start",
+    "test": "nyc jasmine",
+    "coverage": "nyc report --reporter=lcov --reporter=text-lcov | coveralls"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kossy360/Questioner.git"
+  },
+  "keywords": [
+    "api"
+  ],
+  "author": "Kossy Ugochukwu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kossy360/Questioner/issues"
+  },
+  "homepage": "https://github.com/kossy360/Questioner#readme",
+  "dependencies": {
+    "async": "^2.6.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "eslint-config-airbnb": "^17.1.0",
+    "express": "~4.16.0",
+    "express-validator": "^5.3.0",
+    "grunt-contrib-jshint": "^2.0.0",
+    "http-errors": "~1.6.2",
+    "jade": "^1.11.0",
+    "morgan": "~1.9.0",
+    "random-id": "^1.0.1",
+    "request": "^2.88.0",
+    "serve-static": "^1.13.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "@istanbuljs/nyc-config-babel": "^2.0.0",
+    "babel-plugin-istanbul": "^5.0.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-plugin-transform-export-extensions": "^6.22.0",
+    "babel-preset-env": "^1.7.0",
+    "coveralls": "^3.0.2",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "jasmine": "^3.3.0",
+    "jasmine-core": "^2.4.1",
+    "nodemon": "^1.18.4",
+    "nyc": "^13.0.1",
+    "register": "0.0.0"
+  }
+}
