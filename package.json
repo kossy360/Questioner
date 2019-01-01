@@ -2,9 +2,9 @@
   "name": "questioner",
   "version": "1.0.0",
   "description": "api endpoints",
-  "main": "babel-node server.js",
+  "main": "app.js",
   "scripts": {
-    "start": "babel-node server.js",
+    "start": "babel-node app.js",
     "start1": "nodemon --exec npm start",
     "test": "nyc jasmine",
     "coverage": "nyc report --reporter=lcov --reporter=text-lcov | coveralls"
