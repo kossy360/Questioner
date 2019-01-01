@@ -39,6 +39,9 @@ app.use('/api/v1', (req, res) => {
   else if (sender === 'admin') adminRouter(req, res);
   else res.status(403).send({ status: 403, error: 'Not Authorized' });
 });
+app.use('/', (req, res) => {
+  res.status(200).send('welcome to the questioner app');
+});
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
