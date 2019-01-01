@@ -1,9 +1,5 @@
 /* eslint-env jasmine */
 import Request from 'request';
-// import Server from '../server';
-
-// const start = () => Server;
-// start();
 
 const url = string => `http://localhost:3000/api/v1/${string}`;
 

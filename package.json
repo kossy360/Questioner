@@ -1,5 +1,5 @@
 {
-  "name": "Questioner",
+  "name": "questioner",
   "version": "1.0.0",
   "description": "api endpoints",
   "main": "babel-node server.js",
