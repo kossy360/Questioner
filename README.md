@@ -1,5 +1,5 @@
 # Questioner API
-[![Build Status](https://travis-ci.org/kossy360/Questioner.svg?branch=master)](https://travis-ci.org/kossy360/Questioner)
+[![Build Status](https://travis-ci.org/kossy360/Questioner.svg?branch=develop)](https://travis-ci.org/kossy360/Questioner)
 [![Coverage Status](https://coveralls.io/repos/github/kossy360/Questioner/badge.svg?branch=develop)](https://coveralls.io/github/kossy360/Questioner?branch=develop)
 [![Maintainability](https://api.codeclimate.com/v1/badges/783060e3be2b2c154b2b/maintainability)](https://codeclimate.com/github/kossy360/Questioner/maintainability)
 
