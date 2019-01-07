@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="./style.css">
+  <link href="https://fonts.googleapis.com/css?family=Fira+Sans|Josefin+Sans|Slabo+27px|Zilla+Slab" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
   <title>Questioner</title>
 </head>
 
@@ -16,21 +17,21 @@
     </header>
     <nav>
       <span class="tab-selector tab-active">
-        <img class="icon-img" src="./assets/meetup.svg" alt="" srcset="">
+        <img class="icon-img" src="../assets/meetup.svg" alt="" srcset="">
         <span class="tab-selector-text">meets</span>
       </span>
 
       <span class="tab-selector">
-        <img class="icon-img" src="./assets/notifications.svg" alt="" srcset="">
+        <img class="icon-img" src="../assets/notifications.svg" alt="" srcset="">
         <span class="tab-selector-text">notifications</span>
       </span>
 
       <span class="tab-selector">
-        <img class="icon-img" src="./assets/folder.svg" alt="" srcset="">
+        <img class="icon-img" src="../assets/folder.svg" alt="" srcset="">
         <span class="tab-selector-text">Organize</span>
       </span>
       <span class="tab-selector" id="tab-selector-profile">
-        <img class="icon-img profile-icon-img" id="profile-icon" src="./assets/profile.svg" alt="" srcset="">
+        <img class="icon-img profile-icon-img" id="profile-icon" src="../assets/profile.svg" alt="" srcset="">
         <span class="tab-selector-text">profile</span>
       </span>
     </nav>
@@ -99,11 +100,13 @@
     </section>
 
     <section class="main-section" id="meet-create-section">
-      <header class="organizer-header">New Meet</header>
+      <header class="organizer-header-container">
+        <p class="organizer-header">New Meet</p>
+      </header>
       <div class="meet-create-container">
         <div class="meet-entry-container title">
           <label class="meet-input-label" for="meet-title-input">TITLE</label>
-          <input pointer="title" class="meet-create-input" id="meet-title-input" type="text">
+          <textarea pointer="title" class="meet-create-input" id="meet-title-input" type="text"></textarea>
         </div>
         <div class="meet-entry-container date">
           <label class="meet-input-label"for="meet-date-input">DATE</label>
@@ -124,7 +127,7 @@
         </div>
         <div class="meet-entry-container tags">
           <label class="meet-input-label"for="meet-tags-input">TAGS</label>
-          <input pointer="tags" class="meet-create-input" id="meet-tags-input" type="text">
+          <textarea pointer="tags" class="meet-create-input" id="meet-tags-input" type="text"></textarea>
         </div>
       </div>
       <div class="meet-create-button-container">
@@ -135,6 +138,7 @@
     </section>
 
     <section class="main-section" id="profile-section">
+      <button class="profile-button" type="button">logout</button>
       <div class="profile-container-main">
         <div id="profile-picture-container">
           <label id="profile-picture-label" for="profile-picture-input"></label>
@@ -184,10 +188,7 @@
   <footer>
     <p>questioner</p>
   </footer>
-  <script src="./modules/element-creator.js"></script>
-  <script src="./modules/dummy-data.js"></script>
-  <script src="./modules/addScroll.js"></script>
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 
 </html>

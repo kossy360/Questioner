@@ -5,6 +5,7 @@
 html {
   position: relative;
   min-height: 100%;
+  overflow-y: scroll;
 }
 
 body {
@@ -12,6 +13,7 @@ body {
   min-height: 100%;
   height: 100%;
   margin: 0;
+  font-family: 'Zilla Slab', serif;
   font-size: 1em;
   display: flex;
   flex-direction: column;
@@ -60,7 +62,7 @@ div {
 }
 
 .header {
-  background: grey;
+  background: #0863ab;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -73,9 +75,9 @@ nav {
   display: grid;
   position: relative;
   width: 100%;
-  grid-template-columns: repeat(4, 25%);
+  grid-template-columns: repeat(4, auto);
   text-align: center;
-  background: #a2a2a2;
+  background: #0088be;
 }
 
 nav.top-fix {
@@ -89,7 +91,7 @@ nav.top-fix {
   justify-content: center;
   align-items: center;
   height: 2.5rem;
-  transition: background-image 0.3s linear;
+  transition: all 0.3s linear;
 }
 
 .tab-selector-text {
@@ -97,11 +99,12 @@ nav.top-fix {
 }
 
 .tab-selector:hover {
-  background: #e8e7e7;
+  background: #1d7ac4;
 }
 
 .tab-selector.tab-active {
-  background: #e8e7e7;
+  background: #0762a9;
+  color: white;
 }
 
 #profile-icon {
@@ -131,8 +134,18 @@ nav.top-fix {
   display: block;
 }
 
+.main-container {
+  box-shadow: 1px 1px 8px 1px #0000004d;
+  transition: all 0.3s linear;
+}
+
+.main-container:hover {
+  box-shadow: 6px 6px 8px 1px #0000004d;
+}
+
 .meet-container {
-  border: 2px solid;
+  border: 1px solid;
+  border-color: #288bd9;
   width: 95%;
   margin: auto;
   margin-top: 15px;
@@ -140,11 +153,12 @@ nav.top-fix {
 }
 
 .meet-name {
+  color: white;
   margin: 0;
   width: 100%;
   font-size: 1.5em;
   padding: 8px;
-  background: grey;
+  background: #288bd9;
 }
 
 .meet-creator {
@@ -172,18 +186,22 @@ nav.top-fix {
 .meet-tags-container {
   display: flex;
   border-top: 1px solid;
+  border-color: inherit;
   overflow: hidden;
   width: 100%;
 }
 
-
-
 .meet-tag {
   border: 1px solid;
+  border-color: #288bd9;
   border-radius: 8px;
   padding: 4px;
   margin: 5px 5px 5px 0;
   box-sizing: border-box;
+}
+
+.meet-tag:hover {
+  background: #e3f7ff;
 }
 
 .meet-tags {
@@ -196,6 +214,7 @@ nav.top-fix {
 .meet-tags-title {
   display: flex;
   align-self: baseline;
+  min-height: 41px;
 }
 
 .meet-tags-title-text {
@@ -212,7 +231,10 @@ nav.top-fix {
 
 .book-container {
   margin-top: 15px;
+  width: 95%;
+  border: 1px solid;
   border-bottom: 2px solid;
+  border-color: #288bd9;
 }
 
 .question-feed-container {
@@ -231,15 +253,15 @@ nav.top-fix {
 }
 
 .question-feed-dir {
-  background: lightgrey;
+  background: #d7e0e8;
   padding: 5px;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid #288bd9;
 }
 
 .question-feed-container2 {
   display: flex;
   padding: 5px;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid #288bd9;
 }
 
 .question-feed-text {
@@ -252,7 +274,7 @@ nav.top-fix {
   width: 95%;
   border: 2px transparent;
   border-radius: 5px;
-  background: #e0dada
+  background: #d7e0e8;
 }
 
 .sub-notif-container {
@@ -293,6 +315,23 @@ nav.top-fix {
   max-width: 500px;
   padding-right: 10px;
   padding-left: 10px;
+}
+
+.profile-button {
+  float: right;
+  background: red;
+  border: transparent;
+  margin: 0px 5px;
+  width: 5em;
+  height: 2em;
+  border-radius: 5px;
+  color: white;
+  font-family: inherit;
+  font-size: 1.05em;
+}
+
+.profile-button:hover {
+  background: #b10505;
 }
 
 .meet-expanded-section {
@@ -410,7 +449,7 @@ img.meet-image {
 }
 
 .meet-question-details {
-  border: 1px solid;
+  border: 1px solid #288bd9;
   display: grid;
   width: 96%;
   min-height: 3.5em;
@@ -489,7 +528,7 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: grey;
+  background: #0863ab;
   z-index: 1;
 }
 
@@ -520,8 +559,9 @@ footer p {
     height: calc(100% - 7rem);
     width: 18rem;
     top: 130px;
+    padding-top: 20px;
     grid-template-columns: 100%;
-    grid-template-rows: repeat(4, 3rem);
+    grid-template-rows: repeat(4, 4rem);
   }
 
   nav.top-fix {
@@ -531,7 +571,7 @@ footer p {
   .tab-selector {
     justify-content: flex-start;
     padding-left: 15px;
-    font-size: 1.2em;
+    font-size: 1.6em;
     height: 100%;
   }
 
@@ -588,7 +628,7 @@ footer p {
 }
 
 .icon-img {
-  height: 80%;
+  height: 2.1rem;
   display: none;
 }
 
@@ -636,7 +676,8 @@ button.profile-edit-button {
 }
 
 input:focus,
-button:focus {
+button:focus,
+textarea:focus {
   outline: none;
 }
 
@@ -814,10 +855,18 @@ button#add-comment-button {
 }
 
 /* rsvp */
+.rsvp-notif-container {
+  display: flex;
+  width: 100%;
+  /* border-bottom: 1px solid; */
+  border-color: inherit;
+}
 
 .rsvp-container {
-  border-bottom: 1px solid;
   display: flex;
+  width: 100%;
+  border-bottom: 1px solid;
+  border-color: #288bd9;
 }
 
 .rsvp-container div {
@@ -827,6 +876,7 @@ button#add-comment-button {
 
 .rsvp-tag {
   border: 1px solid;
+  border-color: #288bd9;
   width: 3.2rem;
   text-align: center;
   margin: 5px;
@@ -839,7 +889,12 @@ button#add-comment-button {
 }
 
 .notif-icon-container {
-  justify-content: flex-end;
+  justify-self: flex-end;
+  height: 35px;
+  align-items: center;
+  align-content: center;
+  padding-top: 5px;
+  border-bottom: 1px solid #288bd9;
 }
 
 .rsvp-tag.active {
@@ -888,10 +943,16 @@ button#add-comment-button {
   width: 100%;
   box-sizing: border-box;
   height: 2rem;
-  border: 1px solid;
+  border: 1px solid #288bd9;
   border-radius: 8px;
   padding: 5px;
   font-size: 1.2em;
+  resize: none;
+}
+
+textarea.meet-create-input {
+  height: 4rem;
+  font-size: 1.8em;
 }
 
 .meet-entry-container {
@@ -945,7 +1006,7 @@ meet-entry-container.time {
 
 .meet-head-container {
   display: flex;
-  background: grey;
+  background: #288bd9;
 }
 
 .meet-control-container {
@@ -971,13 +1032,25 @@ meet-entry-container.time {
   display: initial;
 }
 
+#meet-create-delete {
+  background: red;
+}
+
+.organizer-header-container {
+  height: 5rem;
+  width: 96%;
+  background: #288bd9;
+  display: flex;
+  color: white;
+  margin: auto;
+}
+
 .organizer-header {
   text-align: center;
+  vertical-align: middle;
   margin: 1.5rem auto;
   font-size: 1.5em;
   font-weight: bold;
-  width: 96%;
-  max-width: 500px;
 }
 
 #meet-picture-input {
