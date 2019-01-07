@@ -35,9 +35,8 @@ const storage = {
   }],
 
   rsvps: [{
-    id: '1-1',
-    user: 1,
-    meetup: 1,
+    userId: 1,
+    meetupId: 1,
     topic: 'building of the 2nd Niger bridge',
     response: 'yes',
   }],

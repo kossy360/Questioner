@@ -41,7 +41,6 @@ const control = {
     const { body } = req;
     body.id = `${storage.meetups.length + 1}`;
     storage.meetups.push(body);
-    console.log(body);
     res.status(200).json(success(200, reduce([body])));
   },
 };

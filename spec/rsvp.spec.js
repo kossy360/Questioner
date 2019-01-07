@@ -4,8 +4,8 @@ import Request from 'request';
 const url = string => `http://localhost:3000/api/v1/${string}`;
 
 const rsvp = {
-  user: 1,
-  meetup: 1,
+  userId: 1,
+  meetupId: 1,
   topic: 'building of the 2nd Niger bridge',
   response: 'yes',
 };

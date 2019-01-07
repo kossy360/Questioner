@@ -18,7 +18,6 @@ const reduce = (rsvps) => {
 const control = {
   createNew(req, res) {
     const { body } = req;
-    body.id = `${body.user}-${body.meetup}`;
     storage.rsvps.push(body);
     res.status(200).json(success(200, reduce([body])));
   },
