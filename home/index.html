@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://fonts.googleapis.com/css?family=Fira+Sans|Josefin+Sans|Slabo+27px|Zilla+Slab" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <title>Questioner | Home</title>
+</head>
+
+<body>
+  <div class="content-container">
+    <header class="header">
+      <p class="logo">Questioner</p>
+    </header>
+    <nav>
+      <span class="tab-selector tab-active">
+        <img class="icon-img" src="../assets/meetup.svg" alt="" srcset="">
+        <span class="tab-selector-text">meets</span>
+      </span>
+      <span class="tab-selector">
+        <img class="icon-img" src="../assets/booked.svg" alt="" srcset="">
+        <span class="tab-selector-text">booked</span>
+      </span>
+      <span class="tab-selector">
+        <img class="icon-img" src="../assets/notifications.svg" alt="" srcset="">
+        <span class="tab-selector-text">notifications</span>
+      </span>
+      <span class="tab-selector" id="tab-selector-profile">
+        <img class="icon-img profile-icon-img" id="profile-icon" src="../assets/profile.svg" alt="" srcset="">
+        <span class="tab-selector-text">profile</span>
+      </span>
+    </nav>
+
+    <section class="main-section section-showing" id="meets-section">
+    </section>
+
+    <section class="main-section" id="booked-section">
+    </section>
+
+    <section class="main-section" id="notif-section">
+    </section>
+
+    <section class="main-section" id="profile-section">
+      <button class="profile-button" type="button">logout</button>
+      <div class="profile-container-main">
+        <div id="profile-picture-container">
+          <label id="profile-picture-label" for="profile-picture-input"></label>
+          <img id="profile-picture" src="../assets/profile.svg" alt="profile pic" srcset="">
+          <input id="profile-picture-input" accept="image/jpeg, image/png" type="file">
+        </div>
+      </div>
+      <div class="profile-container">
+        <label for="profile-username" class="profile-input-label">Username:</label>
+        <input pointer="username" type="text" id="profile-username" class="profile-input" disabled>
+        <button input="profile-username" class="profile-edit-button" type="button">edit</button>
+      </div>
+      <div class="profile-container">
+        <label for="profile-first-name" class="profile-input-label">First name:</label>
+        <input pointer="firstname" type="text" id="profile-first-name" class="profile-input" disabled>
+        <button input="profile-first-name" class="profile-edit-button" type="button">edit</button>
+      </div>
+      <div class="profile-container">
+        <label for="profile-second-name" class="profile-input-label">Second name:</label>
+        <input pointer="secondname" type="text" id="profile-second-name" class="profile-input" disabled>
+        <button input="profile-second-name" class="profile-edit-button" type="button">edit</button>
+      </div>
+      <div class="profile-container">
+        <label for="profile-third-name" class="profile-input-label">Other names:</label>
+        <input pointer="othername" type="text" id="profile-third-name" class="profile-input" disabled>
+        <button input="profile-third-name" class="profile-edit-button" type="button">edit</button>
+      </div>
+      <div class="profile-container">
+        <label for="profile-email" class="profile-input-label">Email:</label>
+        <input pointer="email" type="text" id="profile-email" class="profile-input" disabled>
+        <button input="profile-email" class="profile-edit-button" type="button">edit</button>
+      </div>
+      <div class="profile-container">
+        <label for="profile-phone" class="profile-input-label">Phone:</label>
+        <input pointer="phoneNumber" type="text" id="profile-phone" class="profile-input" disabled>
+        <button input="profile-phone" class="profile-edit-button" type="button">edit</button>
+      </div>
+    </section>
+    <section class="meet-expanded-section main-section" id="meet-expanded">
+      <div id="meet-expanded-container">
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <p>questioner</p>
+  </footer>
+  <script type="module" src="script.js"></script>
+</body>
+
+</html>
