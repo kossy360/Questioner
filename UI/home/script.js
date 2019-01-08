@@ -34,7 +34,7 @@ const loop = Array.prototype.forEach;
 
 const scroll = () => {
   const scr = window.scrollY;
-  if (scr >= 130) {
+  if (scr >= 104) {
     if (nav.classList.contains('top-fix')) return;
     nav.classList.add('top-fix');
     content.classList.add('nav-fixed');
@@ -241,11 +241,11 @@ document.getElementById('profile-picture-input')
   });
 
 document.querySelector('.profile-button').addEventListener('click', (e) => {
-  window.location.href = './signin';
+  window.location.href = '../signin';
 });
 
 populateProfile();
 
 window.addEventListener('load', populate);
 
-window.addEventListener('scroll', scroll);
+// window.addEventListener('scroll', scroll);

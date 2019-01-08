@@ -66,18 +66,23 @@ div {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 130px;
+  height: 60px;
   text-align: center;
+  position: fixed;
+  width: 100%;
+  z-index: 1;
 }
 
 nav {
   height: 2.5rem;
   display: grid;
-  position: relative;
   width: 100%;
   grid-template-columns: repeat(4, auto);
   text-align: center;
+  position: fixed;
+  top: 60px;
   background: #0088be;
+  z-index: 1;
 }
 
 nav.top-fix {
@@ -116,6 +121,7 @@ nav.top-fix {
 
 .main-section {
   margin-bottom: 5rem;
+  margin-top: 119px;
   position: relative;
   display: none;
 }
@@ -294,7 +300,7 @@ nav.top-fix {
   margin: auto;
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid #288bd9;
 }
 
 #profile-user-name-text {
@@ -319,19 +325,18 @@ nav.top-fix {
 
 .profile-button {
   float: right;
-  background: red;
-  border: transparent;
-  margin: 0px 5px;
-  width: 5em;
-  height: 2em;
-  border-radius: 5px;
-  color: white;
-  font-family: inherit;
-  font-size: 1.05em;
-}
-
-.profile-button:hover {
-  background: #b10505;
+  background: transparent;
+  position: fixed;
+  right: 0;
+  background-image: url('../assets/logout.svg');
+  background-size: contain;
+  background-position: center;
+  border: none;
+  margin: 7px;
+  width: 3em;
+  height: 3em;
+  z-index: 2;
+  cursor: pointer;
 }
 
 .meet-expanded-section {
@@ -569,16 +574,16 @@ footer p {
 
   nav {
     position: fixed;
-    height: calc(100% - 7rem);
+    height: calc(100% - 60px);
     width: 18rem;
-    top: 130px;
+    top: 60px;
     padding-top: 20px;
     grid-template-columns: 100%;
     grid-template-rows: repeat(4, 4rem);
   }
 
   nav.top-fix {
-    top: 130px;
+    top: 60px;
   }
 
   .tab-selector {
@@ -595,7 +600,7 @@ footer p {
   .main-section {
     left: 18rem;
     width: calc(100% - 18rem);
-    margin-top: 8rem;
+    margin-top: 4.4rem;
     margin-bottom: 5rem;
   }
 
@@ -680,7 +685,7 @@ button.profile-edit-button {
   padding-right: 5rem;
   font-size: 1.2em;
   border: none;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid #288bd9;
 }
 
 .profile-input:disabled {
@@ -1080,4 +1085,57 @@ meet-entry-container.time {
   padding: 10px;
   margin-bottom: 5px;
   margin-top: 5px;
+}
+
+/* usage stats */
+
+.stat-container {
+  width: 95%;
+  max-width: 500px;
+  margin: auto;
+}
+
+.usage-stat-container {
+  display: grid;
+  grid-template-columns: repeat(3, 33.33%);
+  text-align: center;
+  min-height: 5em;
+  border: 1px solid #288bd9;
+}
+
+.usage-stat-container div {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.usage-stat {
+  background: #288bd9;
+  color: white;
+  border-left: 1px solid;
+}
+
+.stat-count {
+  border-left: 1px solid;
+  color: #288bd9;
+}
+
+.booked-meets.usage-stat {
+  border-left: none;
+}
+
+.booked-meets-count.stat-count {
+  border-left: none;
+}
+
+p.stat-text {
+  display: inline;
+}
+
+.stat-header {
+  display: flex;
+  justify-content: center;
+  height: 5em;
+  font-size: 1.2em;
+  color: #0863ab;
 }

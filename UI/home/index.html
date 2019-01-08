@@ -15,6 +15,7 @@
     <header class="header">
       <p class="logo">Questioner</p>
     </header>
+    <button class="profile-button" type="button"></button>
     <nav>
       <span class="tab-selector tab-active">
         <img class="icon-img" src="../assets/meetup.svg" alt="" srcset="">
@@ -44,7 +45,6 @@
     </section>
 
     <section class="main-section" id="profile-section">
-      <button class="profile-button" type="button">logout</button>
       <div class="profile-container-main">
         <div id="profile-picture-container">
           <label id="profile-picture-label" for="profile-picture-input"></label>
@@ -81,6 +81,31 @@
         <label for="profile-phone" class="profile-input-label">Phone:</label>
         <input pointer="phoneNumber" type="text" id="profile-phone" class="profile-input" disabled>
         <button input="profile-phone" class="profile-edit-button" type="button">edit</button>
+      </div>
+      <div class="stat-container">
+        <div class="stat-header">
+          <p class="stat-text">Usage Statistics</p>
+        </div>
+        <div class="usage-stat-container">
+          <div class="booked-meets usage-stat">
+            <p class="stat-text">Meetups booked to attend</p>
+          </div>
+          <div class="question-stat usage-stat">
+            <p class="stat-text">Questions asked</p>
+          </div>
+          <div class="comment-stat usage-stat">
+            <p class="stat-text">Questions commented on</p>
+          </div>
+          <div class="booked-meets-count stat-count">
+            <p class="stat-num" pointer="bookedMeetsCount">10</p>
+          </div>
+          <div class="question-stat-count stat-count">
+            <p class="stat-num" pointer="questionAskedCount">15</p>
+          </div>
+          <div class="comment-stat-count stat-count">
+            <p class="stat-num" pointer="commentCount">20</p>
+          </div>
+        </div>
       </div>
     </section>
     <section class="meet-expanded-section main-section" id="meet-expanded">
