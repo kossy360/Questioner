@@ -11,7 +11,7 @@ import {
   bookQuestionCreator,
   questionContainerCreator,
   imageCreator,
-} from './modules/element-creator.js';
+} from '../modules/element-creator.js';
 
 import {
   voteControl,
@@ -19,9 +19,9 @@ import {
   askBtnControl,
   commentBtnControl,
   notifContol,
-} from './modules/buttonControllers.js';
+} from '../modules/buttonControllers.js';
 
-import dummydata from './modules/dummy-data.js';
+import dummydata from '../modules/dummy-data.js';
 
 const nav = document.querySelector('nav');
 const content = document.querySelector('.content-container');
@@ -206,12 +206,16 @@ const populate = () => {
   });
 };
 
+const profile = window.sessionStorage;
+console.log(profile);
+
 const populateProfile = () => {
   const inputFields = document.getElementsByClassName('profile-input');
   const editBtns = document.getElementsByClassName('profile-edit-button');
 
   loop.call(inputFields, (elem) => {
-    elem.value = dummydata.user[elem.getAttribute('pointer')];
+    const pointer = elem.getAttribute('pointer');
+    elem.value = profile.getItem(pointer) || dummydata.user[pointer];
   });
 
   loop.call(editBtns, (elem) => {

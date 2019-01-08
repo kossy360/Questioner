@@ -1,0 +1,166 @@
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  background: #03A9F4;
+  font-family: 'Zilla Slab', serif;
+}
+
+header.main.header {
+  height: 8rem;
+  color: white;
+  font-size: 4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main.header p {
+  display: inline;
+}
+
+.text-container {
+  height: 10rem;
+  border-top: 1px solid white;
+}
+
+.image.container {
+  height: 500px;
+  max-height: 700px;
+  background-image: url('./assets/landmeet.svg');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  margin: auto;
+}
+
+.tab-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  text-align: center;
+  height: 4.5rem;
+  background: #039be0;
+  border-radius: 10px 10px 0 0;
+}
+
+.sign-container {
+  display: grid;
+  position: relative;
+  grid-template-columns: 100% 100%;
+  color: #fafdff;
+  background: #136aaf;
+  right: 0;
+  transition: all 0.3s linear;
+  padding-top: 3em;
+}
+
+.main-sign-container {
+  max-width: 27rem;
+  overflow: hidden;
+  padding-bottom: 7rem;
+  background: #136aaf;
+  box-sizing: border-box;
+  position: relative;
+  margin: auto;
+  border-radius: 10px 10px 0 0;
+}
+
+@media screen and (min-width: 700px) {
+
+  body {
+    grid-template-columns: auto auto;
+    grid-auto-rows: auto auto auto;
+  }
+
+  .text-container {
+    width: calc(100% - 31rem);
+  }
+
+  .image.container {
+    width: calc(100% - 30rem);
+    margin: 0;
+  }
+
+  .main-sign-container {
+    position: absolute;
+    top: 8rem;
+    right: 2em;
+    margin-bottom: 0;
+    border-radius: 10px 10px 10px 10px;
+  }
+}
+
+input:focus {
+  outline: none;
+}
+
+.input-label {
+  display: block;
+  font-size: 1.1em;
+}
+
+.input-container {
+  width: 90%;
+  margin: 5px auto;
+}
+
+.form-input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 2.5rem;
+  padding: 5px;
+  border: 1px solid #288bd9;
+  border-radius: 5px;
+  font-size: 1.5em;
+}
+
+.button-container {
+  width: 90%;
+  margin: auto;
+}
+
+.submit-button {
+  background: #009688;
+  border: none;
+  border-radius: 5px;
+  height: 2.5rem;
+  margin: 12px auto;
+  width: 100%;
+  font-family: 'Zilla Slab', serif;
+  font-size: 1.3em;
+  color: white;
+}
+
+.tab-item.active {
+  background: #136aaf;
+  color: white;
+  border-radius: 10px 10px 0 0;
+  border-bottom: 1px solid;
+}
+
+.sign-container.signin {
+  right: 100%;
+}
+
+.signin-container {
+  background: #136aaf;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+}
+
+.tab-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+}
+
+.text-container p {
+  color: white;
+  font-size: 1.5em;
+  margin-left: 10px;
+}

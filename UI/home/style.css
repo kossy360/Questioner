@@ -510,8 +510,21 @@ img.meet-image {
   justify-content: flex-end;
 }
 
+.comment-exp {
+  color: #288bd9;
+  cursor: pointer;
+}
+
 .comment-control::after {
-  content: 'v';
+  content: '';
+  width: 15px;
+  height: 15px;
+  margin-top: 5px;
+  margin-left: 3px;
+  background-image: url('../assets/dropdown.svg');
+  background-size: contain;
+  background-position: bottom;
+  background-repeat: no-repeat;
   transform: rotate(180deg);
   transition: all 0.5s linear;
 }
@@ -599,23 +612,23 @@ footer p {
 /** icons */
 
 .upvote {
-  background-image: url('./assets/upvote-neutral.svg');
+  background-image: url('../assets/upvote-neutral.svg');
   background-repeat: no-repeat;
 }
 
 .dnvote {
-  background-image: url('./assets/downvote-neutral.svg');
+  background-image: url('../assets/downvote-neutral.svg');
   background-repeat: no-repeat;
   transform: scale(1.25);
   margin-left: 15px;
 }
 
 .upvote.active {
-  background-image: url('./assets/upvote.svg');
+  background-image: url('../assets/upvote.svg');
 }
 
 .dnvote.active {
-  background-image: url('./assets/downvote.svg')
+  background-image: url('../assets/downvote.svg')
 }
 
 .feed-stat-vote {
@@ -701,7 +714,7 @@ textarea:focus {
   box-sizing: border-box;
   width: 20%;
   height: 20%;
-  background-image: url('./assets/add.svg');
+  background-image: url('../assets/add.svg');
   background-size: 72%;
   background-repeat: no-repeat;
   background-position: center;
@@ -816,35 +829,35 @@ button#add-comment-button {
 /* icons */
 
 .meet-date-icon {
-  background-image: url('./assets/calender.svg');
+  background-image: url('../assets/calender.svg');
 }
 
 .meet-time-icon {
-  background-image: url('./assets/clock.svg');
+  background-image: url('../assets/clock.svg');
 }
 
 .meet-place-icon {
-  background-image: url('./assets/location.svg');
+  background-image: url('../assets/location.svg');
 }
 
 .meet-notif {
-  background-image: url('./assets/notifications-no.svg');
+  background-image: url('../assets/notifications-no.svg');
 }
 
 .meet-notif.yes {
-  background-image: url('./assets/notification-yes.svg');
+  background-image: url('../assets/notification-yes.svg');
 }
 
 .meet-book.yes {
-  background-image: url('./assets/booked-yes.svg');
+  background-image: url('../assets/booked-yes.svg');
 }
 
 .meet-book {
-  background-image: url('./assets/booked-no.svg');
+  background-image: url('../assets/booked-no.svg');
 }
 
 .tags-icon {
-  background-image: url('./assets/tag.svg');
+  background-image: url('../assets/tag.svg');
 }
 
 .meet-icon {
