@@ -236,7 +236,7 @@ const commentCreator = (box, data) => {
       { div: { class: 'comment-options' } },
       {
         button: {
-          type: 'button', class: 'comment-reply-button', text: 'reply', author: data.username,
+          type: 'button', class: 'comment-reply-button', text: 'reply', username: data.username,
         },
       },
     ],

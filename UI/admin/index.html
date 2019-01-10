@@ -15,6 +15,7 @@
     <header class="header">
       <p class="logo">Questioner</p>
     </header>
+    <button class="profile-button" type="button"></button>
     <nav>
       <span class="tab-selector tab-active">
         <img class="icon-img" src="../assets/meetup.svg" alt="" srcset="">
@@ -127,7 +128,9 @@
         </div>
         <div class="meet-entry-container tags">
           <label class="meet-input-label"for="meet-tags-input">TAGS</label>
-          <textarea pointer="tags" class="meet-create-input" id="meet-tags-input" type="text"></textarea>
+          <div class="tag-edit-container meet-create-input" pointer="tags">
+            <input class="tags-create-input" id="meet-tags-input" type="text" placeholder="add a tag...">
+          </div>
         </div>
       </div>
       <div class="meet-create-button-container">
@@ -138,7 +141,6 @@
     </section>
 
     <section class="main-section" id="profile-section">
-      <button class="profile-button" type="button">logout</button>
       <div class="profile-container-main">
         <div id="profile-picture-container">
           <label id="profile-picture-label" for="profile-picture-input"></label>
