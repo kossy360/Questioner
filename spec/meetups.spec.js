@@ -8,9 +8,9 @@ start();
 const url = string => `http://localhost:3000/api/v1/${string}`;
 
 const meetup = {
-  createdOn: Date.now(),
+  createdOn: Date.now() + 5000,
   location: 'Abuja',
-  happeningOn: Date.now(),
+  happeningOn: Date.now() + 5000,
   topic: 'building of the 2nd Niger bridge',
   images: ['url1', 'url2'],
   tags: ['transport', 'technology', 'construction'],
@@ -32,11 +32,42 @@ describe('create a meetup record', () => {
       done();
     });
   });
-  it('status 200', () => {
-    expect(data.status).toBe(200);
+  it('status 201', () => {
+    expect(data.status).toBe(201);
   });
-  it('an order object', () => {
+  it('a question object', () => {
     expect(data.data[0]).toBeDefined();
+  });
+});
+
+describe('create a meetup record with invalid fields', () => {
+  let data;
+  const options = {
+    url: url('meetups'),
+    headers: {
+      auth: 'admin',
+    },
+    json: true,
+    body: {
+      createdOn: Date.now(),
+      location: 'Abuja',
+      happeningOn: Date.now(),
+      topic: 'building of the 2nd Niger bridge',
+      images: ['', 'url2'],
+      tags: ['transport', 'technology', 'construction'],
+    },
+  };
+  beforeAll((done) => {
+    Request.post(options, (error, response, body) => {
+      data = body;
+      done();
+    });
+  });
+  it('status 400', () => {
+    expect(data.status).toBe(400);
+  });
+  it('an error message', () => {
+    expect(data.error).toBeDefined();
   });
 });
 
@@ -63,7 +94,7 @@ describe('get all meetup records', () => {
   });
 });
 
-describe('get all upcoming records', () => {
+describe('get all upcoming meetup records', () => {
   let data = {};
   const options = {
     url: url('meetups/upcoming'),
@@ -101,7 +132,7 @@ describe('get a specific meetup record', () => {
   it('status 200', () => {
     expect(data.status).toBe(200);
   });
-  it('an order object', () => {
+  it('an meetup object', () => {
     expect(data.data[0]).toBeDefined();
   });
 });
@@ -123,5 +154,8 @@ describe('get a nonexistent meetup record', () => {
   });
   it('status 404', () => {
     expect(data.status).toBe(404);
+  });
+  it('an error message', () => {
+    expect(data.error).toBeDefined();
   });
 });
