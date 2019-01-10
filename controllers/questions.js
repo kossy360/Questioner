@@ -10,7 +10,6 @@ const control = {
       .filter(question => question.meetup.toString() === req.params.meetupId);
     if (questions.length > 0) res.status(200).json(success(200, [questions]));
     else {
-      console.log('here')
       res.status(200).json({
         status: 200,
         message: 'there are no questions found for this meetup',
