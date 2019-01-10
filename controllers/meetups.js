@@ -20,7 +20,7 @@ const reduce = (meets) => {
 };
 
 const control = {
-  getAll(req, res) {
+  getAll: (req, res) => {
     const meets = storage.meetups;
     if (meets) res.status(200).send(success(200, reduce(meets)));
     else {
@@ -31,7 +31,7 @@ const control = {
     }
   },
 
-  getUpcoming(req, res) {
+  getUpcoming: (req, res) => {
     const meets = storage.meetups.filter(meet => meet.happeningOn > Date.now());
     if (meets.length > 0) res.status(200).send(success(200, reduce(meets)));
     else {
@@ -42,13 +42,13 @@ const control = {
     }
   },
 
-  getSpecific(req, res, next) {
+  getSpecific: (req, res, next) => {
     const meetup = storage.meetups.find(meet => meet.id.toString() === req.params.meetupId);
     if (meetup) res.status(200).send(success(200, reduce([meetup])));
     else next(404);
   },
 
-  async createNew(req, res) {
+  createNew: async (req, res) => {
     const body = await validator(req.body, 'meetup').catch(() => error(400, res));
     if (!body) return;
     body.id = `${storage.meetups.length + 1}`;

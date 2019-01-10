@@ -5,7 +5,7 @@ import error from '../middleware/errorhandler';
 const success = (status, data) => ({ status, data });
 
 const control = {
-  getAll(req, res) {
+  getAll: (req, res) => {
     const questions = storage.questions
       .filter(question => question.meetup.toString() === req.params.meetupId);
     if (questions.length > 0) res.status(200).json(success(200, [questions]));
@@ -17,7 +17,7 @@ const control = {
     }
   },
 
-  async createNew(req, res) {
+  createNew: async (req, res) => {
     const body = await validator(req.body, 'questions').catch(() => error(400, res));
     if (!body) return;
     body.id = `${storage.questions.length + 1}`;
@@ -25,7 +25,7 @@ const control = {
     res.status(201).json(success(201, [body]));
   },
 
-  upvote(req, res) {
+  upvote: (req, res) => {
     const questions = storage.questions
       .find(question => question.id.toString() === req.params.questionId);
     if (questions) {
@@ -34,7 +34,7 @@ const control = {
     } else error(404, res, 'question not found');
   },
 
-  downvote(req, res) {
+  downvote: (req, res) => {
     const questions = storage.questions
       .find(question => question.id.toString() === req.params.questionId);
     if (questions) {

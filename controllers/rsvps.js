@@ -18,7 +18,7 @@ const reduce = (rsvps) => {
 };
 
 const control = {
-  async createNew(req, res) {
+  createNew: async (req, res) => {
     const body = await validator(req.body, 'rsvps').catch(() => error(400, res));
     if (!body) return;
     storage.rsvps.push(body);
