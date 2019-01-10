@@ -1,7 +1,8 @@
 import storage from '../storage';
+import validator from '../middleware/validator';
+import error from '../middleware/errorhandler';
 
 const success = (status, data) => ({ status, data });
-const errors = (status, error) => ({ status, error });
 
 const reduce = (meets) => {
   const reducedMeet = meets.map((meet) => {
@@ -22,27 +23,37 @@ const control = {
   getAll(req, res) {
     const meets = storage.meetups;
     if (meets) res.status(200).send(success(200, reduce(meets)));
-    else res.staus(404).send(errors(404, 'Not Found'));
+    else {
+      res.status(200).send({
+        status: 200,
+        message: 'there are no meetup records available',
+      });
+    }
   },
 
   getUpcoming(req, res) {
     const meets = storage.meetups.filter(meet => meet.happeningOn > Date.now());
-    if (meets) res.status(200).send(success(200, reduce(meets)));
-    else res.status(404).send(errors(404, 'Not Found'));
+    if (meets.length > 0) res.status(200).send(success(200, reduce(meets)));
+    else {
+      res.status(200).send({
+        status: 200,
+        message: 'there are no upcoming meetups',
+      });
+    }
   },
 
-  getSpecific(req, res) {
+  getSpecific(req, res, next) {
     const meetup = storage.meetups.find(meet => meet.id.toString() === req.params.meetupId);
     if (meetup) res.status(200).send(success(200, reduce([meetup])));
-    else res.status(404).send(errors(404, 'Not Found'));
+    else next(404);
   },
 
-  createNew(req, res) {
-    const { body } = req;
+  async createNew(req, res) {
+    const body = await validator(req.body, 'meetup').catch(() => error(400, res));
+    if (!body) return;
     body.id = `${storage.meetups.length + 1}`;
     storage.meetups.push(body);
-    console.log(body);
-    res.status(200).json(success(200, reduce([body])));
+    res.status(201).json(success(201, reduce([body])));
   },
 };
 
