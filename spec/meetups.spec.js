@@ -112,9 +112,6 @@ describe('get all upcoming meetup records', () => {
   it('status 200', () => {
     expect(data.status).toBe(200);
   });
-  it('a friendly message', () => {
-    expect(data.message).toBeDefined();
-  });
 });
 
 describe('get a specific meetup record', () => {
