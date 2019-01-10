@@ -60,10 +60,11 @@ All javascript code are written in ^ES6 and precompiles to ES5 for node to run. 
 
 ## Deployment
 
-#Local
+**Local**
 
 If you've followed all the instructions above, you should have it up and running with no issues, but should encounter one, do notify me.
-#Heroku
+
+**Heroku**
 
 https://k-questioner.herokuapp.com/api/v1/
 
