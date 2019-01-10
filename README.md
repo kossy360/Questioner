@@ -35,7 +35,24 @@ Run automated tests using
 ```
 npm run test
 ```
-Before running the test, make sure you don't have the server running. This will cause an error as the test runner starts the server before running the tests. 
+Before running the test, make sure you don't have the server running. This will cause an error as the test runner starts the server before running the tests.
+
+## Testing with POSTMAN
+
+When testing endpoints with POSTMAN, please ensure to add a **'auth'** header with a value of either **admin** or **user**
+Most of the routes do not explicitly require this header, but some routes are only accessible when the header is set to a particular value
+
+```
+POST hostname/api/v1/meetups
+```
+requires the auth header to be set to admin
+
+```
+POST hostname/api/v1/rsvps
+```
+requires the auth header to be set to user
+
+This is going to be changed when the API are secured with JWT, so watch out for updates.
 
 ### Coding style
 
@@ -69,3 +86,4 @@ Follow this project on Pivotal Tracker https://www.pivotaltracker.com/n/projects
 
 * Andela
 * Amaechi Chisom
+* Taiwo Sanni
