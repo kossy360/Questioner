@@ -12,41 +12,30 @@ This is the main development branch for api endpoints
 ### Installing
 
 All dependencies are provided in the package.json file.
-After cloning this branch on your local computer, run this command to install all the project dependencies.
+After cloning this branch on your local computer navigate to into the questioner repository.
+
+```
+-cd
+``` 
+Install all npm modules by running
 
 ```
 npm install
 ```
-Precompile the js files using Babel CLI like so
-
-```
-npm run-script build
-```
-This should precompile all js file and place them in the build folder in the root directory.
-Start the server with no-demon for easy debugging 
+Start the server like so
 
 ```
 npm run start1
 ```
-Go to your browser, navigate to http://localhost:(yourport)/users/items, you should get a 200 OK response and some JSON objects.
-
 ## Running the tests
 
 All tests are run with jasmine and reported with nyc.
-Precompile the js files before running any tests.
 Run automated tests using
 
 ```
 npm run test
 ```
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
+Before running the test, make sure you don't have the server running. This will cause an error as the test runner starts the server before running the tests. 
 
 ### Coding style
 
@@ -54,7 +43,12 @@ All javascript code are written in ^ES6 and precompiles to ES5 for node to run. 
 
 ## Deployment
 
+#Local
+
 If you've followed all the instructions above, you should have it up and running with no issues, but should encounter one, do notify me.
+#Heroku
+
+https://k-questioner.herokuapp.com/api/v1/
 
 ## Built With
 
@@ -65,7 +59,7 @@ If you've followed all the instructions above, you should have it up and running
 
 ## Tracking
 
-Follow this project on Pivotal Tracker https://www.pivotaltracker.com/projects/2194061
+Follow this project on Pivotal Tracker https://www.pivotaltracker.com/n/projects/2232054
 
 ## Authors
 
