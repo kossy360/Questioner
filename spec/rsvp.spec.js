@@ -36,7 +36,7 @@ describe('create a rsvp record', () => {
 
 describe('request rsvp with bad fields', () => {
   let data;
-  const options = {    
+  const options = {
     url: url('meetups/1/rsvps'),
     headers: {
       auth: 'user',

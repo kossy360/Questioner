@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import storage from '../storage';
 import validator from '../middleware/validator';
 import error from '../middleware/errorhandler';
@@ -19,7 +20,7 @@ const reduce = (rsvps) => {
 
 const control = {
   createNew: async (req, res) => {
-    const body = await validator(req.body, 'rsvps').catch(() => error(400, res));
+    const body = await validator(req.body, 'rsvps').catch(e => error(400, res, e.details[0].message.replace(/[\[\]"]/g, '')));
     if (!body) return;
     storage.rsvps.push(body);
     res.status(201).json(success(201, reduce([body])));

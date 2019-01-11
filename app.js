@@ -3,7 +3,7 @@ import express from 'express';
 import logger from 'morgan';
 
 import error from './middleware/errorhandler';
-import routes from './Routes/indexRouter';
+import routes from './routes/indexRouter';
 
 const app = express();
 
@@ -13,14 +13,21 @@ app.listen(port);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use('/api/v1', routes.generalRoute);
 
-app.use('/api/v1', (req, res, next) => {
-  const sender = req.get('auth');
-  if (sender === 'user') routes.userRoute(req, res);
-  else if (sender === 'admin') routes.adminRoute(req, res);
-  else error(403, res, 'authorization not understood');
+app.use('/api/v1', routes.generalRoute);
+app.use('/api/v1', routes.userRoute);
+app.use('/api/v1', routes.adminRoute);
+
+app.use('/api/v1/:invalid', (req, res) => error(400, res, 'request path invalid, please refer to API documentation'));
+
+app.use('/api/v1', (req, res) => {
+  res.status(200).json({
+    status: 200,
+    message: 'welcome to questioner, please refer to our API docs for valid requests',
+  });
 });
+
+app.use('/:invalid', (req, res) => error(400, res, 'request path invalid, please refer to API documentation'));
 
 app.use('/', (req, res) => {
   res.status(200).json({

@@ -12,15 +12,15 @@ const schemas = {
 
   questions: joi.object().keys({
     createdOn: joi.number().min(Date.now()).required(),
-    createdBy: joi.number().integer().min(0).required(),
-    meetup: joi.number().integer().min(0).required(),
+    createdBy: joi.number().integer().min(1).required(),
+    meetup: joi.number().integer().min(1).required(),
     body: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
     votes: joi.number().integer().required(),
   }),
 
   rsvps: joi.object().keys({
-    user: joi.number().integer().min(0).required(),
-    meetup: joi.number().integer().min(0).required(),
+    user: joi.number().integer().min(1).required(),
+    meetup: joi.number().integer().min(1).required(),
     topic: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
     response: joi.string().trim().equal('yes', 'no', 'maybe'),
   }),

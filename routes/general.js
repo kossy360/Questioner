@@ -21,8 +21,8 @@ router.get('/questions/:meetupId', questions.getAll);
 
 router.post('/questions', questions.createNew);
 
-router.patch('/questions/:questionId/upvote', questions.upvote);
+router.patch('/questions/:questionId/:vote', questions.vote);
 
-router.patch('/questions/:questionId/downvote', questions.downvote);
+router.patch('/questions/:questionId/:vote', questions.vote);
 
 export default router;
