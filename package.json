@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "start": "babel-node app.js",
+    "dev-start": "babel-node -r node_modules/dotenv/config app.js",
     "start1": "nodemon --exec npm start",
+    "start2": "nodemon --exec npm run dev-start",
     "test": "nyc jasmine",
     "coverage": "nyc report --reporter=lcov --reporter=text-lcov | coveralls"
   },
@@ -44,11 +46,8 @@
     "express": "~4.16.0",
     "express-validator": "^5.3.0",
     "grunt-contrib-jshint": "^2.0.0",
-    "http-errors": "~1.6.2",
-    "jade": "^1.11.0",
     "joi": "^14.3.1",
     "morgan": "~1.9.0",
-    "random-id": "^1.0.1",
     "request": "^2.88.0",
     "serve-static": "^1.13.2"
   },

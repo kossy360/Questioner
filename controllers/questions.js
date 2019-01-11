@@ -18,27 +18,25 @@ const control = {
   },
 
   createNew: async (req, res) => {
-    const body = await validator(req.body, 'questions').catch(() => error(400, res));
+    const body = await validator(req.body, 'questions').catch(e => error(400, res, e.details[0].message.replace(/"/g, '')));
     if (!body) return;
     body.id = `${storage.questions.length + 1}`;
     storage.meetups.push(body);
     res.status(201).json(success(201, [body]));
   },
 
-  upvote: (req, res) => {
+  vote: (req, res) => {
     const questions = storage.questions
       .find(question => question.id.toString() === req.params.questionId);
+    let vote = 0;
     if (questions) {
-      questions.votes += 1;
-      res.status(200).json(success(200, [questions]));
-    } else error(404, res, 'question not found');
-  },
-
-  downvote: (req, res) => {
-    const questions = storage.questions
-      .find(question => question.id.toString() === req.params.questionId);
-    if (questions) {
-      questions.votes -= 1;
+      if (req.params.vote.toLowerCase() === 'upvote') vote = 1;
+      else if (req.params.vote.toLowerCase() === 'downvote') vote = -1;
+      else {
+        error(400, res, 'vote parameter does not match "upvote" or "downvote"');
+        return;
+      }
+      questions.votes += vote;
       res.status(200).json(success(200, [questions]));
     } else error(404, res, 'question not found');
   },

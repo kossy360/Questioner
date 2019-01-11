@@ -15,7 +15,7 @@ All dependencies are provided in the package.json file.
 After cloning this branch on your local computer navigate to into the questioner repository.
 
 ```
--cd Questioner
+-cd
 ``` 
 Install all npm modules by running
 
@@ -82,3 +82,9 @@ Follow this project on Pivotal Tracker https://www.pivotaltracker.com/n/projects
 ## Authors
 
 * **Kossy Ugochukwu** 
+
+## Acknowledgments
+
+* Andela
+* Amaechi Chisom
+* Taiwo Sanni

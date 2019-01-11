@@ -49,7 +49,7 @@ const control = {
   },
 
   createNew: async (req, res) => {
-    const body = await validator(req.body, 'meetup').catch(() => error(400, res));
+    const body = await validator(req.body, 'meetup').catch(e => error(400, res, e.details[0].message.replace(/"/g, '')));
     if (!body) return;
     body.id = `${storage.meetups.length + 1}`;
     storage.meetups.push(body);
