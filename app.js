@@ -3,7 +3,7 @@ import express from 'express';
 import logger from 'morgan';
 
 import error from './middleware/errorhandler';
-import routes from './Routes/indexRouter';
+import routes from './routes/indexRouter';
 
 const app = express();
 
