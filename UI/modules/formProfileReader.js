@@ -2,14 +2,22 @@
 class ReadForm {
   constructor(inputs) {
     this.inputs = inputs;
+    this.storage = window.sessionStorage;
   }
 
   storeProfile() {
-    const storage = window.sessionStorage;
+    const obj = {};
     Array.prototype.forEach.call(this.inputs, (input) => {
       const pointer = input.getAttribute('pointer');
-      storage.setItem(pointer, input.value);
+      obj[pointer] = input.value;
     });
+    const objString = JSON.stringify(obj);
+    this.storage.setItem('user', objString);
+  }
+
+  getProfile() {
+    const profileString = this.storage.getItem('user');
+    return JSON.parse(profileString);
   }
 }
 

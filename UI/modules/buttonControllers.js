@@ -69,7 +69,6 @@ const askBtnControl = (ask) => {
 const commentBtnControl = (commentBtn) => {
   commentBtn.addEventListener('click', () => {
     const box = commentBtn.box.comment;
-    console.log(box);
     if (commentBtn.classList.contains('collapsed')) {
       if (!box) {
         addComments(commentBtn.action, commentBtn.box);
@@ -86,7 +85,7 @@ const commentBtnControl = (commentBtn) => {
 const replyBtnControl = (btns) => {
   btns.forEach((btn) => {
     btn.addEventListener('click', () => {
-      btn.input.value = `@${btn.username}${btn.input.value}`;
+      btn.input.value = `@${btn.username} ${btn.input.value}`;
       btn.input.focus();
     });
   });
