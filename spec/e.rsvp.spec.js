@@ -2,7 +2,6 @@
 import jwt from 'jsonwebtoken';
 import Request from 'request';
 import Server from '../app';
-import db from '../db/db';
 
 require('dotenv').config();
 
@@ -32,7 +31,6 @@ describe('rsvp tests', () => {
     beforeAll((done) => {
       Request.post(options, (error, response, body) => {
         data = body;
-        console.log(body)
         done();
       });
     });
@@ -95,4 +93,4 @@ describe('rsvp tests', () => {
       expect(data.error).toBeDefined();
     });
   });
-})
+});

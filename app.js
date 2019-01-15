@@ -5,6 +5,7 @@ import logger from 'morgan';
 import error from './middleware/errorhandler';
 import routes from './routes/indexRouter';
 import authenticator from './middleware/authenticator';
+import text from './db/db.sql';
 
 const app = express();
 

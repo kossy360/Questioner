@@ -51,7 +51,6 @@ describe('notification tests', () => {
     beforeAll((done) => {
       Request.post(options, (error, response, body) => {
         data = body;
-        console.log(body);
         done();
       });
     });

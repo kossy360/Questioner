@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import Request from 'request';
 import Server from '../app';
 import db from '../db/db';
-import text from '../migration/db.sql';
+import text from '../db/db.sql';
 
 require('dotenv').config();
 
@@ -18,9 +18,6 @@ const token = jwt.sign({
 }, process.env.secretkey);
 
 describe('meetup tests', () => {
-  beforeAll((done) => {
-    db.query(text).then(done());
-  });
   describe('create a meetup record', () => {
     let data;
     const options = {
@@ -81,32 +78,6 @@ describe('meetup tests', () => {
     });
   });
 
-  describe('get all meetup records', () => {
-    let data = {};
-    const options = {
-      url: url('meetups'),
-      headers: {
-        auth: token,
-      },
-      json: true,
-    };
-    beforeAll((done) => {
-      Request.get(options, (error, response, body) => {
-        data = body;
-        done();
-      });
-    });
-    it('status 200', () => {
-      expect(data.status).toBe(200);
-    });
-    it('a meetup object', () => {
-      expect(data.data[0]).toBeDefined();
-    });
-    it('contain valid meetup fields', () => {
-      expect(data.data[0]).toBeDefined();
-    });
-  });
-
   describe('get all upcoming meetup records', () => {
     let data = {};
     const options = {
@@ -122,8 +93,8 @@ describe('meetup tests', () => {
         done();
       });
     });
-    it('status 200', () => {
-      expect(data.status).toBe(200);
+    it('status code', () => {
+      expect(data.status).toBeGreaterThanOrEqual(200);
     });
   });
 
@@ -170,6 +141,32 @@ describe('meetup tests', () => {
     });
     it('an error message', () => {
       expect(data.error).toBeDefined();
+    });
+  });
+
+  describe('get all meetup records', () => {
+    let data = {};
+    const options = {
+      url: url('meetups'),
+      headers: {
+        auth: token,
+      },
+      json: true,
+    };
+    beforeAll((done) => {
+      Request.get(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 200', () => {
+      expect(data.status).toBe(200);
+    });
+    it('a meetup object', () => {
+      expect(data.data[0]).toBeDefined();
+    });
+    it('contain valid meetup fields', () => {
+      expect(data.data[0]).toBeDefined();
     });
   });
 

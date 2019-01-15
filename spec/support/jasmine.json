@@ -1,8 +1,8 @@
 {
   "spec_dir": "spec",
   "spec_files": [
-    "a.meetups.spec.js",
-    "b.user.spec.js",
+    "a.user.spec.js",
+    "b.meetups.spec.js",    
     "c.questions.spec.js",
     "d.comments.spec.js",
     "e.rsvp.spec.js",
