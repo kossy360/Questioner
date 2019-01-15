@@ -337,7 +337,7 @@ CREATE INDEX fki_votes_question_fkey ON public.vote USING btree (question);
 
 CREATE INDEX fki_votes_user_id_fkey ON public.vote USING btree (user_id);
 
-CREATE INDEX user_email_index ON public."user" USING btree (email) INCLUDE (email);
+CREATE INDEX user_email_index ON public."user" USING btree (email);
 
 CREATE TRIGGER insert_vote AFTER INSERT ON public.vote FOR EACH ROW EXECUTE PROCEDURE public.insert_question_votes();
 
