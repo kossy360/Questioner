@@ -2,11 +2,19 @@ language: node_js
 node_js:
  - "8"
 script: npm test
+env:
+ - PGUSER=postgres
+ - PGHOST=localhost
+ - PGPASSWORD=
+ - PGDATABASE=testdb
+ - PGPORT=5432
 before_script:
  - npm install
  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
  - chmod +x ./cc-test-reporter
  - ./cc-test-reporter before-build
+ - psql -c 'create database testdb'; -U postgres
+ - psql -c root testbase < migrations/db.sql
 after_script:
  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 after_success:

@@ -1,44 +1,62 @@
-import storage from '../storage';
+/* eslint-disable camelcase */
 import validator from '../middleware/validator';
 import error from '../middleware/errorhandler';
+import db from '../db/db';
+import generate from '../db/querygenerator';
 
 const success = (status, data) => ({ status, data });
+const fields = 'id, user_id, meetup, body, created, votes';
+
+const convertVote = (vote) => {
+  const val = vote.toLowerCase();
+  if (val === 'upvote') return 1;
+  if (val === 'downvote') return -1;
+  return 0;
+};
 
 const control = {
-  getAll: (req, res) => {
-    const questions = storage.questions
-      .filter(question => question.meetup.toString() === req.params.meetupId);
-    if (questions.length > 0) res.status(200).json(success(200, [questions]));
-    else {
-      res.status(200).json({
-        status: 200,
-        message: 'there are no questions found for this meetup',
-      });
+  getAll: async (req, res) => {
+    try {
+      const { meetupId } = await validator(req.params, 'reqId');
+      const { rows, rowCount } = await db.query(`SELECT ${fields} FROM public.questions WHERE meetup = $1`, [meetupId]);
+      if (rowCount > 0) res.status(200).json(success(200, rows));
+      else {
+        res.status(200).send({
+          status: 200,
+          message: `there are no questions for meetup with id: ${meetupId}`,
+        });
+      }
+    } catch (e) {
+      error(500, res);
     }
   },
 
-  createNew: async (req, res) => {
-    const body = await validator(req.body, 'questions').catch(e => error(400, res, e.details[0].message.replace(/"/g, '')));
-    if (!body) return;
-    body.id = `${storage.questions.length + 1}`;
-    storage.meetups.push(body);
-    res.status(201).json(success(201, [body]));
+  createNew: async (req, res, next) => {
+    try {
+      const body = await validator(req.body, 'questions');
+      const { key1, key2, values } = generate.insertFields(body);
+      const { rows, rowCount } = await db.query(`INSERT INTO public.questions (${key1}) VALUES (${key2}) RETURNING user_id, meetup, body`, values);
+      if (rowCount > 0) res.status(201).json(success(201, rows));
+      else next(500);
+    } catch (e) {
+      if (e.code === '23503') error(404, res, 'either the user or meetup does not exist');
+      else if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
+      else error(500, res);
+    }
   },
 
-  vote: (req, res) => {
-    const questions = storage.questions
-      .find(question => question.id.toString() === req.params.questionId);
-    let vote = 0;
-    if (questions) {
-      if (req.params.vote.toLowerCase() === 'upvote') vote = 1;
-      else if (req.params.vote.toLowerCase() === 'downvote') vote = -1;
-      else {
-        error(400, res, 'vote parameter does not match "upvote" or "downvote"');
-        return;
-      }
-      questions.votes += vote;
-      res.status(200).json(success(200, [questions]));
-    } else error(404, res, 'question not found');
+  vote: async (req, res, next) => {
+    try {
+      const { vote, questionId } = await validator(req.params, 'reqId');
+      const { rows, rowCount } = await db.query('SELECT * FROM update_votes($1, $2, $3)', [req.decoded.user, questionId, convertVote(vote)]);
+      if (rowCount > 0) res.status(201).json(success(201, rows));
+      else next(500);
+    } catch (e) {
+      if (e.code === '23503') {
+        error(404, res, 'either the user or question does not exist');
+      } else if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
+      else error(500, res);
+    }
   },
 };
 

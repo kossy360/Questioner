@@ -10,7 +10,7 @@ const errors = {
 const createError = (error, res, message = null) => {
   const errorCode = error.status || error;
   const errorMessage = error.message || message || errors[error];
-  res.status(error).json({
+  res.status(errorCode).json({
     status: errorCode,
     error: errorMessage,
   });

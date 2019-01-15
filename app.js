@@ -4,6 +4,7 @@ import logger from 'morgan';
 
 import error from './middleware/errorhandler';
 import routes from './routes/indexRouter';
+import authenticator from './middleware/authenticator';
 
 const app = express();
 
@@ -14,9 +15,9 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use('/api/v1/auth', routes.userRoute);
+app.use('/api/v1', authenticator.verify);
 app.use('/api/v1', routes.generalRoute);
-app.use('/api/v1', routes.userRoute);
-app.use('/api/v1', routes.adminRoute);
 
 app.use('/api/v1/:invalid', (req, res) => error(400, res, 'request path invalid, please refer to API documentation'));
 

@@ -1,9 +1,15 @@
 {
   "spec_dir": "spec",
   "spec_files": [
-    "**/*[sS]pec.js"
+    "a.meetups.spec.js",
+    "b.user.spec.js",
+    "c.questions.spec.js",
+    "d.comments.spec.js",
+    "e.rsvp.spec.js",
+    "f.notifications.spec.js"
   ],
   "helpers": [
     "helpers/**/*.js"
   ]
 }
+

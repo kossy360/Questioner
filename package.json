@@ -8,7 +8,7 @@
     "dev-start": "babel-node -r node_modules/dotenv/config app.js",
     "start1": "nodemon --exec npm start",
     "start2": "nodemon --exec npm run dev-start",
-    "test": "nyc jasmine",
+    "test": "nyc jasmine --random=false",
     "coverage": "nyc report --reporter=lcov --reporter=text-lcov | coveralls"
   },
   "repository": {
@@ -47,7 +47,9 @@
     "express-validator": "^5.3.0",
     "grunt-contrib-jshint": "^2.0.0",
     "joi": "^14.3.1",
+    "jsonwebtoken": "^8.4.0",
     "morgan": "~1.9.0",
+    "pg": "^7.8.0",
     "request": "^2.88.0",
     "serve-static": "^1.13.2"
   },
