@@ -4,6 +4,8 @@ node_js:
 script: npm test
 services:
  - postgresql
+ addons:
+  postgresql: "9.4"
 before_script:
  - npm install
  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
