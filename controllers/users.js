@@ -58,6 +58,23 @@ const controller = {
     }
   },
 
+  update: async (req, res) => {
+    try {
+      const body = await validator(req.body, 'updateUser');
+      const { key1, key2, values } = generate.updateFields(body);
+      const { rows, rowCount } = await db.query(`UPDATE public.user SET ${key1} WHERE id = ${req.decoded.user} RETURNING id,${key2}`, values);
+      if (rowCount > 0) res.status(200).json(success(200, rows));
+      else error(404, res, 'user does not exist');
+    } catch (e) {
+      if (e.code === '23505') {
+        res.status(200).json({
+          status: 200,
+          error: 'email already in use',
+        });
+      } else if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
+      else error(500, res);
+    }
+  },
 };
 
 export default controller;

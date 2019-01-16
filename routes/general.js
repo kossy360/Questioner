@@ -1,4 +1,5 @@
 import Router from 'express';
+import users from '../controllers/users';
 import meetups from '../controllers/meetups';
 import questions from '../controllers/questions';
 import rsvps from '../controllers/rsvps';
@@ -25,6 +26,8 @@ router.post('/meetups', meetups.createNew);
 router.post('/questions', questions.createNew);
 
 router.post('/meetups/:meetupId/rsvps', rsvps.createNew);
+
+router.patch('/users/update', users.update);
 
 router.patch('/meetups/:meetupId', meetups.update);
 
