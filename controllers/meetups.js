@@ -63,6 +63,26 @@ const control = {
       }
     } else error(403, res, 'only users with administrative rights can create meetups');
   },
+
+  deleteSpecific: async (req, res) => {
+    if (req.decoded.isAdmin) {
+      try {
+        const { meetupId } = await validator(req.params, 'reqId');
+        const { rowCount } = await db.query('DELETE FROM public.meets WHERE id = $1 RETURNING *', [meetupId]);
+        if (rowCount > 0) {
+          res.status(200).json({
+            status: 200,
+            message: 'meetup deleted',
+          });
+        } else {
+          error(404, res, 'meetup not found, it has either been deleted or it never existed');
+        }
+      } catch (e) {
+        if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
+        else error(500, res);
+      }
+    } else error(403, res, 'only users with administrative rights can delete meetups');
+  },
 };
 
 export default control;
