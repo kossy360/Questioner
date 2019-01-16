@@ -88,7 +88,7 @@ describe('notification tests', () => {
   describe('reset notifications on a non-existent meetup', () => {
     let data;
     const options = {
-      url: url('notifications'),
+      url: url('notifications/1/reset'),
       headers: {
         auth: token,
       },

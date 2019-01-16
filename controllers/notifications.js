@@ -79,7 +79,7 @@ const control = {
 
   getAll: async (req, res) => {
     try {
-      const { rows, rowCount } = await db.query('SELECT * FROM get_notif_user($1) WHERE res != \'[]\'::jsonb', [req.decoded.user]);
+      const { rows, rowCount } = await db.query("SELECT * FROM get_notif_user($1) WHERE res != '[]'::jsonb", [req.decoded.user]);
       if (rowCount > 0) res.status(200).json(success(200, rows));
       else {
         res.status(200).json({

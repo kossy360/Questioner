@@ -26,7 +26,7 @@ router.get('/questions/:meetupId', questions.getAll);
 
 router.get('/comments/:questionId', comments.getAll);
 
-router.get('/notifications/', notifications.getAll);
+router.get('/notifications', notifications.getAll);
 
 router.post('/meetups', meetups.createNew);
 
