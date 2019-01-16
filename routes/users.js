@@ -1,8 +1,10 @@
 import Router from 'express';
-import rsvps from '../controllers/rsvps';
+import users from '../controllers/users';
 
 const router = Router();
 
-router.post('/meetups/:meetId/rsvps', rsvps.createNew);
+router.post('/login', users.getUser);
+
+router.post('/signup', users.createNew);
 
 export default router;
