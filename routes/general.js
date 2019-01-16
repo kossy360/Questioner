@@ -2,6 +2,7 @@ import Router from 'express';
 import users from '../controllers/users';
 import meetups from '../controllers/meetups';
 import questions from '../controllers/questions';
+import comments from '../controllers/comments';
 import rsvps from '../controllers/rsvps';
 
 const router = Router();
@@ -20,6 +21,8 @@ router.get('/meetups/:meetupId', meetups.getSpecific);
 router.get('/meetups', meetups.getAll);
 
 router.get('/questions/:meetupId', questions.getAll);
+
+router.get('/comments/:questionId', comments.getAll);
 
 router.post('/meetups', meetups.createNew);
 
