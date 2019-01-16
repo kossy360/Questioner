@@ -4,6 +4,8 @@ import meetups from '../controllers/meetups';
 import questions from '../controllers/questions';
 import comments from '../controllers/comments';
 import rsvps from '../controllers/rsvps';
+import notifications from '../controllers/notifications';
+
 
 const router = Router();
 
@@ -31,6 +33,9 @@ router.post('/questions', questions.createNew);
 router.post('/comments', comments.createNew);
 
 router.post('/meetups/:meetupId/rsvps', rsvps.createNew);
+
+router.post('/notifications/:meetupId/register', notifications.register);
+
 
 router.patch('/users/update', users.update);
 
