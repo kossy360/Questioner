@@ -4,6 +4,7 @@ import logger from 'morgan';
 
 import error from './middleware/errorhandler';
 import routes from './routes/indexRouter';
+import authenticator from './middleware/authenticator';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use('/api/v1', authenticator.verify);
 app.use('/api/v1', routes.generalRoute);
 app.use('/api/v1', routes.userRoute);
 app.use('/api/v1', routes.adminRoute);
