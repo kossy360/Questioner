@@ -28,6 +28,8 @@ router.post('/meetups', meetups.createNew);
 
 router.post('/questions', questions.createNew);
 
+router.post('/comments', comments.createNew);
+
 router.post('/meetups/:meetupId/rsvps', rsvps.createNew);
 
 router.patch('/users/update', users.update);
