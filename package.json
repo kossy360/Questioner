@@ -8,7 +8,7 @@
     "dev-start": "babel-node -r node_modules/dotenv/config app.js",
     "start1": "nodemon --exec npm start",
     "start2": "nodemon --exec npm run dev-start",
-    "test": "nyc jasmine",
+    "test": "nyc jasmine --random=false",
     "coverage": "nyc report --reporter=lcov --reporter=text-lcov | coveralls"
   },
   "repository": {
