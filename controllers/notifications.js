@@ -52,6 +52,30 @@ const control = {
       else error(500, res);
     }
   },
+
+  clear: async (req, res) => {
+    try {
+      const { meetupId } = await validator(req.params, 'reqId');
+      const { rowCount } = await db.query(
+        'DELETE FROM public.notifications WHERE user_id = $1 AND meet=$2 RETURNING *',
+        [req.decoded.user, meetupId],
+      );
+      if (rowCount > 0) {
+        res.status(200).json({
+          status: 200,
+          message: `notification stopped for ${meetupId}`,
+        });
+      } else {
+        res.status(200).json({
+          status: 200,
+          message: `you have not registered notifications for meetup ${meetupId}`,
+        });
+      }
+    } catch (e) {
+      if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
+      else error(500, res);
+    }
+  },
 };
 
 export default control;

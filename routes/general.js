@@ -46,4 +46,6 @@ router.patch('/notifications/:meetupId/reset', notifications.reset);
 
 router.delete('/meetups/:meetupId', meetups.deleteSpecific);
 
+router.delete('/notifications/:meetupId/clear', notifications.clear);
+
 export default router;
