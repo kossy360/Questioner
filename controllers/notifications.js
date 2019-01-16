@@ -28,6 +28,30 @@ const control = {
       else error(500, res);
     }
   },
+
+  reset: async (req, res) => {
+    try {
+      const { meetupId } = await validator(req.params, 'reqId');
+      const { rowCount } = await db.query(
+        'UPDATE public.notifications SET last_seen = $1 WHERE meet=$2 AND user_id=$3 RETURNING *;',
+        [Date.now(), meetupId, req.decoded.user],
+      );
+      if (rowCount > 0) {
+        res.status(200).json({
+          status: 200,
+          message: `notification reset for meetup ${meetupId}`,
+        });
+      } else {
+        res.status(200).json({
+          status: 200,
+          message: `you have not registered notifications for meetup ${meetupId}`,
+        });
+      }
+    } catch (e) {
+      if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
+      else error(500, res);
+    }
+  },
 };
 
 export default control;

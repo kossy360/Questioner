@@ -36,12 +36,13 @@ router.post('/meetups/:meetupId/rsvps', rsvps.createNew);
 
 router.post('/notifications/:meetupId/register', notifications.register);
 
-
 router.patch('/users/update', users.update);
 
 router.patch('/meetups/:meetupId', meetups.update);
 
 router.patch('/questions/:questionId/:vote', questions.vote);
+
+router.patch('/notifications/:meetupId/reset', notifications.reset);
 
 router.delete('/meetups/:meetupId', meetups.deleteSpecific);
 
