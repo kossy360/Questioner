@@ -1,4 +1,3 @@
-// import storage from '../storage';
 import validator from '../middleware/validator';
 import error from '../middleware/errorhandler';
 import db from '../db/db';
