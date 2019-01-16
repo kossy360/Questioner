@@ -1,5 +1,5 @@
 import validator from '../helpers/validator';
-import error from '../helpers/errorhandler';
+import createError from '../helpers/createError';
 import { meetupQuery } from '../db/querydata';
 
 const success = (status, data) => ({ status, data });
@@ -15,8 +15,8 @@ const control = {
           message: 'there are no meetup records available',
         });
       }
-    } catch (e) {
-      error(500, res);
+    } catch (error) {
+      createError(500, res);
     }
   },
 
@@ -31,8 +31,8 @@ const control = {
           message: 'there are no upcoming meetups',
         });
       }
-    } catch (e) {
-      error(500, res);
+    } catch (error) {
+      createError(500, res);
     }
   },
 
@@ -43,8 +43,8 @@ const control = {
         .getSpecific(req.decoded.user, req.decoded.isAdmin, meetupId);
       if (rowCount > 0) res.status(200).send(success(200, rows));
       else next(404);
-    } catch (e) {
-      error(400, res, e.details[0].message.replace(/"/g, ''));
+    } catch (error) {
+      createError(400, res, error.details[0].message.replace(/"/g, ''));
     }
   },
 
@@ -55,11 +55,11 @@ const control = {
         const { rows, rowCount } = await meetupQuery.createNew(body);
         if (rowCount > 0) res.status(201).json(success(201, rows));
         else next(500);
-      } catch (e) {
-        if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
-        else error(500, res);
+      } catch (error) {
+        if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+        else createError(500, res);
       }
-    } else error(403, res, 'only users with administrative rights can create meetups');
+    } else createError(403, res, 'only users with administrative rights can create meetups');
   },
 
   deleteSpecific: async (req, res) => {
@@ -73,13 +73,13 @@ const control = {
             message: 'meetup deleted',
           });
         } else {
-          error(404, res, 'meetup not found, it has either been deleted or it never existed');
+          createError(404, res, 'meetup not found, it has either been deleted or it never existed');
         }
-      } catch (e) {
-        if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
-        else error(500, res);
+      } catch (error) {
+        if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+        else createError(500, res);
       }
-    } else error(403, res, 'only users with administrative rights can delete meetups');
+    } else createError(403, res, 'only users with administrative rights can delete meetups');
   },
 
   update: async (req, res) => {
@@ -89,12 +89,12 @@ const control = {
         const body = await validator(req.body, 'updateMeetup');
         const { rows, rowCount } = await meetupQuery.update(body, meetupId);
         if (rowCount > 0) res.status(200).json(success(200, rows));
-        else error(404, res, 'meet does not exist');
-      } catch (e) {
-        if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
-        else error(500, res);
+        else createError(404, res, 'meet does not exist');
+      } catch (error) {
+        if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+        else createError(500, res);
       }
-    } else error(403, res, 'only users with administrative rights can update meetups');
+    } else createError(403, res, 'only users with administrative rights can update meetups');
   },
 };
 

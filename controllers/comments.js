@@ -1,5 +1,5 @@
 import validator from '../helpers/validator';
-import error from '../helpers/errorhandler';
+import createError from '../helpers/createError';
 import { commentsQuery } from '../db/querydata';
 
 const success = (status, data) => ({ status, data });
@@ -16,25 +16,25 @@ const control = {
           message: `there are no comments for the question with id: ${questionId}`,
         });
       }
-    } catch (e) {
-      error(500, res);
+    } catch (error) {
+      createError(500, res);
     }
   },
 
   createNew: async (req, res, next) => {
     try {
       const body = await validator(req.body, 'comments');
-      const { rows, rowCount } = await commentsQuery.createNew(body);
+      const { rows, rowCount } = await commentsQuery.createNew(req.decoded.user, body);
       if (rowCount > 0) res.status(201).json(success(201, rows));
       else next(500);
-    } catch (e) {
-      if (e.code === '23503') {
+    } catch (error) {
+      if (error.code === '23503') {
         res.status(200).json({
           status: 200,
-          error: 'either the user or question does not exist',
+          message: 'either the user or question does not exist',
         });
-      } else if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
-      else error(500, res);
+      } else if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      else createError(500, res);
     }
   },
 };

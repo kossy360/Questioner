@@ -1,5 +1,5 @@
 import validator from '../helpers/validator';
-import error from '../helpers/errorhandler';
+import createError from '../helpers/createError';
 import authenticator from '../middleware/authenticator';
 import { userQuery } from '../db/querydata';
 
@@ -20,15 +20,15 @@ const controller = {
           }],
         });
       } else next(500);
-    } catch (e) {
-      if (e.code === '23505') {
+    } catch (error) {
+      if (error.code === '23505') {
         res.status(200).json({
           status: 200,
-          error: 'user is already registered',
+          createError: 'user is already registered',
         });
-      } else if (e.details[0].type === 'string.regex.base') error(400, res, 'password must contain 6 - 12 characters');
-      else if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
-      else error(500, res);
+      } else if (error.details[0].type === 'string.regex.base') createError(400, res, 'password must contain 6 - 12 characters');
+      else if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      else createError(500, res);
     }
   },
 
@@ -45,11 +45,11 @@ const controller = {
             user: rows[0],
           }],
         });
-      } else error(404, res, 'email or password incorrect');
-    } catch (e) {
-      if (e.routine) error(403, res);
-      else if (e.details[0].type === 'string.regex.base') error(400, res, 'password must contain 6 - 12 characters');
-      else error(400, res, e.details[0].message.replace(/"/g, ''));
+      } else createError(404, res, 'email or password incorrect');
+    } catch (error) {
+      if (error.routine) createError(403, res);
+      else if (error.details[0].type === 'string.regex.base') createError(400, res, 'password must contain 6 - 12 characters');
+      else createError(400, res, error.details[0].message.replace(/"/g, ''));
     }
   },
 
@@ -58,15 +58,15 @@ const controller = {
       const body = await validator(req.body, 'updateUser');
       const { rows, rowCount } = await userQuery.update(req.decoded.user, body);
       if (rowCount > 0) res.status(200).json(success(200, rows));
-      else error(404, res, 'user does not exist');
-    } catch (e) {
-      if (e.code === '23505') {
+      else createError(404, res, 'user does not exist');
+    } catch (error) {
+      if (error.code === '23505') {
         res.status(200).json({
           status: 200,
-          error: 'email already in use',
+          createError: 'email already in use',
         });
-      } else if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
-      else error(500, res);
+      } else if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      else createError(500, res);
     }
   },
 };

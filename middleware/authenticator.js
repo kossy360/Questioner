@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import error from '../helpers/errorhandler';
+import createError from '../helpers/createError';
 
 const authenticator = {
   generate: body => new Promise((res) => {
@@ -15,7 +15,7 @@ const authenticator = {
   verify: (req, res, next) => {
     jwt.verify(req.get('auth'), process.env.secretkey, (err, decoded) => {
       if (err) {
-        error(403, res, err.message);
+        createError(403, res, err.message);
         return;
       }
       req.decoded = decoded;

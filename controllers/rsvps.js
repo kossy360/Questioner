@@ -1,5 +1,5 @@
 import validator from '../helpers/validator';
-import error from '../helpers/errorhandler';
+import createError from '../helpers/createError';
 import { rsvpsQuery } from '../db/querydata';
 
 const success = (status, data) => ({ status, data });
@@ -14,12 +14,12 @@ const control = {
           .createNew(req.decoded.user, meetupId, response.toLowerCase());
         if (rowCount > 0) res.status(201).json(success(201, rows));
         else next(500);
-      } catch (e) {
-        if (e.code === '23503') error(404, res, 'meetup does not exist');
-        else if (e.details[0]) error(400, res, e.details[0].message.replace(/[[\]"]/g, ''));
-        else error(500, res);
+      } catch (error) {
+        if (error.code === '23503') createError(404, res, 'meetup does not exist');
+        else if (error.details[0]) createError(400, res, error.details[0].message.replace(/[[\]"]/g, ''));
+        else createError(500, res);
       }
-    } else error(403, res, 'this route is only available to users');
+    } else createError(403, res, 'this route is only available to users');
   },
 };
 

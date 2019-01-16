@@ -1,5 +1,5 @@
 import validator from '../helpers/validator';
-import error from '../helpers/errorhandler';
+import createError from '../helpers/createError';
 import { notificationsQuery } from '../db/querydata';
 
 const success = (status, data) => ({ status, data });
@@ -15,14 +15,14 @@ const control = {
           message: `notifications registered for meetup ${meetupId}`,
         });
       }
-    } catch (e) {
-      if (e.code === '23503') {
+    } catch (error) {
+      if (error.code === '23503') {
         res.status(201).json({
           status: 201,
           message: 'you have already set up notifications for this meetup',
         });
-      } else if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
-      else error(500, res);
+      } else if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      else createError(500, res);
     }
   },
 
@@ -41,9 +41,9 @@ const control = {
           message: `you have not registered notifications for meetup ${meetupId}`,
         });
       }
-    } catch (e) {
-      if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
-      else error(500, res);
+    } catch (error) {
+      if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      else createError(500, res);
     }
   },
 
@@ -62,9 +62,9 @@ const control = {
           message: `you have not registered notifications for meetup ${meetupId}`,
         });
       }
-    } catch (e) {
-      if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
-      else error(500, res);
+    } catch (error) {
+      if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      else createError(500, res);
     }
   },
 
@@ -78,9 +78,9 @@ const control = {
           message: 'you have no new notifications',
         });
       }
-    } catch (e) {
-      if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
-      else error(500, res);
+    } catch (error) {
+      if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      else createError(500, res);
     }
   },
 };

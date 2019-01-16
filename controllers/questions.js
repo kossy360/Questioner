@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import validator from '../helpers/validator';
-import error from '../helpers/errorhandler';
+import createError from '../helpers/createError';
 import { questionQuery } from '../db/querydata';
 
 const success = (status, data) => ({ status, data });
@@ -24,8 +24,8 @@ const control = {
           message: `there are no questions for meetup with id: ${meetupId}`,
         });
       }
-    } catch (e) {
-      error(500, res);
+    } catch (error) {
+      createError(500, res);
     }
   },
 
@@ -35,10 +35,10 @@ const control = {
       const { rows, rowCount } = await questionQuery.createNew(req.decoded.user, body);
       if (rowCount > 0) res.status(201).json(success(201, rows));
       else next(500);
-    } catch (e) {
-      if (e.code === '23503') error(404, res, 'either the user or meetup does not exist');
-      else if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
-      else error(500, res);
+    } catch (error) {
+      if (error.code === '23503') createError(404, res, 'either the user or meetup does not exist');
+      else if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      else createError(500, res);
     }
   },
 
@@ -49,11 +49,11 @@ const control = {
         .vote(req.decoded.user, questionId, convertVote(vote));
       if (rowCount > 0) res.status(201).json(success(201, rows));
       else next(500);
-    } catch (e) {
-      if (e.code === '23503') {
-        error(404, res, 'either the user or question does not exist');
-      } else if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
-      else error(500, res);
+    } catch (error) {
+      if (error.code === '23503') {
+        createError(404, res, 'either the user or question does not exist');
+      } else if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      else createError(500, res);
     }
   },
 };
