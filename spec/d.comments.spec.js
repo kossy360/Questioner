@@ -25,7 +25,6 @@ describe('comments tests', () => {
       },
       json: true,
       body: {
-        user_id: 1,
         question: 1,
         comment: 'this is a comment',
       },
@@ -53,7 +52,6 @@ describe('comments tests', () => {
       },
       json: true,
       body: {
-        user_id: 1,
         question: 1,
         comment: '  ',
       },
@@ -81,7 +79,6 @@ describe('comments tests', () => {
       },
       json: true,
       body: {
-        user_id: 1,
         question: 5,
         comment: 'this is a comment',
       },
@@ -96,7 +93,7 @@ describe('comments tests', () => {
       expect(data.status).toBe(200);
     });
     it('a freindly message', () => {
-      expect(data.error).toBeDefined();
+      expect(data.message).toBeDefined();
     });
   });
 

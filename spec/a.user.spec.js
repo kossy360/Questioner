@@ -2,8 +2,8 @@
 import jwt from 'jsonwebtoken';
 import Request from 'request';
 import Server from '../app';
-import db from '../db/querydb';
-import text from '../db/databaseSQL';
+import querydb from '../db/querydb';
+import dbsql from '../db/databaseSQL';
 
 require('dotenv').config();
 
@@ -19,7 +19,7 @@ const token = jwt.sign({
 
 describe('user tests', () => {
   beforeAll((done) => {
-    db.query(text.trim()).then(() => done()).catch(e => console.log(e));
+    querydb.query(dbsql.trim()).then(() => done()).catch(e => console.log(e));
   });
   describe('register a new user', () => {
     let data;

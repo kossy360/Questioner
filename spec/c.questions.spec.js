@@ -25,7 +25,6 @@ describe('question tests', () => {
       },
       json: true,
       body: {
-        user_id: 1,
         meetup: 1,
         body: 'are we really testing?',
       },
@@ -53,7 +52,6 @@ describe('question tests', () => {
       },
       json: true,
       body: {
-        user_id: 1,
         meetup: 1,
         body: '  ',
       },
