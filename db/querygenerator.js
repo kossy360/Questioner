@@ -1,4 +1,4 @@
-const generate = {
+const queryGenerator = {
   insertFields: (body) => {
     const keys = Object.keys(body);
     const result = {
@@ -30,4 +30,4 @@ const generate = {
   },
 };
 
-export default generate;
+export default queryGenerator;

@@ -1,6 +1,6 @@
-import validator from '../middleware/validator';
-import error from '../middleware/errorhandler';
-import db from '../db/db';
+import validator from '../helpers/validator';
+import error from '../helpers/errorhandler';
+import { notificationsQuery } from '../db/querydata';
 
 const success = (status, data) => ({ status, data });
 
@@ -8,10 +8,7 @@ const control = {
   register: async (req, res) => {
     try {
       const { meetupId } = await validator(req.params, 'reqId');
-      const { rowCount } = await db.query(
-        'INSERT INTO public.notifications (user_id, meet) VALUES ($1, $2) ON CONFLICT ON CONSTRAINT notifications_unique DO NOTHING;',
-        [req.decoded.user, meetupId],
-      );
+      const { rowCount } = await notificationsQuery.register(req.decoded.user, meetupId);
       if (rowCount > 0) {
         res.status(201).json({
           status: 201,
@@ -32,10 +29,7 @@ const control = {
   reset: async (req, res) => {
     try {
       const { meetupId } = await validator(req.params, 'reqId');
-      const { rowCount } = await db.query(
-        'UPDATE public.notifications SET last_seen = $1 WHERE meet=$2 AND user_id=$3 RETURNING *;',
-        [Date.now(), meetupId, req.decoded.user],
-      );
+      const { rowCount } = await notificationsQuery.reset(req.decoded.user, meetupId);
       if (rowCount > 0) {
         res.status(200).json({
           status: 200,
@@ -56,10 +50,7 @@ const control = {
   clear: async (req, res) => {
     try {
       const { meetupId } = await validator(req.params, 'reqId');
-      const { rowCount } = await db.query(
-        'DELETE FROM public.notifications WHERE user_id = $1 AND meet=$2 RETURNING *',
-        [req.decoded.user, meetupId],
-      );
+      const { rowCount } = await notificationsQuery.clear(req.decoded.user, meetupId);
       if (rowCount > 0) {
         res.status(200).json({
           status: 200,
@@ -79,7 +70,7 @@ const control = {
 
   getAll: async (req, res) => {
     try {
-      const { rows, rowCount } = await db.query("SELECT * FROM get_notif_user($1) WHERE res != '[]'::jsonb", [req.decoded.user]);
+      const { rows, rowCount } = await notificationsQuery.getAll(req.decoded.user);
       if (rowCount > 0) res.status(200).json(success(200, rows));
       else {
         res.status(200).json({

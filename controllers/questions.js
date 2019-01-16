@@ -1,11 +1,9 @@
 /* eslint-disable camelcase */
-import validator from '../middleware/validator';
-import error from '../middleware/errorhandler';
-import db from '../db/db';
-import generate from '../db/querygenerator';
+import validator from '../helpers/validator';
+import error from '../helpers/errorhandler';
+import { questionQuery } from '../db/querydata';
 
 const success = (status, data) => ({ status, data });
-const fields = 'id, user_id, meetup, body, created, votes';
 
 const convertVote = (vote) => {
   const val = vote.toLowerCase();
@@ -18,7 +16,7 @@ const control = {
   getAll: async (req, res) => {
     try {
       const { meetupId } = await validator(req.params, 'reqId');
-      const { rows, rowCount } = await db.query(`SELECT ${fields} FROM public.questions WHERE meetup = $1`, [meetupId]);
+      const { rows, rowCount } = await questionQuery.getAll(meetupId);
       if (rowCount > 0) res.status(200).json(success(200, rows));
       else {
         res.status(200).send({
@@ -34,8 +32,7 @@ const control = {
   createNew: async (req, res, next) => {
     try {
       const body = await validator(req.body, 'questions');
-      const { key1, key2, values } = generate.insertFields(body);
-      const { rows, rowCount } = await db.query(`INSERT INTO public.questions (${key1}) VALUES (${key2}) RETURNING user_id, meetup, body`, values);
+      const { rows, rowCount } = await questionQuery.createNew(req.decoded.user, body);
       if (rowCount > 0) res.status(201).json(success(201, rows));
       else next(500);
     } catch (e) {
@@ -48,7 +45,8 @@ const control = {
   vote: async (req, res, next) => {
     try {
       const { vote, questionId } = await validator(req.params, 'reqId');
-      const { rows, rowCount } = await db.query('SELECT * FROM update_votes($1, $2, $3)', [req.decoded.user, questionId, convertVote(vote)]);
+      const { rows, rowCount } = await questionQuery
+        .vote(req.decoded.user, questionId, convertVote(vote));
       if (rowCount > 0) res.status(201).json(success(201, rows));
       else next(500);
     } catch (e) {

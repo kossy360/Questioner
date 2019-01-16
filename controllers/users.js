@@ -1,19 +1,15 @@
-import validator from '../middleware/validator';
-import error from '../middleware/errorhandler';
-import db from '../db/db';
-import generate from '../db/querygenerator';
+import validator from '../helpers/validator';
+import error from '../helpers/errorhandler';
 import authenticator from '../middleware/authenticator';
+import { userQuery } from '../db/querydata';
 
 const success = (status, data) => ({ status, data });
-const fields = 'id, firstname, lastname, othername, email, phoneNumber, username, registered, isadmin';
-
 
 const controller = {
-  createNew: async (req, res, next) => {
+  signUp: async (req, res, next) => {
     try {
       const body = await validator(req.body, 'user');
-      const { key1, key2, values } = generate.insertFields(body);
-      const { rows, rowCount } = await db.query(`INSERT INTO public.user (${key1}) VALUES (${key2}) RETURNING ${fields}`, values);
+      const { rows, rowCount } = await userQuery.createNew(body);
       if (rowCount > 0) {
         const token = await authenticator.generate(rows[0]);
         res.status(201).json({
@@ -36,10 +32,10 @@ const controller = {
     }
   },
 
-  getUser: async (req, res) => {
+  login: async (req, res) => {
     try {
       const { email, password } = await validator(req.body, 'login');
-      const { rows, rowCount } = await db.query(`SELECT ${fields} FROM public.user WHERE email = $1 AND password = $2`, [email, password]);
+      const { rows, rowCount } = await userQuery.getUser(email, password);
       if (rowCount > 0) {
         const token = await authenticator.generate(rows[0]);
         res.status(200).json({
@@ -60,8 +56,7 @@ const controller = {
   update: async (req, res) => {
     try {
       const body = await validator(req.body, 'updateUser');
-      const { key1, key2, values } = generate.updateFields(body);
-      const { rows, rowCount } = await db.query(`UPDATE public.user SET ${key1} WHERE id = ${req.decoded.user} RETURNING id,${key2}`, values);
+      const { rows, rowCount } = await userQuery.update(req.decoded.user, body);
       if (rowCount > 0) res.status(200).json(success(200, rows));
       else error(404, res, 'user does not exist');
     } catch (e) {

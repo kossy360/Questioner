@@ -2,7 +2,7 @@
 import express from 'express';
 import logger from 'morgan';
 
-import error from './middleware/errorhandler';
+import error from './helpers/errorhandler';
 import routes from './routes/indexRouter';
 import authenticator from './middleware/authenticator';
 
@@ -16,10 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/v1/auth', routes.userRoute);
-app.use('/api/v1', authenticator.verify);
-app.use('/api/v1', routes.generalRoute);
-
-app.use('/api/v1/:invalid', (req, res) => error(400, res, 'request path invalid, please refer to API documentation'));
+app.use('/api/v1/:path', authenticator.verify, routes.generalRoute);
 
 app.use('/api/v1', (req, res) => {
   res.status(200).json({
