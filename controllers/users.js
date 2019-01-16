@@ -36,6 +36,28 @@ const controller = {
       else error(500, res);
     }
   },
+
+  getUser: async (req, res) => {
+    try {
+      const { email, password } = await validator(req.body, 'login');
+      const { rows, rowCount } = await db.query(`SELECT ${fields} FROM public.user WHERE email = $1 AND password = $2`, [email, password]);
+      if (rowCount > 0) {
+        const token = await authenticator.generate(rows[0]);
+        res.status(200).json({
+          status: 200,
+          data: [{
+            token,
+            user: rows[0],
+          }],
+        });
+      } else error(404, res, 'email or password incorrect');
+    } catch (e) {
+      if (e.routine) error(403, res);
+      else if (e.details[0].type === 'string.regex.base') error(400, res, 'password must contain 6 - 12 characters');
+      else error(400, res, e.details[0].message.replace(/"/g, ''));
+    }
+  },
+
 };
 
 export default controller;
