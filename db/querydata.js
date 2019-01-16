@@ -34,7 +34,7 @@ const meetupQuery = {
   delete: meetupId => querydb.query('DELETE FROM public.meets WHERE id = $1 RETURNING *', [meetupId]),
 
   update: (body, meetupId) => {
-    const { key1, key2, values } = queryGenerator(body);
+    const { key1, key2, values } = queryGenerator.updateFields(body);
     return querydb.query(`UPDATE public.meets SET ${key1} WHERE id = ${meetupId} RETURNING id as meetup, topic, ${key2.replace(/topic,/, '')}`, values);
   },
 };
@@ -46,7 +46,7 @@ const questionQuery = {
 
   createNew: (userId, body) => {
     const { key1, key2, values } = queryGenerator.insertFields(body);
-    return querydb.query(`INSERT INTO public.questions (${key1}, user_id) VALUES (${key2}, userId) RETURNING user_id, meetup, body`, values);
+    return querydb.query(`INSERT INTO public.questions (${key1}, user_id) VALUES (${key2}, ${userId}) RETURNING user_id, meetup, body`, values);
   },
 
   vote: (userId, questionId, vote) => querydb.query('SELECT * FROM update_votes($1, $2, $3)', [userId, questionId, vote]),
@@ -56,9 +56,9 @@ const commentsQuery = {
   getall: questionId => querydb.query('SELECT c.id, c.user_id as user, c.question, u.username, c.comment, c.created FROM public.comments c LEFT JOIN public.user u ON c.user_id = u.id WHERE c.question = $1',
     [questionId]),
 
-  createNew: (body) => {
+  createNew: (userId, body) => {
     const { key2, values } = queryGenerator.insertFields(body);
-    return querydb.query(`SELECT * FROM post_comments(${key2})`, values);
+    return querydb.query(`SELECT * FROM post_comments(${userId},${key2})`, values);
   },
 };
 

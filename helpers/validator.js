@@ -18,7 +18,6 @@ const schemas = {
   }),
 
   updateUser: joi.object().keys({
-    user_id: joi.any(),
     isAdmin: joi.any(),
     firstname: joi.string().alphanum().min(1),
     lastname: joi.string().alphanum().min(1),
@@ -45,13 +44,11 @@ const schemas = {
   }),
 
   questions: joi.object().keys({
-    user_id: joi.number().integer().min(1).required(),
     meetup: joi.number().integer().min(1).required(),
     body: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
   }),
 
   comments: joi.object().keys({
-    user_id: joi.number().integer().min(1).required(),
     question: joi.number().integer().min(1).required(),
     comment: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
   }),
@@ -63,7 +60,6 @@ const schemas = {
   reqId: joi.object().keys({
     meetupId: joi.number().integer().min(1),
     questionId: joi.number().integer().min(1),
-    userId: joi.number().integer().min(1),
     vote: joi.string().trim().equal('upvote', 'downvote', 'clear').insensitive(),
   }),
 };
