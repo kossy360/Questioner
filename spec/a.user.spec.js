@@ -2,8 +2,8 @@
 import jwt from 'jsonwebtoken';
 import Request from 'request';
 import Server from '../app';
-import db from '../db/db';
-import text from '../db/db.sql';
+import db from '../db/querydb';
+import text from '../db/databaseSQL';
 
 require('dotenv').config();
 

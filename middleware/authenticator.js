@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import error from './errorhandler';
+import error from '../helpers/errorhandler';
 
 const authenticator = {
   generate: body => new Promise((res) => {
