@@ -83,6 +83,22 @@ const control = {
       }
     } else error(403, res, 'only users with administrative rights can delete meetups');
   },
+
+  update: async (req, res) => {
+    if (req.decoded.isAdmin) {
+      try {
+        const { meetupId } = await validator(req.params, 'reqId');
+        const body = await validator(req.body, 'updateMeetup');
+        const { key1, key2, values } = generate.updateFields(body);
+        const { rows, rowCount } = await db.query(`UPDATE public.meets SET ${key1} WHERE id = ${meetupId} RETURNING id as meetup, topic, ${key2.replace(/topic,/, '')}`, values);
+        if (rowCount > 0) res.status(200).json(success(200, rows));
+        else error(404, res, 'meet does not exist');
+      } catch (e) {
+        if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
+        else error(500, res);
+      }
+    } else error(403, res, 'only users with administrative rights can update meetups');
+  },
 };
 
 export default control;
