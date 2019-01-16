@@ -76,6 +76,22 @@ const control = {
       else error(500, res);
     }
   },
+
+  getAll: async (req, res) => {
+    try {
+      const { rows, rowCount } = await db.query('SELECT * FROM get_notif_user($1) WHERE res != \'[]\'::jsonb', [req.decoded.user]);
+      if (rowCount > 0) res.status(200).json(success(200, rows));
+      else {
+        res.status(200).json({
+          status: 200,
+          message: 'you have no new notifications',
+        });
+      }
+    } catch (e) {
+      if (e.details[0]) error(400, res, e.details[0].message.replace(/"/g, ''));
+      else error(500, res);
+    }
+  },
 };
 
 export default control;
