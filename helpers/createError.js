@@ -9,8 +9,11 @@ const errors = {
 
 const createError = (error, res, message = null) => {
   const errorCode = error.status || error;
-  const errorMessage = error.message || message || errors[error];
-  res.status(error).json({
+  let errorMessage = error.message || message || errors[error];
+  if (error.type === 'entity.parse.failed') {
+    errorMessage = 'payload is not a valid JSON';
+  }
+  res.status(errorCode).json({
     status: errorCode,
     error: errorMessage,
   });
