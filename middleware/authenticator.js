@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import createError from '../helpers/createError';
 
 const authenticator = {
-  generate: body => new Promise((res) => {
+  generateToken: body => new Promise((res) => {
     const payload = {
       user: body.id,
       isAdmin: body.isadmin,
