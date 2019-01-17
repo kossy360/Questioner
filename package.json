@@ -4,8 +4,8 @@
   "description": "api endpoints",
   "main": "app.js",
   "scripts": {
-    "start": "babel-node app.js",
-    "dev-start": "babel-node -r node_modules/dotenv/config app.js",
+    "start": "babel-node server/app.js",
+    "dev-start": "babel-node -r node_modules/dotenv/config server/app.js",
     "start1": "nodemon --exec npm start",
     "start2": "nodemon --exec npm run dev-start",
     "test": "nyc jasmine --random=false",

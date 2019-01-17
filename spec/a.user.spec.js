@@ -1,9 +1,9 @@
 /* eslint-env jasmine */
 import jwt from 'jsonwebtoken';
 import Request from 'request';
-import Server from '../app';
-import querydb from '../db/querydb';
-import dbsql from '../db/databaseSQL';
+import Server from '../server/app';
+import querydb from '../server/db/querydb';
+import dbsql from '../server/db/databaseSQL';
 
 require('dotenv').config();
 

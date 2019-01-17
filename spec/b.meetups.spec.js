@@ -1,7 +1,7 @@
 /* eslint-env jasmine */
 import jwt from 'jsonwebtoken';
 import Request from 'request';
-import Server from '../app';
+import Server from '../server/app';
 
 require('dotenv').config();
 
