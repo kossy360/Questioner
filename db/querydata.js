@@ -1,5 +1,5 @@
 import querydb from './querydb';
-import queryGenerator from './queryGenerator';
+import queryGenerator from './querygenerator';
 
 const userQuery = {
   fields: 'id, firstname, lastname, othername, email, phoneNumber, username, registered, isadmin',
