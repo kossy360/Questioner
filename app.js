@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import express from 'express';
 import logger from 'morgan';
+import cors from 'cors';
 
 import createError from './helpers/createError';
 import routes from './routes/indexRouter';
@@ -11,6 +12,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 app.listen(port);
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
