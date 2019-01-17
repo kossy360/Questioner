@@ -7,7 +7,7 @@ const success = (status, data) => ({ status, data });
 const control = {
   register: async (req, res) => {
     try {
-      const { meetupId } = await validator(req.params, 'reqId');
+      const { meetupId } = await validator(req.params, 'requestId');
       const { rowCount } = await notificationsQuery.register(req.decoded.user, meetupId);
       if (rowCount > 0) {
         res.status(201).json({
@@ -28,7 +28,7 @@ const control = {
 
   reset: async (req, res) => {
     try {
-      const { meetupId } = await validator(req.params, 'reqId');
+      const { meetupId } = await validator(req.params, 'requestId');
       const { rowCount } = await notificationsQuery.reset(req.decoded.user, meetupId);
       if (rowCount > 0) {
         res.status(200).json({
@@ -49,7 +49,7 @@ const control = {
 
   clear: async (req, res) => {
     try {
-      const { meetupId } = await validator(req.params, 'reqId');
+      const { meetupId } = await validator(req.params, 'requestId');
       const { rowCount } = await notificationsQuery.clear(req.decoded.user, meetupId);
       if (rowCount > 0) {
         res.status(200).json({

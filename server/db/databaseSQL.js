@@ -1,4 +1,4 @@
-const test = `SET statement_timeout = 0;
+const databaseSQL = `SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -373,4 +373,4 @@ ALTER TABLE ONLY public.vote
     ADD CONSTRAINT votes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 `;
-export default test;
+export default databaseSQL;

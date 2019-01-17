@@ -8,7 +8,7 @@ const control = {
   createNew: async (req, res, next) => {
     if (!req.decoded.isAdmin) {
       try {
-        const { meetupId } = await validator(req.params, 'reqId');
+        const { meetupId } = await validator(req.params, 'requestId');
         const { response } = await validator(req.body, 'rsvps');
         const { rows, rowCount } = await rsvpsQuery
           .createNew(req.decoded.user, meetupId, response.toLowerCase());

@@ -57,7 +57,7 @@ const schemas = {
     response: joi.string().trim().equal('yes', 'no', 'maybe').insensitive().required(),
   }),
 
-  reqId: joi.object().keys({
+  requestId: joi.object().keys({
     meetupId: joi.number().integer().min(1),
     questionId: joi.number().integer().min(1),
     vote: joi.string().trim().equal('upvote', 'downvote', 'clear').insensitive(),

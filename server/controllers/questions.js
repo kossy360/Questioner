@@ -15,7 +15,7 @@ const convertVote = (vote) => {
 const control = {
   getAll: async (req, res) => {
     try {
-      const { meetupId } = await validator(req.params, 'reqId');
+      const { meetupId } = await validator(req.params, 'requestId');
       const { rows, rowCount } = await questionQuery.getAll(meetupId);
       if (rowCount > 0) res.status(200).json(success(200, rows));
       else {
@@ -44,7 +44,7 @@ const control = {
 
   vote: async (req, res, next) => {
     try {
-      const { vote, questionId } = await validator(req.params, 'reqId');
+      const { vote, questionId } = await validator(req.params, 'requestId');
       const { rows, rowCount } = await questionQuery
         .vote(req.decoded.user, questionId, convertVote(vote));
       if (rowCount > 0) res.status(201).json(success(201, rows));

@@ -38,7 +38,7 @@ const control = {
 
   getSpecific: async (req, res, next) => {
     try {
-      const { meetupId } = await validator(req.params, 'reqId');
+      const { meetupId } = await validator(req.params, 'requestId');
       const { rows, rowCount } = await meetupQuery
         .getSpecific(req.decoded.user, req.decoded.isAdmin, meetupId);
       if (rowCount > 0) res.status(200).send(success(200, rows));
@@ -65,7 +65,7 @@ const control = {
   deleteSpecific: async (req, res) => {
     if (req.decoded.isAdmin) {
       try {
-        const { meetupId } = await validator(req.params, 'reqId');
+        const { meetupId } = await validator(req.params, 'requestId');
         const { rowCount } = await meetupQuery.delete(meetupId);
         if (rowCount > 0) {
           res.status(200).json({
@@ -85,7 +85,7 @@ const control = {
   update: async (req, res) => {
     if (req.decoded.isAdmin) {
       try {
-        const { meetupId } = await validator(req.params, 'reqId');
+        const { meetupId } = await validator(req.params, 'requestId');
         const body = await validator(req.body, 'updateMeetup');
         const { rows, rowCount } = await meetupQuery.update(body, meetupId);
         if (rowCount > 0) res.status(200).json(success(200, rows));
