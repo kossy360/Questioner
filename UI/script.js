@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/extensions */
 /* eslint-env browser */
-import getFormData from './helpers/getFormData.js';
+import getFormData from './helpers/getformData.js';
 import fetchData from './helpers/fetchData.js';
 
 const tab1 = document.querySelector('.tab-signup');
