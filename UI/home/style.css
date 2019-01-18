@@ -500,6 +500,11 @@ img.meet-image {
   padding: 3px;
 }
 
+.comment-boxes {
+  max-height: 500px;
+  overflow: auto;
+}
+
 #question-input-button {
   height: 2.1rem;
   width: 15%;

@@ -5,7 +5,7 @@ const populateProfile = (inputFields, editBtns, profile) => {
   loop.call(inputFields, (elem) => {
     const pointer = elem.getAttribute('pointer');
     elem.value = profile[pointer];
-  });
+  })
 
   loop.call(editBtns, (elem) => {
     elem.addEventListener('click', () => {

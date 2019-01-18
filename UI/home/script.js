@@ -19,7 +19,10 @@ import dummydata from '../modules/dummy-data.js';
 import { createQuestions } from '../modules/pagecontrol.js';
 import { imageInputControl } from '../modules/imageControl.js';
 import { populateProfile } from '../modules/profileControl.js';
-import ReadForm from '../modules/formProfileReader.js';
+import fetchData from '../helpers/fetchData.js';
+const profile = JSON.parse(window.sessionStorage.getItem('user'));
+if (!profile) window.location.href = './';
+
 
 const tabSelector = document.getElementsByClassName('tab-selector');
 const tabs = document.getElementsByClassName('main-section');
@@ -141,8 +144,6 @@ const populate = () => {
     addBook(rsvp);
   });
 };
-
-const profile = new ReadForm().getProfile();
 
 populateProfile(
   document.getElementsByClassName('profile-input'),
