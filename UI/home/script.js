@@ -21,7 +21,7 @@ import { imageInputControl } from '../modules/imageControl.js';
 import { populateProfile } from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
 const profile = JSON.parse(window.sessionStorage.getItem('user'));
-if (!profile) window.location.href = './';
+if (!profile) window.location.href = '/Quetioner/UI';
 
 
 const tabSelector = document.getElementsByClassName('tab-selector');
