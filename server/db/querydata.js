@@ -40,9 +40,12 @@ const meetupQuery = {
 };
 
 const questionQuery = {
-  fields: 'id, user_id, meetup, body, created, votes',
+  fields: 'q.id, q.user_id, u.username, q.meetup, q.body, q.created, q.votes',
 
-  getAll: meetupId => querydb.query(`SELECT ${questionQuery.fields} FROM public.questions WHERE meetup = $1`, [meetupId]),
+  getAll: meetupId => querydb.query(
+    `SELECT ${questionQuery.fields} FROM public.questions q LEFT JOIN public.user u ON q.user_id = u.id WHERE q.meetup = $1 ORDER BY (votes, created) DESC`,
+    [meetupId],
+  ),
 
   createNew: (userId, body) => {
     const { key1, key2, values } = queryGenerator.insertFields(body);
