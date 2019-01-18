@@ -5,7 +5,7 @@ const fetchData = {
     const old = btn.textContent.slice();
     btn.textContent = '...';
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/auth/${action}`, {
+      const response = await fetch(`https://k-questioner.herokuapp.com/api/v1/auth/${action}`, {
         method: 'post',
         headers: {
           'content-type': 'application/json',
