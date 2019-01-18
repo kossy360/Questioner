@@ -58,8 +58,8 @@ const saveData = ({
   window.sessionStorage.setItem('username', user.username);
   window.sessionStorage.setItem('user', JSON.stringify(user));
 
-  if (user.isadmin) window.location.href = '/admin';
-  else window.location.href = '/home';
+  if (user.isadmin) window.location.href = 'UI/admin';
+  else window.location.href = 'UI/home';
 };
 
 button1.addEventListener('click', async () => {
