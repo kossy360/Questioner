@@ -39,20 +39,20 @@ Before running the test, make sure you don't have the server running. This will 
 
 ## Testing with POSTMAN
 
-When testing endpoints with POSTMAN, please ensure to add a **'auth'** header with a value of either **admin** or **user**
+When testing endpoints with POSTMAN, please ensure to add a **'auth'** header with a value of either **admin** or **user**.
 Most of the routes do not explicitly require this header, but some routes are only accessible when the header is set to a particular value
 
 ```
 POST hostname/api/v1/meetups
 ```
-requires the auth header to be set to admin
+requires the auth header to be set to "admin"
 
 ```
 POST hostname/api/v1/rsvps
 ```
-requires the auth header to be set to user
+requires the auth header to be set to "user"
 
-This is going to be changed when the API are secured with JWT, so watch out for updates.
+This is going to be changed when all API routes are secured with JWT, so watch out for updates.
 
 #### Update
 All API routes have been secured with JWT, to get a token, open an account on questioner via the API route
@@ -62,7 +62,7 @@ POST hostname/api/v1/auth/signup
 
 Or login via
 ```
-POST hostname/api/v1/login
+POST hostname/api/v1/auth/login
 ```
 To get a token which you can use to access other routes on the app. Be sure to pass the token in the **auth** header.
 
@@ -74,7 +74,7 @@ All javascript code are written in ^ES6 and precompiles to ES5 for node to run. 
 
 **Local**
 
-If you've followed all the instructions above, you should have it up and running with no issues, but should encounter one, do notify me.
+If you've followed all the instructions above, you should have it up and running with no issues, but should you encounter one, do notify me.
 
 **Heroku**
 
