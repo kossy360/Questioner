@@ -54,6 +54,18 @@ requires the auth header to be set to user
 
 This is going to be changed when the API are secured with JWT, so watch out for updates.
 
+#### Update
+All API routes have been secured with JWT, to get a token, open an account on questioner via the API route
+```
+POST hostname/api/v1/auth/signup
+```
+
+Or login via
+```
+POST hostname/api/v1/login
+```
+To get a token which you can use to access other routes on the app. Be sure to pass the token in the **auth** header.
+
 ### Coding style
 
 All javascript code are written in ^ES6 and precompiles to ES5 for node to run. It also adheres to Airbnb style guide.
