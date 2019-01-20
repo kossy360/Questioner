@@ -1,3 +1,4 @@
+import crypt from '../helpers/crypt';
 import validator from '../helpers/validator';
 import createError from '../helpers/createError';
 import authenticator from '../middleware/authenticator';
@@ -8,7 +9,8 @@ const success = (status, data) => ({ status, data });
 const controller = {
   signUp: async (req, res, next) => {
     try {
-      const body = await validator(req.body, 'user');
+      let body = await validator(req.body, 'user');
+      body = await crypt.hash(body, 10);
       const { rows, rowCount } = await userQuery.createNew(body);
       if (rowCount > 0) {
         const token = await authenticator.generateToken(rows[0]);
@@ -35,15 +37,13 @@ const controller = {
   login: async (req, res) => {
     try {
       const { email, password } = await validator(req.body, 'login');
-      const { rows, rowCount } = await userQuery.getUser(email, password);
-      if (rowCount > 0) {
+      const { rows } = await userQuery.getUser(email);
+      const user = await crypt.verify(rows[0], password);
+      if (user) {
         const token = await authenticator.generateToken(rows[0]);
         res.status(200).json({
           status: 200,
-          data: [{
-            token,
-            user: rows[0],
-          }],
+          data: [{ token, user }],
         });
       } else createError(404, res, 'email or password incorrect');
     } catch (error) {

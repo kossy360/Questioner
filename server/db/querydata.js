@@ -2,14 +2,14 @@ import querydb from './querydb';
 import queryGenerator from './querygenerator';
 
 const userQuery = {
-  fields: 'id, firstname, lastname, othername, email, phoneNumber, username, registered, isadmin',
+  fields: 'id, firstname, lastname, othername, email, phoneNumber, username, registered, isadmin, password',
 
   createNew: (body) => {
     const { key1, key2, values } = queryGenerator.insertFields(body);
     return querydb.query(`INSERT INTO public.user (${key1}) VALUES (${key2}) RETURNING ${userQuery.fields}`, values);
   },
 
-  getUser: (email, password) => querydb.query(`SELECT ${userQuery.fields} FROM public.user WHERE email = $1 AND password = $2`, [email, password]),
+  getUser: email => querydb.query(`SELECT ${userQuery.fields} FROM public.user WHERE email = $1`, [email]),
 
   update: (userId, body) => {
     const { key1, key2, values } = queryGenerator.updateFields(body);
