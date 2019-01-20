@@ -22,7 +22,7 @@ const meetupQuery = {
 
   getAll: (userId, isadmin) => querydb.query(`SELECT * from all_meets_${isadmin ? 'admin' : 'user'}(${userId})`),
 
-  getUpcoming: (userId, isadmin) => querydb.query(`SELECT * FROM all_meets_${isadmin ? 'admin' : 'user'}(${userId}) WHERE happening > ${Date.now() - 172800000}`),
+  getUpcoming: (userId, isadmin) => querydb.query(`SELECT * FROM all_meets_${isadmin ? 'admin' : 'user'}(${userId}) WHERE happening > '${new Date().toISOString()}'::timestamptz`),
 
   getSpecific: (userId, isadmin, meetupId) => querydb.query(`SELECT * FROM all_meets_${isadmin ? 'admin' : 'user'}(${userId}) WHERE id = $1`, [meetupId]),
 
