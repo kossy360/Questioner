@@ -28,12 +28,8 @@ const control = {
       if (rowCount > 0) res.status(201).json(success(201, rows));
       else next(500);
     } catch (error) {
-      if (error.code === '23503') {
-        res.status(200).json({
-          status: 200,
-          message: 'either the user or question does not exist',
-        });
-      } else if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      if (error.code === '23503') createError(404, res, 'the question you are trying to comment on was not found');
+      else if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
     }
   },
