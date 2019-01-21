@@ -7,32 +7,30 @@ SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
-
-CREATE EXTENSION IF NOT EXISTS adminpack WITH SCHEMA pg_catalog;
-
 CREATE TYPE public.votes AS ENUM (
     '0',
     '1',
     'null'
 );
-
-CREATE FUNCTION public.all_meets_admin(userid integer) RETURNS TABLE(id integer, happening numeric, topic character varying, location character varying, tags jsonb, images jsonb, rsvp jsonb)
+CREATE FUNCTION public.all_meets_admin(userid integer) RETURNS TABLE(id integer, happening numeric, topic character varying, location character varying, tags jsonb, images jsonb, rsvp jsonb, questions bigint)
     LANGUAGE plpgsql
     AS $$
 BEGIN
-	RETURN QUERY SELECT m.id, m.happening, m.topic, m.location, m.tags, m.images, rsvp_count(m.id) as rsvp
-	FROM public.meets m;
-END; $$;
-
-CREATE FUNCTION public.all_meets_user(userid integer) RETURNS TABLE(id integer, happening numeric, topic character varying, location character varying, tags jsonb, images jsonb, rsvp character varying)
-    LANGUAGE plpgsql
-    AS $$
-BEGIN
-	RETURN QUERY SELECT m.id, m.happening, m.topic, m.location, m.tags, m.images, r.rsvp
+	RETURN QUERY SELECT m.id, m.happening, m.topic, m.location, m.tags, m.images, rsvp_count(m.id) as rsvp, COUNT(q.meetup) as questions
 	FROM public.meets m
-	LEFT JOIN public.rsvps r ON r.user_id = userid AND r.meetup = m.id;
+	LEFT JOIN public.questions q ON q.meetup = m.id
+	GROUP BY (q.meetup, m.id);
 END; $$;
-
+CREATE FUNCTION public.all_meets_user(userid integer) RETURNS TABLE(id integer, happening numeric, topic character varying, location character varying, tags jsonb, images jsonb, rsvp character varying, questions bigint)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	RETURN QUERY SELECT m.id, m.happening, m.topic, m.location, m.tags, m.images, r.rsvp, COUNT(q.meetup)
+	FROM public.meets m
+	LEFT JOIN public.rsvps r ON r.user_id = userid AND r.meetup = m.id
+	LEFT JOIN public.questions q ON q.meetup = m.id
+	GROUP BY (q.meetup, m.id, r.rsvp);
+END; $$;
 CREATE FUNCTION public.get_notif_user(userid integer, OUT res jsonb) RETURNS jsonb
     LANGUAGE plpgsql
     AS $$
@@ -52,7 +50,6 @@ BEGIN
 	END LOOP;
 	res = jsonarr;
 END; $$;
-
 CREATE FUNCTION public.insert_question_votes() RETURNS trigger
     LANGUAGE plpgsql
     AS $$	 
@@ -63,7 +60,6 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END; $$;
-
 CREATE FUNCTION public.json_merge(json1 jsonb, json2 jsonb, OUT json3 jsonb) RETURNS jsonb
     LANGUAGE plpgsql
     AS $$
@@ -81,7 +77,6 @@ BEGIN
 		END LOOP;
 	json3 := json4 || json5;
 END; $$;
-
 CREATE FUNCTION public.post_comments(user_id integer, question_id integer, comment_body text) RETURNS TABLE(question integer, body text, comment text)
     LANGUAGE plpgsql
     AS $$DECLARE	
@@ -92,7 +87,6 @@ BEGIN
 	RETURN QUERY SELECT c.question, q.body, c.comment FROM public.comments c 
 	LEFT JOIN public.questions q ON q.id = c.question AND c.question = 7 ORDER BY c.created DESC LIMIT 1;
 END; $$;
-
 CREATE FUNCTION public.rsvp_count(meet_id integer, OUT json1 jsonb) RETURNS jsonb
     LANGUAGE plpgsql
     AS $$
@@ -106,7 +100,6 @@ BEGIN
 		END LOOP;
 	json1 := json2;
 END; $$;
-
 CREATE FUNCTION public.update_meet_notif() RETURNS trigger
     LANGUAGE plpgsql
     AS $$	 
@@ -115,7 +108,6 @@ BEGIN
 		NEW.id, '1', '1');
 	RETURN NEW;
 END; $$;
-
 CREATE FUNCTION public.update_meets(meet_obj jsonb) RETURNS void
     LANGUAGE plpgsql
     AS $_$
@@ -131,7 +123,6 @@ BEGIN
 	END LOOP;
 	select * from all_meets();
 END; $_$;
-
 CREATE FUNCTION public.update_meets_array() RETURNS trigger
     LANGUAGE plpgsql
     AS $$	  
@@ -140,7 +131,6 @@ BEGIN
 	NEW.images := json_merge(OLD.images, NEW.images);
 	RETURN NEW;
 END; $$;
-
 CREATE FUNCTION public.update_question_votes() RETURNS trigger
     LANGUAGE plpgsql
     AS $$	 
@@ -157,8 +147,6 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END; $$;
-
-
 CREATE FUNCTION public.update_rsvps(userid integer, meetup_id integer, rsvp text) RETURNS TABLE(meetup integer, topic character varying, status character varying)
     LANGUAGE plpgsql
     AS $$DECLARE	
@@ -168,7 +156,6 @@ BEGIN
 	EXECUTE query;
 	RETURN QUERY SELECT r.meetup, m.topic, r.rsvp FROM public.rsvps r LEFT JOIN public.meets m ON r.meetup = m.id WHERE r.meetup = meetup_id AND r.user_id = userid;
 END; $$;
-
 CREATE FUNCTION public.update_votes(user_id integer, question integer, vote integer) RETURNS TABLE(meetup integer, body text, votes integer)
     LANGUAGE plpgsql
     AS $$DECLARE	
@@ -179,176 +166,141 @@ BEGIN
 	EXECUTE query;
 	RETURN QUERY SELECT q.meetup, q.body, q.votes FROM public.questions q WHERE id = question;
 END; $$;
-
 CREATE SEQUENCE public.activity_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 CREATE SEQUENCE public.comments_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-
+SET default_tablespace = '';
 SET default_with_oids = false;
-
 CREATE TABLE public.comments (
     id integer DEFAULT nextval('public.comments_id_seq'::regclass) NOT NULL,
     user_id integer NOT NULL,
     question integer NOT NULL,
     comment text NOT NULL,
-    created numeric DEFAULT floor((date_part('epoch'::text, timezone('UTC'::text, now())) * (1000)::double precision)) NOT NULL
+    created timestamp with time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL
 );
-
 CREATE SEQUENCE public.meet_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 CREATE TABLE public.meets (
     id integer DEFAULT nextval('public.meet_id_seq'::regclass) NOT NULL,
     topic character varying(200) NOT NULL,
     location character varying(45) NOT NULL,
     tags jsonb DEFAULT '[]'::jsonb NOT NULL,
     images jsonb DEFAULT '[]'::jsonb NOT NULL,
-    created numeric DEFAULT floor((date_part('epoch'::text, timezone('UTC'::text, now())) * (1000)::double precision)) NOT NULL,
-    happening numeric DEFAULT floor((date_part('epoch'::text, timezone('UTC'::text, now())) * (1000)::double precision)) NOT NULL,
-    test integer DEFAULT 0 NOT NULL
+    happening timestamp with time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
+    created timestamp with time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL
 );
-
 CREATE SEQUENCE public.notif_types_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 CREATE SEQUENCE public.notifications_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 CREATE TABLE public.notifications (
     id integer DEFAULT nextval('public.notifications_id_seq'::regclass) NOT NULL,
     user_id integer NOT NULL,
     meet integer NOT NULL,
-    last_seen numeric DEFAULT floor((date_part('epoch'::text, timezone('UTC'::text, now())) * (1000)::double precision)) NOT NULL
+    last_seen timestamp with time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL
 );
-
 CREATE SEQUENCE public.question_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 CREATE TABLE public.questions (
     user_id integer NOT NULL,
     meetup integer NOT NULL,
     body text NOT NULL,
     votes integer DEFAULT 0,
-    created numeric DEFAULT floor((date_part('epoch'::text, timezone('UTC'::text, now())) * (1000)::double precision)) NOT NULL,
-    id integer DEFAULT nextval('public.question_id_seq'::regclass) NOT NULL
+    id integer DEFAULT nextval('public.question_id_seq'::regclass) NOT NULL,
+    created timestamp with time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL
 );
-
 CREATE TABLE public.rsvps (
     meetup integer NOT NULL,
     user_id integer NOT NULL,
     rsvp character varying(5) DEFAULT NULL::character varying
 );
-
 CREATE SEQUENCE public.user_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 CREATE TABLE public."user" (
     id integer DEFAULT nextval('public.user_id_seq'::regclass) NOT NULL,
-    firstname character varying(45) NOT NULL,
-    lastname character varying(45) NOT NULL,
-    othername character varying(45) DEFAULT NULL::character varying,
-    username character varying(45) DEFAULT NULL::character varying,
-    email character varying(50) NOT NULL,
-    phonenumber text NOT NULL,
+    firstname character varying(45),
+    lastname character varying(45),
+    othername character varying(45),
+    username character varying(45),
+    email character varying(45) NOT NULL,
+    phonenumber text,
     isadmin boolean DEFAULT false NOT NULL,
-    password text DEFAULT 'secret'::text NOT NULL,
-    registered numeric DEFAULT floor((date_part('epoch'::text, timezone('UTC'::text, now())) * (1000)::double precision)) NOT NULL
+    password text NOT NULL,
+    registered timestamp with time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL
 );
-
 CREATE TABLE public.vote (
     user_id integer NOT NULL,
     question integer NOT NULL,
     response smallint DEFAULT '0'::smallint NOT NULL
 );
-
+SELECT pg_catalog.setval('public.activity_id_seq', 1, false);
+SELECT pg_catalog.setval('public.comments_id_seq', 1, false);
+SELECT pg_catalog.setval('public.meet_id_seq', 1, false);
+SELECT pg_catalog.setval('public.notif_types_id_seq', 1, false);
+SELECT pg_catalog.setval('public.notifications_id_seq', 1, false);
+SELECT pg_catalog.setval('public.question_id_seq', 1, false);
+SELECT pg_catalog.setval('public.user_id_seq', 1, false);
 ALTER TABLE ONLY public.comments
     ADD CONSTRAINT comments_pkey PRIMARY KEY (id);
-
 ALTER TABLE ONLY public.meets
     ADD CONSTRAINT meet_pkey PRIMARY KEY (id);
-
 ALTER TABLE ONLY public.notifications
     ADD CONSTRAINT notifications_pkey PRIMARY KEY (id);
-
 ALTER TABLE ONLY public.notifications
     ADD CONSTRAINT notifications_unique UNIQUE (user_id, meet);
-
 ALTER TABLE ONLY public.questions
     ADD CONSTRAINT question_pkey PRIMARY KEY (id);
-
 ALTER TABLE ONLY public.rsvps
     ADD CONSTRAINT rsvps_unique UNIQUE (meetup, user_id);
-
 ALTER TABLE ONLY public."user"
     ADD CONSTRAINT user_email_key UNIQUE (email);
-
 ALTER TABLE ONLY public."user"
     ADD CONSTRAINT user_pkey PRIMARY KEY (id);
-												
 ALTER TABLE ONLY public.vote
     ADD CONSTRAINT votes_unique UNIQUE (user_id, question);
-
-CREATE INDEX comment_created_index ON public.comments USING btree (created DESC NULLS LAST);
-
 CREATE INDEX fki_comments_question_id_fkey ON public.comments USING btree (question);
-
 CREATE INDEX fki_comments_user_id_fkey ON public.comments USING btree (user_id);
-
 CREATE INDEX fki_notifications_meet_fkey ON public.notifications USING btree (meet);
-
 CREATE INDEX fki_notifications_user_id_fkey ON public.notifications USING btree (user_id);
-
 CREATE INDEX fki_rsvps_meetup_fkey ON public.rsvps USING btree (meetup);
-
 CREATE INDEX fki_rsvps_user_id_fkey ON public.rsvps USING btree (user_id);
-
 CREATE INDEX fki_votes_question_fkey ON public.vote USING btree (question);
-
 CREATE INDEX fki_votes_user_id_fkey ON public.vote USING btree (user_id);
-
 CREATE INDEX user_email_index ON public."user" USING btree (email);
-
 CREATE TRIGGER insert_vote AFTER INSERT ON public.vote FOR EACH ROW EXECUTE PROCEDURE public.insert_question_votes();
-
 CREATE TRIGGER update_arrays BEFORE UPDATE ON public.meets FOR EACH ROW EXECUTE PROCEDURE public.update_meets_array();
-
 CREATE TRIGGER update_vote AFTER UPDATE OF response ON public.vote FOR EACH ROW EXECUTE PROCEDURE public.update_question_votes();
-
-
 ALTER TABLE ONLY public.comments
     ADD CONSTRAINT comments_questions_fkey FOREIGN KEY (question) REFERENCES public.questions(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
 ALTER TABLE ONLY public.comments
     ADD CONSTRAINT comments_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 ALTER TABLE ONLY public.notifications
@@ -359,16 +311,12 @@ ALTER TABLE ONLY public.questions
     ADD CONSTRAINT question_created_by_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE;
 ALTER TABLE ONLY public.questions
     ADD CONSTRAINT question_meetup_fkey FOREIGN KEY (meetup) REFERENCES public.meets(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
 ALTER TABLE ONLY public.rsvps
     ADD CONSTRAINT rsvps_meetup_fkey FOREIGN KEY (meetup) REFERENCES public.meets(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
 ALTER TABLE ONLY public.rsvps
     ADD CONSTRAINT rsvps_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
 ALTER TABLE ONLY public.vote
     ADD CONSTRAINT vote_question_fkey FOREIGN KEY (question) REFERENCES public.questions(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
 ALTER TABLE ONLY public.vote
     ADD CONSTRAINT votes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
