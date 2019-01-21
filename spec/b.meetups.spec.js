@@ -21,11 +21,11 @@ describe('meetup tests', () => {
     const options = {
       url: url('meetups'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {
-        happening: Date.now() + 36000,
+        happening: '2019-03-15T15:30',
         location: 'Abuja',
         topic: 'testing',
         images: ['url1', 'url2'],
@@ -51,11 +51,11 @@ describe('meetup tests', () => {
     const options = {
       url: url('meetups'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {
-        happening: Date.now() + 36000,
+        happening: '2019-03-15T15:30',
         location: 'Abuja',
         topic: '  ',
         images: ['url1', 'url2'],
@@ -69,7 +69,7 @@ describe('meetup tests', () => {
       });
     });
     it('status 400', () => {
-      expect(data.status).toBe(400);
+      expect(data.status).toBe(422);
     });
     it('an error message', () => {
       expect(data.error).toBeDefined();
@@ -81,7 +81,7 @@ describe('meetup tests', () => {
     const options = {
       url: url('meetups/upcoming'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -101,7 +101,7 @@ describe('meetup tests', () => {
     const options = {
       url: url('meetups/1'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -124,7 +124,7 @@ describe('meetup tests', () => {
     const options = {
       url: url('meetups/8'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -147,7 +147,7 @@ describe('meetup tests', () => {
     const options = {
       url: url('meetups'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -173,7 +173,7 @@ describe('meetup tests', () => {
     const options = {
       url: url('meetups/1'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {
@@ -199,7 +199,7 @@ describe('meetup tests', () => {
     const options = {
       url: url('meetups/8'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {
@@ -225,7 +225,7 @@ describe('meetup tests', () => {
     const options = {
       url: url('meetups/1'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {
@@ -239,7 +239,7 @@ describe('meetup tests', () => {
       });
     });
     it('status 400', () => {
-      expect(data.status).toBe(400);
+      expect(data.status).toBe(422);
     });
     it('an error message', () => {
       expect(data.error).toBeDefined();

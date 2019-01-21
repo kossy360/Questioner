@@ -2,6 +2,7 @@
 import jwt from 'jsonwebtoken';
 import Request from 'request';
 import Server from '../server/app';
+import querydb from '../server/db/querydb';
 
 require('dotenv').config();
 
@@ -21,7 +22,7 @@ describe('notification tests', () => {
     const options = {
       url: url('notifications/1/register'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -44,7 +45,7 @@ describe('notification tests', () => {
     const options = {
       url: url('notifications/5/register'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -55,7 +56,7 @@ describe('notification tests', () => {
       });
     });
     it('status 200', () => {
-      expect(data.status).toBe(201);
+      expect(data.status).toBe(200);
     });
     it('a friendly message', () => {
       expect(data.message).toBeDefined();
@@ -67,7 +68,7 @@ describe('notification tests', () => {
     const options = {
       url: url('notifications/1/reset'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -90,7 +91,7 @@ describe('notification tests', () => {
     const options = {
       url: url('notifications/1/reset'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -113,7 +114,7 @@ describe('notification tests', () => {
     const options = {
       url: url('notifications/1/clear'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -136,7 +137,7 @@ describe('notification tests', () => {
     const options = {
       url: url('notifications'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -159,7 +160,7 @@ describe('notification tests', () => {
     const options = {
       url: url('meetups/1'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -175,5 +176,8 @@ describe('notification tests', () => {
     it('a success message', () => {
       expect(data.message).toBeDefined();
     });
+  });
+  afterAll((done) => {
+    querydb.query('DROP SCHEMA public cascade; CREATE SCHEMA public AUTHORIZATION postgres;').then(() => done());
   });
 });
