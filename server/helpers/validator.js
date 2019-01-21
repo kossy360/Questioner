@@ -3,12 +3,12 @@ import joi from 'joi';
 
 const schemas = {
   user: joi.object().keys({
-    firstname: joi.string().alphanum().min(1).required(),
-    lastname: joi.string().alphanum().min(1).required(),
-    othername: joi.string().alphanum().min(1).required(),
+    firstname: joi.string().alphanum().min(1),
+    lastname: joi.string().alphanum().min(1),
+    othername: joi.string().alphanum().min(1),
     email: joi.string().email().required(),
-    phonenumber: joi.string().regex(/^\d+$/).min(6).max(15).required(),
-    username: joi.string().alphanum().min(3).max(10).required(),
+    phonenumber: joi.string().regex(/^\d+$/).min(6).max(15),
+    username: joi.string().alphanum().min(3).max(10),
     password: joi.string().trim().regex(/^[a-zA-Z0-9]{6,12}$/).required(),
   }),
 
@@ -28,7 +28,7 @@ const schemas = {
   }),
 
   meetup: joi.object().keys({
-    happening: joi.number().integer().min(Date.now()).required(),
+    happening: joi.date().iso().min('now').required(),
     location: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
     topic: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
     images: joi.array().items(joi.string().required()).required(),

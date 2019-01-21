@@ -1,4 +1,5 @@
 import Router from 'express';
+import authenticator from '../middleware/authenticator';
 import users from '../controllers/users';
 import meetups from '../controllers/meetups';
 import questions from '../controllers/questions';
@@ -8,7 +9,7 @@ import notifications from '../controllers/notifications';
 
 
 const router = Router();
-
+const check = authenticator.verify;
 const methods = ['POST', 'GET', 'PATCH', 'DELETE'];
 
 router.use('/', (req, res, next) => {
@@ -16,38 +17,38 @@ router.use('/', (req, res, next) => {
   else next();
 });
 
-router.get('/meetups/upcoming', meetups.getUpcoming);
+router.get('/meetups/upcoming', check, meetups.getUpcoming);
 
-router.get('/meetups/:meetupId', meetups.getSpecific);
+router.get('/meetups/:meetupId', check, meetups.getSpecific);
 
-router.get('/meetups', meetups.getAll);
+router.get('/meetups', check, meetups.getAll);
 
-router.get('/questions/:meetupId', questions.getAll);
+router.get('/questions/:meetupId', check, questions.getAll);
 
-router.get('/comments/:questionId', comments.getAll);
+router.get('/comments/:questionId', check, comments.getAll);
 
-router.get('/notifications', notifications.getAll);
+router.get('/notifications', check, notifications.getAll);
 
-router.post('/meetups', meetups.createNew);
+router.post('/meetups', check, meetups.createNew);
 
-router.post('/questions', questions.createNew);
+router.post('/questions', check, questions.createNew);
 
-router.post('/comments', comments.createNew);
+router.post('/comments', check, comments.createNew);
 
-router.post('/meetups/:meetupId/rsvps', rsvps.createNew);
+router.post('/meetups/:meetupId/rsvps', check, rsvps.createNew);
 
-router.post('/notifications/:meetupId/register', notifications.register);
+router.post('/notifications/:meetupId/register', check, notifications.register);
 
-router.patch('/users/update', users.update);
+router.patch('/users/update', check, users.update);
 
-router.patch('/meetups/:meetupId', meetups.update);
+router.patch('/meetups/:meetupId', check, meetups.update);
 
-router.patch('/questions/:questionId/:vote', questions.vote);
+router.patch('/questions/:questionId/:vote', check, questions.vote);
 
-router.patch('/notifications/:meetupId/reset', notifications.reset);
+router.patch('/notifications/:meetupId/reset', check, notifications.reset);
 
-router.delete('/meetups/:meetupId', meetups.deleteSpecific);
+router.delete('/meetups/:meetupId', check, meetups.deleteSpecific);
 
-router.delete('/notifications/:meetupId/clear', notifications.clear);
+router.delete('/notifications/:meetupId/clear', check, notifications.clear);
 
 export default router;

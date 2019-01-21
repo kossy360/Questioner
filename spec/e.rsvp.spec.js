@@ -21,7 +21,7 @@ describe('rsvp tests', () => {
     const options = {
       url: url('meetups/1/rsvps'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {
@@ -47,7 +47,7 @@ describe('rsvp tests', () => {
     const options = {
       url: url('meetups/1/rsvps'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {
@@ -61,19 +61,19 @@ describe('rsvp tests', () => {
       });
     });
     it('status 400', () => {
-      expect(data.status).toBe(400);
+      expect(data.status).toBe(422);
     });
     it('expects an error message', () => {
       expect(data.error).toBeDefined();
     });
   });
 
-  describe('rsvp for a nonexistent question', () => {
+  describe('rsvp for a nonexistent meetup', () => {
     let data;
     const options = {
       url: url('meetups/8/rsvps'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {

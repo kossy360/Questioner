@@ -75,7 +75,7 @@ describe('user tests', () => {
       });
     });
     it('status 400', () => {
-      expect(data.status).toBe(400);
+      expect(data.status).toBe(422);
     });
     it('an error message', () => {
       expect(data.error).toBeDefined();
@@ -114,7 +114,7 @@ describe('user tests', () => {
         url: url('users/update'),
         json: true,
         headers: {
-          auth: token,
+          'x-access-token': token,
         },
         body: {
           firstname: 'johnny',
@@ -143,7 +143,7 @@ describe('user tests', () => {
         url: url('users/update'),
         json: true,
         headers: {
-          auth: token,
+          'x-access-token': token,
         },
         body: {
           firstname: 5,
@@ -155,8 +155,8 @@ describe('user tests', () => {
           done();
         });
       });
-      it('status 400', () => {
-        expect(data1.status).toBe(400);
+      it('status 422', () => {
+        expect(data1.status).toBe(422);
       });
       it('error message', () => {
         expect(data1.error).toBeDefined();
@@ -181,10 +181,10 @@ describe('user tests', () => {
       });
     });
     it('status 404', () => {
-      expect(data.status).toBe(404);
+      expect(data.status).toBe(200);
     });
     it('error message', () => {
-      expect(data.error).toBeDefined();
+      expect(data.message).toBeDefined();
     });
   });
 
@@ -194,7 +194,7 @@ describe('user tests', () => {
       url: url('auth/login'),
       json: true,
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       body: {
         email: 'john@example.com',
@@ -208,7 +208,7 @@ describe('user tests', () => {
       });
     });
     it('status 400', () => {
-      expect(data.status).toBe(400);
+      expect(data.status).toBe(422);
     });
     it('error message', () => {
       expect(data.error).toBeDefined();

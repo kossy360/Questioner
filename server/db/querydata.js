@@ -2,14 +2,14 @@ import querydb from './querydb';
 import queryGenerator from './querygenerator';
 
 const userQuery = {
-  fields: 'id, firstname, lastname, othername, email, phoneNumber, username, registered, isadmin',
+  fields: 'id, firstname, lastname, othername, email, phoneNumber, username, registered, isadmin, password',
 
   createNew: (body) => {
     const { key1, key2, values } = queryGenerator.insertFields(body);
     return querydb.query(`INSERT INTO public.user (${key1}) VALUES (${key2}) RETURNING ${userQuery.fields}`, values);
   },
 
-  getUser: (email, password) => querydb.query(`SELECT ${userQuery.fields} FROM public.user WHERE email = $1 AND password = $2`, [email, password]),
+  getUser: email => querydb.query(`SELECT ${userQuery.fields} FROM public.user WHERE email = $1`, [email]),
 
   update: (userId, body) => {
     const { key1, key2, values } = queryGenerator.updateFields(body);
@@ -22,7 +22,7 @@ const meetupQuery = {
 
   getAll: (userId, isadmin) => querydb.query(`SELECT * from all_meets_${isadmin ? 'admin' : 'user'}(${userId})`),
 
-  getUpcoming: (userId, isadmin) => querydb.query(`SELECT * FROM all_meets_${isadmin ? 'admin' : 'user'}(${userId}) WHERE happening > ${Date.now() - 172800000}`),
+  getUpcoming: (userId, isadmin) => querydb.query(`SELECT * FROM all_meets_${isadmin ? 'admin' : 'user'}(${userId}) WHERE happening > '${new Date().toISOString()}'::timestamptz`),
 
   getSpecific: (userId, isadmin, meetupId) => querydb.query(`SELECT * FROM all_meets_${isadmin ? 'admin' : 'user'}(${userId}) WHERE id = $1`, [meetupId]),
 
@@ -74,7 +74,7 @@ const notificationsQuery = {
     [userId, meetupId]),
 
   reset: (userId, meetupId) => querydb.query('UPDATE public.notifications SET last_seen = $1 WHERE meet=$2 AND user_id=$3 RETURNING *;',
-    [Date.now(), meetupId, userId]),
+    [new Date().toISOString(), meetupId, userId]),
 
   clear: (userId, meetupId) => querydb.query('DELETE FROM public.notifications WHERE user_id = $1 AND meet=$2 RETURNING *',
     [userId, meetupId]),

@@ -17,8 +17,8 @@ const control = {
       }
     } catch (error) {
       if (error.code === '23503') {
-        res.status(201).json({
-          status: 201,
+        res.status(200).json({
+          status: 200,
           message: 'you have already set up notifications for this meetup',
         });
       } else if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
@@ -35,13 +35,9 @@ const control = {
           status: 200,
           message: `notification reset for meetup ${meetupId}`,
         });
-      } else {
-        res.status(200).json({
-          status: 200,
-          message: `you have not registered notifications for meetup ${meetupId}`,
-        });
-      }
+      } else createError(404, res, 'meetup not registered for notifications or meetup does not exist');
     } catch (error) {
+      console.log(error)
       if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
     }
@@ -56,12 +52,7 @@ const control = {
           status: 200,
           message: `notification stopped for ${meetupId}`,
         });
-      } else {
-        res.status(200).json({
-          status: 200,
-          message: `you have not registered notifications for meetup ${meetupId}`,
-        });
-      }
+      } else createError(404, res, 'meetup not registered for notifications or meetup does not exist');
     } catch (error) {
       if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
@@ -79,8 +70,7 @@ const control = {
         });
       }
     } catch (error) {
-      if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
-      else createError(500, res);
+      createError(500, res);
     }
   },
 };

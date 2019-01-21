@@ -21,7 +21,7 @@ describe('question tests', () => {
     const options = {
       url: url('questions'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {
@@ -48,7 +48,7 @@ describe('question tests', () => {
     const options = {
       url: url('questions'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {
@@ -63,7 +63,7 @@ describe('question tests', () => {
       });
     });
     it('status 400', () => {
-      expect(data.status).toBe(400);
+      expect(data.status).toBe(422);
     });
     it('an error message', () => {
       expect(data.error).toBeDefined();
@@ -75,7 +75,7 @@ describe('question tests', () => {
     const options = {
       url: url('questions/1'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -98,7 +98,7 @@ describe('question tests', () => {
     const options = {
       url: url('questions/15'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -121,7 +121,7 @@ describe('question tests', () => {
     const options = {
       url: url('questions/1/upvote'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -144,7 +144,7 @@ describe('question tests', () => {
     const options = {
       url: url('questions/1/downvote'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -167,7 +167,7 @@ describe('question tests', () => {
     const options = {
       url: url('questions/1/clear'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -190,7 +190,7 @@ describe('question tests', () => {
     const options = {
       url: url('questions/10/downvote'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -213,7 +213,7 @@ describe('question tests', () => {
     const options = {
       url: url('meetups/8'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };

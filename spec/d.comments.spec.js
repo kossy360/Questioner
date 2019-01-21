@@ -21,7 +21,7 @@ describe('comments tests', () => {
     const options = {
       url: url('comments'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {
@@ -48,7 +48,7 @@ describe('comments tests', () => {
     const options = {
       url: url('comments'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {
@@ -62,8 +62,8 @@ describe('comments tests', () => {
         done();
       });
     });
-    it('status 400', () => {
-      expect(data.status).toBe(400);
+    it('status 422', () => {
+      expect(data.status).toBe(422);
     });
     it('an error message', () => {
       expect(data.error).toBeDefined();
@@ -75,7 +75,7 @@ describe('comments tests', () => {
     const options = {
       url: url('comments'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
       body: {
@@ -90,20 +90,19 @@ describe('comments tests', () => {
       });
     });
     it('status 200', () => {
-      expect(data.status).toBe(200);
+      expect(data.status).toBe(404);
     });
-    it('a freindly message', () => {
-      expect(data.message).toBeDefined();
+    it('a error message', () => {
+      expect(data.error).toBeDefined();
     });
   });
-
 
   describe('get all comments for a specific question', () => {
     let data = {};
     const options = {
       url: url('comments/1'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };
@@ -126,7 +125,7 @@ describe('comments tests', () => {
     const options = {
       url: url('comments/15'),
       headers: {
-        auth: token,
+        'x-access-token': token,
       },
       json: true,
     };

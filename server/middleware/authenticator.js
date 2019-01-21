@@ -13,9 +13,21 @@ const authenticator = {
   }),
 
   verify: (req, res, next) => {
-    jwt.verify(req.get('auth'), process.env.secretkey, (err, decoded) => {
-      if (err) {
-        createError(403, res, err.message);
+    jwt.verify(req.get('x-access-token'), process.env.secretkey, (error, decoded) => {
+      if (error) {
+        const { name, message } = error;
+        let msg;
+        switch (name) {
+          case 'TokenExpiredError':
+            msg = 'your access token is expired, login or signup to get a new one';
+            break;
+          case 'JsonWebTokenError':
+            msg = 'an access token is required to access this resource';
+            break;
+          default:
+            msg = message;
+        }
+        createError(401, res, msg);
         return;
       }
       req.decoded = decoded;
