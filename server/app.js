@@ -15,7 +15,6 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 app.use('/', (req, res, next) => {
   if (req.path === '/' || /^\/api\/v\d+\/*$/.test(req.path)) {
     res.status(200).json({
@@ -24,9 +23,7 @@ app.use('/', (req, res, next) => {
     });
   } else next();
 });
-
 app.use('/api/v1', routes.userRoute, routes.generalRoute);
-
 app.use('/:invalid', (req, res) => createError(400, res, 'request path invalid, please refer to API documentation'));
 
 // error handler

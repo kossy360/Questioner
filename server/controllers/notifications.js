@@ -79,8 +79,7 @@ const control = {
         });
       }
     } catch (error) {
-      if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
-      else createError(500, res);
+      createError(500, res);
     }
   },
 };

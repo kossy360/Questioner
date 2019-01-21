@@ -37,7 +37,7 @@ const control = {
       else next(500);
     } catch (error) {
       if (error.code === '23503') createError(404, res, 'either the user or meetup does not exist');
-      else if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      else if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
     }
   },

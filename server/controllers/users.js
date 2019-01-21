@@ -26,10 +26,10 @@ const controller = {
       if (error.code === '23505') {
         res.status(200).json({
           status: 200,
-          createError: 'user is already registered',
+          message: 'user is already registered',
         });
-      } else if (error.details[0].type === 'string.regex.base') createError(400, res, 'password must contain 6 - 12 characters');
-      else if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      } else if (error.details[0].type === 'string.regex.base') createError(422, res, 'password must contain 6 - 12 characters');
+      else if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
     }
   },
@@ -45,10 +45,15 @@ const controller = {
           status: 200,
           data: [{ token, user }],
         });
-      } else createError(404, res, 'email or password incorrect');
+        return;
+      }
+      res.status(200).json({
+        status: 200,
+        message: 'email or password incorrect',
+      });
     } catch (error) {
       if (error.routine) createError(403, res);
-      else if (error.details[0].type === 'string.regex.base') createError(400, res, 'password must contain 6 - 12 characters');
+      else if (error.details[0].type === 'string.regex.base') createError(422, res, 'password must contain 6 - 12 characters');
       else createError(400, res, error.details[0].message.replace(/"/g, ''));
     }
   },
@@ -63,9 +68,9 @@ const controller = {
       if (error.code === '23505') {
         res.status(200).json({
           status: 200,
-          createError: 'email already in use',
+          message: 'email already in use',
         });
-      } else if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      } else if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
     }
   },

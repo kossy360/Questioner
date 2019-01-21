@@ -56,7 +56,7 @@ const control = {
         if (rowCount > 0) res.status(201).json(success(201, rows));
         else next(500);
       } catch (error) {
-        if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+        if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
         else createError(500, res);
       }
     } else createError(403, res, 'only users with administrative rights can create meetups');
@@ -76,7 +76,7 @@ const control = {
           createError(404, res, 'meetup not found, it has either been deleted or it never existed');
         }
       } catch (error) {
-        if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+        if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
         else createError(500, res);
       }
     } else createError(403, res, 'only users with administrative rights can delete meetups');
@@ -89,9 +89,9 @@ const control = {
         const body = await validator(req.body, 'updateMeetup');
         const { rows, rowCount } = await meetupQuery.update(body, meetupId);
         if (rowCount > 0) res.status(200).json(success(200, rows));
-        else createError(404, res, 'meet does not exist');
+        else createError(404, res, 'meetup does not exist');
       } catch (error) {
-        if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+        if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
         else createError(500, res);
       }
     } else createError(403, res, 'only users with administrative rights can update meetups');

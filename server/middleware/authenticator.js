@@ -13,8 +13,9 @@ const authenticator = {
   }),
 
   verify: (req, res, next) => {
-    jwt.verify(req.get('x-access-token'), process.env.secretkey, ({ name, message }, decoded) => {
-      if (name) {
+    jwt.verify(req.get('x-access-token'), process.env.secretkey, (error, decoded) => {
+      if (error) {
+        const { name, message } = error;
         let msg;
         switch (name) {
           case 'TokenExpiredError':
@@ -26,7 +27,7 @@ const authenticator = {
           default:
             msg = message;
         }
-        createError(403, res, msg);
+        createError(401, res, msg);
         return;
       }
       req.decoded = decoded;
