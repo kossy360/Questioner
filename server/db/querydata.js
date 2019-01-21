@@ -74,7 +74,7 @@ const notificationsQuery = {
     [userId, meetupId]),
 
   reset: (userId, meetupId) => querydb.query('UPDATE public.notifications SET last_seen = $1 WHERE meet=$2 AND user_id=$3 RETURNING *;',
-    [Date.now(), meetupId, userId]),
+    [new Date().toISOString(), meetupId, userId]),
 
   clear: (userId, meetupId) => querydb.query('DELETE FROM public.notifications WHERE user_id = $1 AND meet=$2 RETURNING *',
     [userId, meetupId]),

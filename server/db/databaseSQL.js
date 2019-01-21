@@ -12,7 +12,7 @@ CREATE TYPE public.votes AS ENUM (
     '1',
     'null'
 );
-CREATE FUNCTION public.all_meets_admin(userid integer) RETURNS TABLE(id integer, happening numeric, topic character varying, location character varying, tags jsonb, images jsonb, rsvp jsonb, questions bigint)
+CREATE FUNCTION public.all_meets_admin(userid integer) RETURNS TABLE(id integer, happening timestamptz, topic character varying, location character varying, tags jsonb, images jsonb, rsvp jsonb, questions bigint)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -21,7 +21,7 @@ BEGIN
 	LEFT JOIN public.questions q ON q.meetup = m.id
 	GROUP BY (q.meetup, m.id);
 END; $$;
-CREATE FUNCTION public.all_meets_user(userid integer) RETURNS TABLE(id integer, happening numeric, topic character varying, location character varying, tags jsonb, images jsonb, rsvp character varying, questions bigint)
+CREATE FUNCTION public.all_meets_user(userid integer) RETURNS TABLE(id integer, happening timestamptz, topic character varying, location character varying, tags jsonb, images jsonb, rsvp character varying, questions bigint)
     LANGUAGE plpgsql
     AS $$
 BEGIN
