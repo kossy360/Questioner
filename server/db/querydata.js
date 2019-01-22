@@ -35,7 +35,7 @@ const meetupQuery = {
 
   update: (body, meetupId) => {
     const { key1, key2, values } = queryGenerator.updateFields(body);
-    return querydb.query(`UPDATE public.meets SET ${key1} WHERE id = ${meetupId} RETURNING id as meetup, topic, ${key2.replace(/topic,/, '')}`, values);
+    return querydb.query(`UPDATE public.meets SET ${key1} WHERE id = ${meetupId} RETURNING id as meetup, topic, ${key2.replace(/topic,/, '')}, dImages`, values);
   },
 };
 

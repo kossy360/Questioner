@@ -1,5 +1,6 @@
 import validator from '../helpers/validator';
 import createError from '../helpers/createError';
+import cloudDelete from '../helpers/cloudDelete';
 import { meetupQuery } from '../db/querydata';
 
 const success = (status, data) => ({ status, data });
@@ -84,14 +85,14 @@ const control = {
   update: async (req, res) => {
     if (req.decoded.isAdmin) {
       try {
-        const { meetupId } = await validator(req.params, 'requestId');
-        const body = await validator(req.body, 'updateMeetup');
-        const { rows, rowCount } = await meetupQuery.update(body, meetupId);
-        if (rowCount > 0) res.status(200).json(success(200, rows));
-        else createError(404, res, 'meetup does not exist');
+        const { rows } = await meetupQuery.update(req.body, req.params.meetupId);
+        if (rows.length > 0) {
+          await cloudDelete(rows[0].dimages);
+          delete rows[0].dimages;
+          res.status(200).json(success(200, rows));
+        } else createError(404, res, 'meetup does not exist');
       } catch (error) {
-        if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
-        else createError(500, res);
+        createError(500, res);
       }
     } else createError(403, res, 'only users with administrative rights can update meetups');
   },
