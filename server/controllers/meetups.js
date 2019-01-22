@@ -66,8 +66,9 @@ const control = {
     if (req.decoded.isAdmin) {
       try {
         const { meetupId } = await validator(req.params, 'requestId');
-        const { rowCount } = await meetupQuery.delete(meetupId);
-        if (rowCount > 0) {
+        const { rows } = await meetupQuery.delete(meetupId);
+        if (rows.length > 0) {
+          await cloudDelete(rows[0].images);
           res.status(200).json({
             status: 200,
             message: 'meetup deleted',
