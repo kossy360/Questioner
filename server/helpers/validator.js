@@ -31,12 +31,12 @@ const schemas = {
     happening: joi.date().iso().min('now').required(),
     location: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
     topic: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
-    images: joi.array().items(joi.string().required()).required(),
-    tags: joi.array().items(joi.string().required()).required(),
+    images: joi.array().items(joi.string().required()),
+    tags: joi.array().items(joi.string().required()),
   }),
 
   updateMeetup: joi.object().keys({
-    happening: joi.number().integer().min(Date.now()),
+    happening: joi.date().iso().min('now').required(),
     location: joi.string().replace(/^ *$/g, '').concat(joi.string().trim()).min(3),
     topic: joi.string().replace(/^ *$/g, '').concat(joi.string().trim()),
     images: joi.array().items(joi.string().required()),
