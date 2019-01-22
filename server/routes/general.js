@@ -1,12 +1,12 @@
 import Router from 'express';
 import authenticator from '../middleware/authenticator';
+import imageUpload from '../middleware/imageUpload';
 import users from '../controllers/users';
 import meetups from '../controllers/meetups';
 import questions from '../controllers/questions';
 import comments from '../controllers/comments';
 import rsvps from '../controllers/rsvps';
 import notifications from '../controllers/notifications';
-
 
 const router = Router();
 const check = authenticator.verify;
@@ -29,7 +29,7 @@ router.get('/comments/:questionId', check, comments.getAll);
 
 router.get('/notifications', check, notifications.getAll);
 
-router.post('/meetups', check, meetups.createNew);
+router.post('/meetups', check, imageUpload, meetups.createNew);
 
 router.post('/questions', check, questions.createNew);
 
@@ -41,7 +41,7 @@ router.post('/notifications/:meetupId/register', check, notifications.register);
 
 router.patch('/users/update', check, users.update);
 
-router.patch('/meetups/:meetupId', check, meetups.update);
+router.patch('/meetups/:meetupId', check, imageUpload, meetups.update);
 
 router.patch('/questions/:questionId/:vote', check, questions.vote);
 

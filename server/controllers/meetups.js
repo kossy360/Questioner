@@ -51,8 +51,7 @@ const control = {
   createNew: async (req, res, next) => {
     if (req.decoded.isAdmin) {
       try {
-        const body = await validator(req.body, 'meetup');
-        const { rows, rowCount } = await meetupQuery.createNew(body);
+        const { rows, rowCount } = await meetupQuery.createNew(req.body);
         if (rowCount > 0) res.status(201).json(success(201, rows));
         else next(500);
       } catch (error) {
