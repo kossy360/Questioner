@@ -1,9 +1,17 @@
 import validator from '../helpers/validator';
 import createError from '../helpers/createError';
-import cloudDelete from '../helpers/cloudDelete';
+import { imageUpload, imageDelete } from '../helpers/cloudinary';
 import { meetupQuery } from '../db/querydata';
 
 const success = (status, data) => ({ status, data });
+
+const deleteImg = async (images) => {
+  try {
+    await imageDelete(images);
+  } catch (error) {
+    if (typeof error !== 'string') throw error;
+  }
+};
 
 const control = {
   getAll: async (req, res) => {
@@ -52,6 +60,8 @@ const control = {
   createNew: async (req, res, next) => {
     if (req.decoded.isAdmin) {
       try {
+        await validator(req, 'meetup');
+        await imageUpload(req);
         const { rows, rowCount } = await meetupQuery.createNew(req.body);
         if (rowCount > 0) res.status(201).json(success(201, rows));
         else next(500);
@@ -68,7 +78,7 @@ const control = {
         const { meetupId } = await validator(req.params, 'requestId');
         const { rows } = await meetupQuery.delete(meetupId);
         if (rows.length > 0) {
-          await cloudDelete(rows[0].images);
+          await deleteImg(rows[0].images);
           res.status(200).json({
             status: 200,
             message: 'meetup deleted',
@@ -86,14 +96,21 @@ const control = {
   update: async (req, res) => {
     if (req.decoded.isAdmin) {
       try {
-        const { rows } = await meetupQuery.update(req.body, req.params.meetupId);
+        const { meetupId } = await validator(req.params, 'requestId');
+        await validator(req, 'updateMeetup');
+        await imageUpload(req);
+        const { rows } = await meetupQuery.update(req.body, meetupId);
         if (rows.length > 0) {
-          await cloudDelete(rows[0].dimages);
+          await deleteImg(rows[0].dimages);
           delete rows[0].dimages;
           res.status(200).json(success(200, rows));
-        } else createError(404, res, 'meetup does not exist');
+        } else {
+          if (req.body.images) await imageDelete(req.body.images);
+          createError(404, res, 'meetup does not exist');
+        }
       } catch (error) {
-        createError(500, res);
+        if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
+        else createError(500, res);
       }
     } else createError(403, res, 'only users with administrative rights can update meetups');
   },

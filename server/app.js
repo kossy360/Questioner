@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import express from 'express';
+import multer from 'multer';
 import logger from 'morgan';
 import cors from 'cors';
 
@@ -15,6 +16,8 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(multer().any());
+
 app.use('/', (req, res, next) => {
   if (req.path === '/' || /^\/api\/v\d+\/*$/.test(req.path)) {
     res.status(200).json({

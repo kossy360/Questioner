@@ -29,12 +29,11 @@ const control = {
     }
   },
 
-  createNew: async (req, res, next) => {
+  createNew: async (req, res) => {
     try {
-      const body = await validator(req.body, 'questions');
-      const { rows, rowCount } = await questionQuery.createNew(req.decoded.user, body);
-      if (rowCount > 0) res.status(201).json(success(201, rows));
-      else next(500);
+      const body = await validator(req, 'questions');
+      const { rows } = await questionQuery.createNew(req.decoded.user, body);
+      res.status(201).json(success(201, rows));
     } catch (error) {
       if (error.code === '23503') createError(404, res, 'either the user or meetup does not exist');
       else if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
@@ -42,13 +41,12 @@ const control = {
     }
   },
 
-  vote: async (req, res, next) => {
+  vote: async (req, res) => {
     try {
       const { vote, questionId } = await validator(req.params, 'requestId');
-      const { rows, rowCount } = await questionQuery
+      const { rows } = await questionQuery
         .vote(req.decoded.user, questionId, convertVote(vote));
-      if (rowCount > 0) res.status(201).json(success(201, rows));
-      else next(500);
+      res.status(201).json(success(201, rows));
     } catch (error) {
       if (error.code === '23503') {
         createError(404, res, 'either the user or question does not exist');
