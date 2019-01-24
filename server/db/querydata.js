@@ -13,7 +13,7 @@ const userQuery = {
 
   update: (userId, body) => {
     const { key1, key2, values } = queryGenerator.updateFields(body);
-    return querydb.query(`UPDATE public.user SET ${key1} WHERE id = ${userId} RETURNING id,${key2}`, values);
+    return querydb.query(`UPDATE public.user SET ${key1} WHERE id = ${userId} RETURNING ${key2.includes('email') ? '' : 'email,'}${key2}`, values);
   },
 };
 
