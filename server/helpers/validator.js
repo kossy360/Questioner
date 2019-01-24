@@ -8,7 +8,7 @@ const schemas = {
     othername: joi.string().alphanum().min(1),
     email: joi.string().email().required(),
     phonenumber: joi.string().regex(/^\d+$/).min(6).max(15),
-    username: joi.string().alphanum().min(3).max(10),
+    username: joi.string().alphanum().min(3).max(10).required(),
     password: joi.string().trim().regex(/^[a-zA-Z0-9]{6,12}$/).required(),
   }),
 
