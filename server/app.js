@@ -26,6 +26,7 @@ app.use('/', (req, res, next) => {
     });
   } else next();
 });
+app.use('/api/v1/docs', (req, res) => res.status(302).redirect('https://questioner.docs.apiary.io/#'));
 app.use('/api/v1', routes.userRoute, routes.generalRoute);
 app.use('/:invalid', (req, res) => createError(400, res, 'request path invalid, please refer to API documentation'));
 
