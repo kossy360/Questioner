@@ -208,6 +208,29 @@ describe('question tests', () => {
     });
   });
 
+  describe('vote with invalid meetupId', () => {
+    let data = {};
+    const options = {
+      url: url('questions/xx/downvote'),
+      headers: {
+        'x-access-token': token,
+      },
+      json: true,
+    };
+    beforeAll((done) => {
+      Request.patch(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 400', () => {
+      expect(data.status).toBe(400);
+    });
+    it('an error message', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
+
   describe('delete a non existent meetup record', () => {
     let data = {};
     const options = {

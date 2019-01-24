@@ -9,7 +9,7 @@ const queryGenerator = {
     keys.forEach((key, index) => {
       const comma = index === 0 ? '' : ',';
       result.key2 = `${result.key2}${comma}$${index + 1}`;
-      result.values.push(typeof body[key] === 'object' ? JSON.stringify(body[key]) : body[key]);
+      result.values.push(typeof body[key] === 'object' && body[key] !== null ? JSON.stringify(body[key]) : body[key]);
     });
     return result;
   },
@@ -24,7 +24,7 @@ const queryGenerator = {
     keys.forEach((key, index) => {
       const comma = index === (keys.length - 1) ? '' : ',';
       result.key1 = `${result.key1}${key}=$${index + 1}${comma}`;
-      result.values.push(typeof body[key] === 'object' ? JSON.stringify(body[key]) : body[key]);
+      result.values.push(typeof body[key] === 'object' && body[key] !== null ? JSON.stringify(body[key]) : body[key]);
     });
     return result;
   },

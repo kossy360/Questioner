@@ -63,6 +63,29 @@ describe('notification tests', () => {
     });
   });
 
+  describe('register notifications with invalid meetupId', () => {
+    let data;
+    const options = {
+      url: url('notifications/a/register'),
+      headers: {
+        'x-access-token': token,
+      },
+      json: true,
+    };
+    beforeAll((done) => {
+      Request.post(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 400', () => {
+      expect(data.status).toBe(400);
+    });
+    it('a error message', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
+
   describe('reset notifications on a meetup', () => {
     let data;
     const options = {
@@ -89,7 +112,7 @@ describe('notification tests', () => {
   describe('reset notifications on a non-existent meetup', () => {
     let data;
     const options = {
-      url: url('notifications/1/reset'),
+      url: url('notifications/5/reset'),
       headers: {
         'x-access-token': token,
       },
@@ -101,11 +124,34 @@ describe('notification tests', () => {
         done();
       });
     });
-    it('status 200', () => {
-      expect(data.status).toBe(200);
+    it('status 404', () => {
+      expect(data.status).toBe(404);
     });
-    it('a message', () => {
-      expect(data.message).toBeDefined();
+    it('an error message', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
+
+  describe('reset notifications with an invalid meetupId', () => {
+    let data;
+    const options = {
+      url: url('notifications/k/reset'),
+      headers: {
+        'x-access-token': token,
+      },
+      json: true,
+    };
+    beforeAll((done) => {
+      Request.patch(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 400', () => {
+      expect(data.status).toBe(400);
+    });
+    it('a error message', () => {
+      expect(data.error).toBeDefined();
     });
   });
 
@@ -132,7 +178,53 @@ describe('notification tests', () => {
     });
   });
 
-  describe('get all notifications on a meetup', () => {
+  describe('clear notifications on a non-existent meetup', () => {
+    let data;
+    const options = {
+      url: url('notifications/1/clear'),
+      headers: {
+        'x-access-token': token,
+      },
+      json: true,
+    };
+    beforeAll((done) => {
+      Request.delete(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 404', () => {
+      expect(data.status).toBe(404);
+    });
+    it('a error message', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
+
+  describe('clear notifications with an invalid meetupId', () => {
+    let data;
+    const options = {
+      url: url('notifications/p/clear'),
+      headers: {
+        'x-access-token': token,
+      },
+      json: true,
+    };
+    beforeAll((done) => {
+      Request.delete(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 400', () => {
+      expect(data.status).toBe(400);
+    });
+    it('a error message', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
+
+  describe('get all notifications for a user', () => {
     let data;
     const options = {
       url: url('notifications'),

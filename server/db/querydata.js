@@ -2,7 +2,7 @@ import querydb from './querydb';
 import queryGenerator from './querygenerator';
 
 const userQuery = {
-  fields: 'id, firstname, lastname, othername, email, phoneNumber, username, registered, isadmin',
+  fields: 'id, firstname, lastname, othername, email, phoneNumber, username, registered, displaypicture, isadmin',
 
   createNew: (body) => {
     const { key1, key2, values } = queryGenerator.insertFields(body);
@@ -35,7 +35,7 @@ const meetupQuery = {
 
   update: (body, meetupId) => {
     const { key1, key2, values } = queryGenerator.updateFields(body);
-    return querydb.query(`UPDATE public.meets SET ${key1} WHERE id = ${meetupId} RETURNING id as meetup, topic, ${key2.replace(/topic,/, '')}`, values);
+    return querydb.query(`UPDATE public.meets SET ${key1} WHERE id = ${meetupId} RETURNING id as meetup, topic, ${key2.replace(/topic,/, '')}, dImages`, values);
   },
 };
 

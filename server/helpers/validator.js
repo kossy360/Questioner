@@ -18,28 +18,28 @@ const schemas = {
   }),
 
   updateUser: joi.object().keys({
-    isAdmin: joi.any(),
     firstname: joi.string().alphanum().min(1),
     lastname: joi.string().alphanum().min(1),
     othername: joi.string().alphanum().min(1),
     email: joi.string().email(),
     phonenumber: joi.string().regex(/\d/).min(6).max(15),
     username: joi.string().alphanum().min(3).max(10),
+    displaypicture: joi.string().min(5).allow(''),
   }),
 
   meetup: joi.object().keys({
     happening: joi.date().iso().min('now').required(),
     location: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
     topic: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
-    images: joi.array().items(joi.string().required()).required(),
-    tags: joi.array().items(joi.string().required()).required(),
+    images: joi.array().items(joi.string().required()),
+    tags: joi.array().items(joi.string().required()),
   }),
 
   updateMeetup: joi.object().keys({
-    happening: joi.number().integer().min(Date.now()),
+    happening: joi.date().iso().min('now'),
     location: joi.string().replace(/^ *$/g, '').concat(joi.string().trim()).min(3),
     topic: joi.string().replace(/^ *$/g, '').concat(joi.string().trim()),
-    images: joi.array().items(joi.string().required()),
+    images: joi.array().items(joi.string()),
     tags: joi.array().items(joi.string().required()),
   }),
 
@@ -64,9 +64,19 @@ const schemas = {
   }),
 };
 
-const validator = (object, schemaName) => joi.validate(
-  object,
-  schemas[schemaName],
-);
+const validator = (object, schemaName) => {
+  if (object.body) {
+    if ((!object.files || object.files.length === 0) && Object.keys(object.body).length === 0) {
+      const error = {
+        details: [{
+          message: 'request body cannot be empty',
+        }],
+      };
+      throw error;
+    }
+    return joi.validate(object.body, schemas[schemaName]);
+  }
+  return joi.validate(object, schemas[schemaName]);
+};
 
 export default validator;

@@ -1,8 +1,17 @@
 import validator from '../helpers/validator';
 import createError from '../helpers/createError';
+import { imageUpload, imageDelete } from '../helpers/cloudinary';
 import { meetupQuery } from '../db/querydata';
 
 const success = (status, data) => ({ status, data });
+
+const deleteImg = async (images) => {
+  try {
+    await imageDelete(images);
+  } catch (error) {
+    if (typeof error !== 'string') throw error;
+  }
+};
 
 const control = {
   getAll: async (req, res) => {
@@ -51,8 +60,9 @@ const control = {
   createNew: async (req, res, next) => {
     if (req.decoded.isAdmin) {
       try {
-        const body = await validator(req.body, 'meetup');
-        const { rows, rowCount } = await meetupQuery.createNew(body);
+        await validator(req, 'meetup');
+        await imageUpload(req);
+        const { rows, rowCount } = await meetupQuery.createNew(req.body);
         if (rowCount > 0) res.status(201).json(success(201, rows));
         else next(500);
       } catch (error) {
@@ -66,8 +76,9 @@ const control = {
     if (req.decoded.isAdmin) {
       try {
         const { meetupId } = await validator(req.params, 'requestId');
-        const { rowCount } = await meetupQuery.delete(meetupId);
-        if (rowCount > 0) {
+        const { rows } = await meetupQuery.delete(meetupId);
+        if (rows.length > 0) {
+          await deleteImg(rows[0].images);
           res.status(200).json({
             status: 200,
             message: 'meetup deleted',
@@ -86,10 +97,17 @@ const control = {
     if (req.decoded.isAdmin) {
       try {
         const { meetupId } = await validator(req.params, 'requestId');
-        const body = await validator(req.body, 'updateMeetup');
-        const { rows, rowCount } = await meetupQuery.update(body, meetupId);
-        if (rowCount > 0) res.status(200).json(success(200, rows));
-        else createError(404, res, 'meetup does not exist');
+        await validator(req, 'updateMeetup');
+        await imageUpload(req);
+        const { rows } = await meetupQuery.update(req.body, meetupId);
+        if (rows.length > 0) {
+          await deleteImg(rows[0].dimages);
+          delete rows[0].dimages;
+          res.status(200).json(success(200, rows));
+        } else {
+          if (req.body.images) await imageDelete(req.body.images);
+          createError(404, res, 'meetup does not exist');
+        }
       } catch (error) {
         if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
         else createError(500, res);

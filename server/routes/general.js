@@ -7,7 +7,6 @@ import comments from '../controllers/comments';
 import rsvps from '../controllers/rsvps';
 import notifications from '../controllers/notifications';
 
-
 const router = Router();
 const check = authenticator.verify;
 const methods = ['POST', 'GET', 'PATCH', 'DELETE'];
@@ -39,7 +38,7 @@ router.post('/meetups/:meetupId/rsvps', check, rsvps.createNew);
 
 router.post('/notifications/:meetupId/register', check, notifications.register);
 
-router.patch('/users/update', check, users.update);
+router.patch('/users', check, users.update);
 
 router.patch('/meetups/:meetupId', check, meetups.update);
 

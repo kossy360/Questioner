@@ -19,7 +19,7 @@ const token = jwt.sign({
 
 describe('user tests', () => {
   beforeAll((done) => {
-    querydb.query(dbsql.trim()).then(() => done()).catch(e => console.log(e));
+    querydb.query(dbsql.trim()).then(() => done());
   });
   describe('register a new user', () => {
     let data;
@@ -111,7 +111,7 @@ describe('user tests', () => {
     describe('update user data', () => {
       let data1;
       const options1 = {
-        url: url('users/update'),
+        url: url('users'),
         json: true,
         headers: {
           'x-access-token': token,
@@ -140,7 +140,7 @@ describe('user tests', () => {
     describe('update user with bad data', () => {
       let data1;
       const options1 = {
-        url: url('users/update'),
+        url: url('users'),
         json: true,
         headers: {
           'x-access-token': token,
@@ -207,7 +207,31 @@ describe('user tests', () => {
         done();
       });
     });
-    it('status 400', () => {
+    it('status 422', () => {
+      expect(data.status).toBe(422);
+    });
+    it('error message', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
+
+  describe('make a post request with an empty request body', () => {
+    let data;
+    const options = {
+      url: url('auth/login'),
+      json: true,
+      headers: {
+        'x-access-token': token,
+      },
+      body: {},
+    };
+    beforeAll((done) => {
+      Request.post(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 422', () => {
       expect(data.status).toBe(422);
     });
     it('error message', () => {

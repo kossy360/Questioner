@@ -9,7 +9,7 @@ const control = {
     if (!req.decoded.isAdmin) {
       try {
         const { meetupId } = await validator(req.params, 'requestId');
-        const { response } = await validator(req.body, 'rsvps');
+        const { response } = await validator(req, 'rsvps');
         const { rows, rowCount } = await rsvpsQuery
           .createNew(req.decoded.user, meetupId, response.toLowerCase());
         if (rowCount > 0) res.status(201).json(success(201, rows));

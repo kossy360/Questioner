@@ -15,6 +15,11 @@ const token = jwt.sign({
   isAdmin: true,
 }, process.env.secretkey);
 
+const token2 = jwt.sign({
+  user: 1,
+  isAdmin: false,
+}, process.env.secretkey);
+
 describe('meetup tests', () => {
   describe('create a meetup record', () => {
     let data;
@@ -68,8 +73,38 @@ describe('meetup tests', () => {
         done();
       });
     });
-    it('status 400', () => {
+    it('status 422', () => {
       expect(data.status).toBe(422);
+    });
+    it('an error message', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
+
+  describe('create a meetup record by non-admin user', () => {
+    let data;
+    const options = {
+      url: url('meetups'),
+      headers: {
+        'x-access-token': token2,
+      },
+      json: true,
+      body: {
+        happening: '2019-03-15T15:30',
+        location: 'Abuja',
+        topic: 'the test meetup',
+        images: ['url1', 'url2'],
+        tags: ['transport', 'infrastructure'],
+      },
+    };
+    beforeAll((done) => {
+      Request.post(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 403', () => {
+      expect(data.status).toBe(403);
     });
     it('an error message', () => {
       expect(data.error).toBeDefined();
@@ -240,6 +275,98 @@ describe('meetup tests', () => {
     });
     it('status 400', () => {
       expect(data.status).toBe(422);
+    });
+    it('an error message', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
+
+  describe('update a meetup record by non-admin user', () => {
+    let data = {};
+    const options = {
+      url: url('meetups/1'),
+      headers: {
+        'x-access-token': token2,
+      },
+      json: true,
+      body: {
+        location: 'lagos',
+      },
+    };
+    beforeAll((done) => {
+      Request.patch(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 403', () => {
+      expect(data.status).toBe(403);
+    });
+    it('an error message', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
+
+  describe('delete a meetup record by non-admin user', () => {
+    let data = {};
+    const options = {
+      url: url('meetups/1'),
+      headers: {
+        'x-access-token': token2,
+      },
+      json: true,
+    };
+    beforeAll((done) => {
+      Request.delete(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 403', () => {
+      expect(data.status).toBe(403);
+    });
+    it('an error message', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
+
+  describe('delete a meetup with invalid meetupId', () => {
+    let data = {};
+    const options = {
+      url: url('meetups/xx'),
+      headers: {
+        'x-access-token': token,
+      },
+      json: true,
+    };
+    beforeAll((done) => {
+      Request.delete(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 422', () => {
+      expect(data.status).toBe(422);
+    });
+    it('an error message', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
+
+  describe('access secure route without token', () => {
+    let data = {};
+    const options = {
+      url: url('meetups/1'),
+      json: true,
+    };
+    beforeAll((done) => {
+      Request.delete(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 401', () => {
+      expect(data.status).toBe(401);
     });
     it('an error message', () => {
       expect(data.error).toBeDefined();

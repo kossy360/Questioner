@@ -37,7 +37,6 @@ const control = {
         });
       } else createError(404, res, 'meetup not registered for notifications or meetup does not exist');
     } catch (error) {
-      console.log(error)
       if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
     }
