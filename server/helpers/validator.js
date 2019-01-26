@@ -1,4 +1,5 @@
 /* eslint-disable newline-per-chained-call */
+/* eslint-disable max-len */
 import joi from 'joi';
 
 const schemas = {
@@ -43,6 +44,11 @@ const schemas = {
     tags: joi.array().items(joi.string().required()),
   }),
 
+  meetSearch: joi.object().keys({
+    tags: joi.alternatives().try(joi.string(), joi.array().items(joi.string().required())),
+    topic: joi.string(),
+  }),
+
   questions: joi.object().keys({
     meetup: joi.number().integer().min(1).required(),
     body: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
@@ -61,6 +67,7 @@ const schemas = {
     meetupId: joi.number().integer().min(1),
     questionId: joi.number().integer().min(1),
     vote: joi.string().trim().equal('upvote', 'downvote', 'clear').insensitive(),
+    type: joi.string().trim().equal('tags', 'topic').insensitive(),
   }),
 };
 

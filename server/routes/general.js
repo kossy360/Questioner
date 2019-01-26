@@ -2,6 +2,7 @@ import Router from 'express';
 import authenticator from '../middleware/authenticator';
 import users from '../controllers/users';
 import meetups from '../controllers/meetups';
+import meetSearch from '../controllers/meetSearch';
 import questions from '../controllers/questions';
 import comments from '../controllers/comments';
 import rsvps from '../controllers/rsvps';
@@ -17,6 +18,8 @@ router.use('/', (req, res, next) => {
 });
 
 router.get('/meetups/upcoming', check, meetups.getUpcoming);
+
+router.get('/meetups/search', check, meetSearch.search);
 
 router.get('/meetups/:meetupId', check, meetups.getSpecific);
 

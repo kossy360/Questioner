@@ -37,6 +37,11 @@ const meetupQuery = {
     const { key1, key2, values } = queryGenerator.updateFields(body);
     return querydb.query(`UPDATE public.meets SET ${key1} WHERE id = ${meetupId} RETURNING id as meetup, topic, ${key2.replace(/topic,/, '')}, dImages`, values);
   },
+
+  search: (type, value, userId, isadmin) => {
+    if (type === 'topic') return querydb.query(`SELECT * from all_meets_${isadmin ? 'admin' : 'user'}(${userId}) WHERE topic ILIKE $1`, [value]);
+    return querydb.query(`SELECT * from all_meets_${isadmin ? 'admin' : 'user'}(${userId}) ${queryGenerator.searchTag(value)}`);
+  },
 };
 
 const questionQuery = {
