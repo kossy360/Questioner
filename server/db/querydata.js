@@ -15,6 +15,8 @@ const userQuery = {
     const { key1, key2, values } = queryGenerator.updateFields(body);
     return querydb.query(`UPDATE public.user SET ${key1} WHERE id = ${userId} RETURNING ${key2.includes('email') ? '' : 'email,'}${key2.includes('username') ? '' : 'username,'}${key2}`, values);
   },
+
+  lookup: (type, value) => querydb.query(`SELECT ${type} FROM public.user WHERE ${type} = $1`, [value]),
 };
 
 const meetupQuery = {

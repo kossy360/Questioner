@@ -17,6 +17,8 @@ router.use('/', (req, res, next) => {
   else next();
 });
 
+router.get('/users/lookup', users.lookup);
+
 router.get('/meetups/upcoming', check, meetups.getUpcoming);
 
 router.get('/meetups/search', check, meetSearch.search);

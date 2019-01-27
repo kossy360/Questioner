@@ -28,6 +28,11 @@ const schemas = {
     displaypicture: joi.string().min(5).allow(''),
   }),
 
+  userLookup: joi.object().keys({
+    email: joi.string().email(),
+    username: joi.string().alphanum().min(3).max(10),
+  }),
+
   meetup: joi.object().keys({
     happening: joi.date().iso().min('now').required(),
     location: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
@@ -75,6 +80,7 @@ const validator = (object, schemaName) => {
   if (object.body) {
     if ((!object.files || object.files.length === 0) && Object.keys(object.body).length === 0) {
       const error = {
+        isJoi: true,
         details: [{
           message: 'request body cannot be empty',
         }],
