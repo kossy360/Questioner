@@ -38,8 +38,8 @@ const controller = {
 
   login: async (req, res) => {
     try {
-      const { email, password } = await validator(req, 'login');
-      const { rows } = await userQuery.getUser(email);
+      const { username, email, password } = await validator(req, 'login');
+      const { rows } = await userQuery.getUser(email || username);
       const user = await crypt.verify(rows[0], password);
       if (user) {
         const token = await authenticator.generateToken(rows[0]);
@@ -51,13 +51,12 @@ const controller = {
       }
       res.status(200).json({
         status: 200,
-        message: 'email or password incorrect',
+        message: `${email ? 'email' : 'username'} or password incorrect`,
       });
     } catch (error) {
-      console.log(error)
-      if (error.routine) createError(403, res);
-      else if (error.details[0].type === 'string.regex.base') createError(422, res, 'password must contain 6 - 12 characters');
-      else createError(422, res, error.details[0].message.replace(/"/g, ''));
+      if (error.details[0].type === 'string.regex.base') createError(422, res, 'password must contain 6 - 12 characters');
+      else if (error.isJoi) createError(422, res, error.details[0].message.replace(/"/g, ''));
+      else createError(500, res);
     }
   },
 

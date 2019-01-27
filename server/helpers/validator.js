@@ -14,9 +14,10 @@ const schemas = {
   }),
 
   login: joi.object().keys({
-    email: joi.string().email().required(),
+    username: joi.string().alphanum().min(3).max(10),
+    email: joi.string().email(),
     password: joi.string().trim().regex(/^[a-zA-Z0-9]{6,12}$/).required(),
-  }),
+  }).xor('username', 'email').error(() => 'either a user name or email must be provided but not both'),
 
   updateUser: joi.object().keys({
     firstname: joi.string().alphanum().min(1),

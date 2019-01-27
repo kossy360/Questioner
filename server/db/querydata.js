@@ -9,7 +9,7 @@ const userQuery = {
     return querydb.query(`INSERT INTO public.user (${key1}) VALUES (${key2}) RETURNING ${userQuery.fields}`, values);
   },
 
-  getUser: email => querydb.query(`SELECT ${userQuery.fields}, password FROM public.user WHERE email = $1`, [email]),
+  getUser: value => querydb.query(`SELECT ${userQuery.fields}, password FROM public.user WHERE email = $1 OR username = $1`, [value]),
 
   update: (userId, body) => {
     const { key1, key2, values } = queryGenerator.updateFields(body);
