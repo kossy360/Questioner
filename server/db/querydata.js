@@ -47,7 +47,7 @@ const meetupQuery = {
 };
 
 const questionQuery = {
-  fields: 'q.id, q.user_id, u.username, q.meetup, q.body, q.created, q.votes',
+  fields: 'q.id, q.user_id as user, u.username, u.displaypicture, q.meetup, q.body, q.created, q.votes',
 
   getAll: meetupId => querydb.query(
     `SELECT ${questionQuery.fields} FROM public.questions q LEFT JOIN public.user u ON q.user_id = u.id WHERE q.meetup = $1 ORDER BY (votes, created) DESC`,
@@ -63,7 +63,7 @@ const questionQuery = {
 };
 
 const commentsQuery = {
-  getall: questionId => querydb.query('SELECT c.id, c.user_id as user, c.question, u.username, c.comment, c.created FROM public.comments c LEFT JOIN public.user u ON c.user_id = u.id WHERE c.question = $1',
+  getall: questionId => querydb.query('SELECT c.id, c.user_id as user, c.question, u.username, u.displaypicture, c.comment, c.created FROM public.comments c LEFT JOIN public.user u ON c.user_id = u.id WHERE c.question = $1',
     [questionId]),
 
   createNew: (userId, body) => {
