@@ -238,4 +238,165 @@ describe('user tests', () => {
       expect(data.error).toBeDefined();
     });
   });
+
+  describe('user lookup with username', () => {
+    let data;
+    const options = {
+      url: url('users/lookup'),
+      json: true,
+      body: {
+        username: 'johndoe',
+      },
+    };
+    beforeAll((done) => {
+      Request.get(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 200', () => {
+      expect(data.status).toBe(200);
+    });
+    it('lookup result', () => {
+      expect(data.data[0].username.registered).toBe(true);
+    });
+  });
+
+  describe('user lookup with username', () => {
+    let data;
+    const options = {
+      url: url('users/lookup'),
+      json: true,
+      body: {
+        username: 'johndoee',
+      },
+    };
+    beforeAll((done) => {
+      Request.get(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 200', () => {
+      expect(data.status).toBe(200);
+    });
+    it('lookup result', () => {
+      expect(data.data[0].username.registered).toBe(false);
+    });
+  });
+
+  describe('user lookup with email', () => {
+    let data;
+    const options = {
+      url: url('users/lookup'),
+      json: true,
+      body: {
+        email: 'john@example.com',
+      },
+    };
+    beforeAll((done) => {
+      Request.get(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 200', () => {
+      expect(data.status).toBe(200);
+    });
+    it('lookup result', () => {
+      expect(data.data[0].email.registered).toBe(true);
+    });
+  });
+
+  describe('user lookup with email', () => {
+    let data;
+    const options = {
+      url: url('users/lookup'),
+      json: true,
+      body: {
+        email: 'john@examplee.com',
+      },
+    };
+    beforeAll((done) => {
+      Request.get(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 200', () => {
+      expect(data.status).toBe(200);
+    });
+    it('lookup result', () => {
+      expect(data.data[0].email.registered).toBe(false);
+    });
+  });
+
+  describe('user lookup with both email and username', () => {
+    let data;
+    const options = {
+      url: url('users/lookup'),
+      json: true,
+      body: {
+        email: 'john@examplee.com',
+        username: 'johndoe',
+      },
+    };
+    beforeAll((done) => {
+      Request.get(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 200', () => {
+      expect(data.status).toBe(200);
+    });
+    it('lookup result', () => {
+      expect(data.data[0].email.registered).toBe(false);
+      expect(data.data[0].username.registered).toBe(true);
+    });
+  });
+
+  describe('user lookup without required fields', () => {
+    let data;
+    const options = {
+      url: url('users/lookup'),
+      json: true,
+      body: {},
+    };
+    beforeAll((done) => {
+      Request.get(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 422', () => {
+      expect(data.status).toBe(422);
+    });
+    it('lookup result', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
+
+  describe('user lookup with bad data', () => {
+    let data;
+    const options = {
+      url: url('users/lookup'),
+      json: true,
+      body: {
+        email: 'jonny',
+      },
+    };
+    beforeAll((done) => {
+      Request.get(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 422', () => {
+      expect(data.status).toBe(422);
+    });
+    it('lookup result', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
 });
