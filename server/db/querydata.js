@@ -9,12 +9,14 @@ const userQuery = {
     return querydb.query(`INSERT INTO public.user (${key1}) VALUES (${key2}) RETURNING ${userQuery.fields}`, values);
   },
 
-  getUser: email => querydb.query(`SELECT ${userQuery.fields}, password FROM public.user WHERE email = $1`, [email]),
+  getUser: value => querydb.query(`SELECT ${userQuery.fields}, password FROM public.user WHERE email = $1 OR username = $1`, [value]),
 
   update: (userId, body) => {
     const { key1, key2, values } = queryGenerator.updateFields(body);
-    return querydb.query(`UPDATE public.user SET ${key1} WHERE id = ${userId} RETURNING ${key2.includes('email') ? '' : 'email,'}${key2}`, values);
+    return querydb.query(`UPDATE public.user SET ${key1} WHERE id = ${userId} RETURNING ${key2.includes('email') ? '' : 'email,'}${key2.includes('username') ? '' : 'username,'}${key2}`, values);
   },
+
+  lookup: (type, value) => querydb.query(`SELECT ${type} FROM public.user WHERE ${type} = $1`, [value]),
 };
 
 const meetupQuery = {
@@ -37,10 +39,15 @@ const meetupQuery = {
     const { key1, key2, values } = queryGenerator.updateFields(body);
     return querydb.query(`UPDATE public.meets SET ${key1} WHERE id = ${meetupId} RETURNING id as meetup, topic, ${key2.replace(/topic,/, '')}, dImages`, values);
   },
+
+  search: (type, value, userId, isadmin) => {
+    if (type === 'topic') return querydb.query(`SELECT * from all_meets_${isadmin ? 'admin' : 'user'}(${userId}) WHERE topic ILIKE $1`, [value]);
+    return querydb.query(`SELECT * from all_meets_${isadmin ? 'admin' : 'user'}(${userId}) ${queryGenerator.searchTag(value)}`);
+  },
 };
 
 const questionQuery = {
-  fields: 'q.id, q.user_id, u.username, q.meetup, q.body, q.created, q.votes',
+  fields: 'q.id, q.user_id as user, u.username, u.displaypicture, q.meetup, q.body, q.created, q.votes',
 
   getAll: meetupId => querydb.query(
     `SELECT ${questionQuery.fields} FROM public.questions q LEFT JOIN public.user u ON q.user_id = u.id WHERE q.meetup = $1 ORDER BY (votes, created) DESC`,
@@ -56,7 +63,7 @@ const questionQuery = {
 };
 
 const commentsQuery = {
-  getall: questionId => querydb.query('SELECT c.id, c.user_id as user, c.question, u.username, c.comment, c.created FROM public.comments c LEFT JOIN public.user u ON c.user_id = u.id WHERE c.question = $1',
+  getall: questionId => querydb.query('SELECT c.id, c.user_id as user, c.question, u.username, u.displaypicture, c.comment, c.created FROM public.comments c LEFT JOIN public.user u ON c.user_id = u.id WHERE c.question = $1',
     [questionId]),
 
   createNew: (userId, body) => {

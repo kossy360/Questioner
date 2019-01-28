@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import crypt from '../helpers/crypt';
 import validator from '../helpers/validator';
 import createError from '../helpers/createError';
@@ -37,8 +38,8 @@ const controller = {
 
   login: async (req, res) => {
     try {
-      const { email, password } = await validator(req, 'login');
-      const { rows } = await userQuery.getUser(email);
+      const { username, email, password } = await validator(req, 'login');
+      const { rows } = await userQuery.getUser(email || username);
       const user = await crypt.verify(rows[0], password);
       if (user) {
         const token = await authenticator.generateToken(rows[0]);
@@ -50,12 +51,12 @@ const controller = {
       }
       res.status(200).json({
         status: 200,
-        message: 'email or password incorrect',
+        message: `${email ? 'email' : 'username'} or password incorrect`,
       });
     } catch (error) {
-      if (error.routine) createError(403, res);
-      else if (error.details[0].type === 'string.regex.base') createError(422, res, 'password must contain 6 - 12 characters');
-      else createError(422, res, error.details[0].message.replace(/"/g, ''));
+      if (error.details[0].type === 'string.regex.base') createError(422, res, 'password must contain 6 - 12 characters');
+      else if (error.isJoi) createError(422, res, error.details[0].message.replace(/"/g, ''));
+      else createError(500, res);
     }
   },
 
@@ -72,6 +73,28 @@ const controller = {
           message: 'email already in use',
         });
       } else if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
+      else createError(500, res);
+    }
+  },
+
+  userLookup: async (type, value, body) => {
+    if (!value) return;
+    const { rowCount } = await userQuery.lookup(type, value);
+    const obj = { value };
+    if (rowCount > 0) obj.registered = true;
+    else obj.registered = false;
+    body[type] = obj;
+  },
+
+  lookup: async (req, res) => {
+    try {
+      const body = {};
+      const { email, username } = await validator(req, 'userLookup');
+      await controller.userLookup('email', email, body);
+      await controller.userLookup('username', username, body);
+      res.status(200).json({ status: 200, data: [body] });
+    } catch (error) {
+      if (error.isJoi) createError(422, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
     }
   },

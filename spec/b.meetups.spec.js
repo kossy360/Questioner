@@ -372,4 +372,110 @@ describe('meetup tests', () => {
       expect(data.error).toBeDefined();
     });
   });
+
+  describe('meetup search by tags', () => {
+    let data = {};
+    const options = {
+      url: url('meetups/search'),
+      headers: {
+        'x-access-token': token2,
+      },
+      json: true,
+      body: {
+        tags: ['infrastructure'],
+      },
+    };
+    beforeAll((done) => {
+      Request.get(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 200', () => {
+      expect(data.status).toBe(200);
+    });
+    it('a meetup object', () => {
+      expect(data.data[0].tags.result[0].topic).toBeDefined();
+    });
+  });
+
+  describe('meetup search by topic', () => {
+    let data = {};
+    const options = {
+      url: url('meetups/search'),
+      headers: {
+        'x-access-token': token2,
+      },
+      json: true,
+      body: {
+        topic: 'test',
+      },
+    };
+    beforeAll((done) => {
+      Request.get(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 200', () => {
+      expect(data.status).toBe(200);
+    });
+    it('a meetup object', () => {
+      expect(data.data[0].topic.result[0].topic).toBeDefined();
+    });
+  });
+
+  describe('meetup search by tags and topic', () => {
+    let data = {};
+    const options = {
+      url: url('meetups/search'),
+      headers: {
+        'x-access-token': token2,
+      },
+      json: true,
+      body: {
+        tags: ['infrastructure'],
+        topic: 'testings',
+      },
+    };
+    beforeAll((done) => {
+      Request.get(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status 200', () => {
+      expect(data.status).toBe(200);
+    });
+    it('a meetup object', () => {
+      expect(data.data[0].tags.result[0].topic).toBeDefined();
+      expect(data.data[0].topic.message).toBeDefined();
+    });
+  });
+
+  describe('meetup search with bad data', () => {
+    let data = {};
+    const options = {
+      url: url('meetups/search'),
+      headers: {
+        'x-access-token': token2,
+      },
+      json: true,
+      body: {
+        topic: 3,
+      },
+    };
+    beforeAll((done) => {
+      Request.get(options, (error, response, body) => {
+        data = body;
+        done();
+      });
+    });
+    it('status erro', () => {
+      expect(data.status).toBe(422);
+    });
+    it('an error message', () => {
+      expect(data.error).toBeDefined();
+    });
+  });
 });

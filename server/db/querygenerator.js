@@ -28,6 +28,15 @@ const queryGenerator = {
     });
     return result;
   },
+
+  searchTag: (tags) => {
+    let string = '';
+    tags.forEach((tag, index) => {
+      const or = index === 0 ? '' : 'OR';
+      string = `${string} ${or} tags ? '${tag}'`;
+    });
+    return `WHERE ${string}`;
+  },
 };
 
 export default queryGenerator;

@@ -1,4 +1,5 @@
 /* eslint-disable newline-per-chained-call */
+/* eslint-disable max-len */
 import joi from 'joi';
 
 const schemas = {
@@ -8,14 +9,15 @@ const schemas = {
     othername: joi.string().alphanum().min(1),
     email: joi.string().email().required(),
     phonenumber: joi.string().regex(/^\d+$/).min(6).max(15),
-    username: joi.string().alphanum().min(3).max(10),
+    username: joi.string().alphanum().min(3).max(10).required(),
     password: joi.string().trim().regex(/^[a-zA-Z0-9]{6,12}$/).required(),
   }),
 
   login: joi.object().keys({
-    email: joi.string().email().required(),
+    username: joi.string().alphanum().min(3).max(10),
+    email: joi.string().email(),
     password: joi.string().trim().regex(/^[a-zA-Z0-9]{6,12}$/).required(),
-  }),
+  }).xor('username', 'email').error(() => 'either a user name or email must be provided but not both'),
 
   updateUser: joi.object().keys({
     firstname: joi.string().alphanum().min(1),
@@ -25,6 +27,11 @@ const schemas = {
     phonenumber: joi.string().regex(/\d/).min(6).max(15),
     username: joi.string().alphanum().min(3).max(10),
     displaypicture: joi.string().min(5).allow(''),
+  }),
+
+  userLookup: joi.object().keys({
+    email: joi.string().email(),
+    username: joi.string().alphanum().min(3).max(10),
   }),
 
   meetup: joi.object().keys({
@@ -41,6 +48,11 @@ const schemas = {
     topic: joi.string().replace(/^ *$/g, '').concat(joi.string().trim()),
     images: joi.array().items(joi.string()),
     tags: joi.array().items(joi.string().required()),
+  }),
+
+  meetSearch: joi.object().keys({
+    tags: joi.alternatives().try(joi.string(), joi.array().items(joi.string().required())),
+    topic: joi.string(),
   }),
 
   questions: joi.object().keys({
@@ -61,6 +73,7 @@ const schemas = {
     meetupId: joi.number().integer().min(1),
     questionId: joi.number().integer().min(1),
     vote: joi.string().trim().equal('upvote', 'downvote', 'clear').insensitive(),
+    type: joi.string().trim().equal('tags', 'topic').insensitive(),
   }),
 };
 
@@ -68,6 +81,7 @@ const validator = (object, schemaName) => {
   if (object.body) {
     if ((!object.files || object.files.length === 0) && Object.keys(object.body).length === 0) {
       const error = {
+        isJoi: true,
         details: [{
           message: 'request body cannot be empty',
         }],
