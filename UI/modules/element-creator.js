@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 /* eslint-env browser */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
@@ -36,7 +37,8 @@ const meetCreator = (box, data) => {
   const meetSchema = [
     [
       { div: { class: 'meet-container main-container', id: meetData.id } },
-      { p: { class: 'meet-name', text: meetData.title } },
+      { p: { class: 'meet-name big', text: meetData.title } },
+      { img: { class: 'meet-image', src: '../assets/meeting1.jpg' } },
       { div: { class: 'meet-stats' } },
       { div: { class: 'meet-stat date' } },
       { span: { class: 'meet-icon meet-date-icon' } },
@@ -57,20 +59,20 @@ const meetCreator = (box, data) => {
       { span: { class: 'tags-icon meet-icon' } },
       { div: { class: 'meet-tags' } },
     ],
-    [0, 0, 2, 3, 3, 2, 6, 6, 2, 9, 9, 2, 12, 2, 14, 0, 16, 17, 17, 16],
+    [0, 0, 0, 3, 4, 4, 3, 7, 7, 3, 10, 10, 3, 13, 3, 15, 0, 17, 18, 18, 17],
   ];
 
   const elements = elementCreator(meetSchema);
 
 
   const [main, rsvps, notif] = rsvpNotifCreator([meetData.rsvp, meetData.notif]);
-  elements[0].insertBefore(main, elements[2]);
+  elements[0].insertBefore(main, elements[3]);
 
   meetData.tags.forEach((tag) => {
     const span = document.createElement('span');
     span.className = 'meet-tag';
     span.innerHTML = tag;
-    elements[20].appendChild(span);
+    elements[21].appendChild(span);
   });
 
   box.appendChild(elements[0]);
@@ -83,7 +85,7 @@ const notifCreator = (box, data) => {
   const notifSchema = [
     [
       { div: { class: 'main-notif-container main-container' } },
-      { p: { class: 'meet-name', text: notifData.title } },
+      { p: { class: 'meet-name small', text: notifData.title } },
       { div: { class: 'sub-notif-container' } },
       { p: { class: 'notif-message', text: `${notifData.count} new questions` } },
     ],
@@ -101,7 +103,7 @@ const bookCreator = (box, data) => {
   const bookSchema = [
     [
       { div: { class: 'book-container main-container', meetup: bookData.meetup } },
-      { p: { class: 'meet-name', text: bookData.title } },
+      { p: { class: 'meet-name small', text: bookData.title } },
       { div: { class: 'question-feed-container' } },
       { p: { class: 'question-feed-dir collapsed', text: 'expand' } },
       { div: { class: 'question-feed-container1' } },
@@ -142,11 +144,11 @@ const questionContainerCreator = (box, data) => {
   const schema = [
     [
       { div: { class: 'meet-expanded-details' } },
-      { div: { id: 'meet-expanded-questions' } },
+      { div: { class: 'meet-expanded-questions' } },
       { div: { class: 'question-input-container' } },
       { label: { class: 'question-input-label', for: 'question-input', text: 'Ask a question' } },
       { div: { class: 'question-input-box' } },
-      { input: { id: 'question-input', type: 'text' } },
+      { input: { id: 'question-input', type: 'text', placeholder: 'question here...' } },
       { button: { id: 'question-input-button', type: 'button', text: 'Ask!' } },
     ],
     [0, 0, 2, 2, 4, 4],
@@ -166,8 +168,6 @@ const questionContainerCreator = (box, data) => {
 
 const questionCreator = (box, data) => {
   const voteArray = [];
-
-
   const commentBtns = [];
   data.forEach((quest) => {
     const schema = [
@@ -177,21 +177,21 @@ const questionCreator = (box, data) => {
         { span: { class: 'meet-question-name span-flex', text: quest.body } },
         { span: { class: 'meet-question-author span-flex', text: quest.username } },
         { div: { class: 'meet-question-details-2' } },
-        { span: { class: 'question-feed-stat vote-stat flex-left' } },
+        { img: { class: 'user-dp-small question-dp', src: data.displaypicture || '../assets/profile.svg' } },
         { div: { class: 'feed-stat-vote' } },
         { span: { class: 'upvote vote-btn', qObj: quest, action: 1 } },
+        { span: { class: 'vote-count', id: `vote-count-${quest.id}`, text: quest.votes } },
         { span: { class: 'dnvote vote-btn', qObj: quest, action: -1 } },
-        { span: { class: 'vote-count', text: quest.votes } },
         { span: { class: 'meet-question-stat span-flex', text: quest.createdOn } },
         { span: { class: 'comment-control span-flex collapsed', action: quest.id } },
         { span: { class: 'comment-exp', text: 'comments' } },
       ],
-      [0, 1, 1, 0, 4, 5, 6, 6, 6, 4, 4, 11],
+      [0, 1, 1, 0, 0, 0, 6, 6, 6, 4, 4, 11],
     ];
 
     const elems = elementCreator(schema);
     elems[11].container = elems[0];
-    voteArray.push([elems[7], elems[8]]);
+    voteArray.push([elems[7], elems[9]]);
     elems[11].box = elems[0];
     commentBtns.push(elems[11]);
     box.appendChild(elems[0]);
@@ -204,48 +204,42 @@ const commentBoxCreator = (box, data) => {
   const boxSchema = [
     [
       { div: { class: 'comment-box-container showing' } },
+      { div: { class: 'comment-box-container2' } },
       { div: { class: 'add-comment-container' } },
-      { input: { type: 'text', id: 'add-comment-input' } },
+      { input: { type: 'text', id: 'add-comment-input', placeholder: 'Add comment...' } },
       { button: { type: 'button', id: 'add-comment-button', text: 'comment' } },
     ],
-    [0, 1, 1],
+    [0, 0, 2, 2],
   ];
-
   const elements = elementCreator(boxSchema);
-
-
   const replyBtns = [];
-  data.forEach(comment => replyBtns.push(commentCreator(elements[0], comment)));
-  elements[3].box = elements[0];
+  data.forEach(comment => replyBtns.push(commentCreator(elements[1], comment)));
+  elements[4].box = elements[1];
   box.classList.add('populated');
   box.comment = elements[0];
   box.appendChild(elements[0]);
 
-  return [elements[3], elements[2], replyBtns];
+  return [elements[4], elements[3], replyBtns];
 };
 
 const commentCreator = (box, data) => {
+  const commentText = `<span class="comment-author">${data.username}</span>${data.body}`;
   const schema = [
     [
       { div: { class: 'comment-box' } },
-      { div: { class: 'comment-box-details' } },
-      { span: { class: 'comment-author', text: data.username } },
-      { span: { class: 'comment-timestamp', text: data.createdOn } },
+      { img: { class: 'user-dp-small comment-dp', src: data.displaypicture || '../assets/profile.svg' } },
       { div: { class: 'comment-box-text' } },
-      { span: { class: 'comment-text', text: data.body } },
+      { span: { class: 'comment-text', text: commentText } },
       { div: { class: 'comment-options' } },
-      {
-        button: {
-          type: 'button', class: 'comment-reply-button', text: 'reply', username: data.username,
-        },
-      },
+      { button: { type: 'button', class: 'comment-reply-button', text: 'reply', username: data.username } },
+      { span: { class: 'comment-timestamp', text: data.createdOn } },
     ],
-    [0, 1, 1, 0, 4, 0, 6],
+    [0, 0, 2, 0, 4, 4],
   ];
-
   const elements = elementCreator(schema);
-  box.insertBefore(elements[0], box.lastChild);
-  return elements[7];
+  box.appendChild(elements[0]);
+
+  return elements[5];
 };
 
 const rsvpNotifCreator = ([rsvp, notif]) => {
@@ -263,6 +257,7 @@ const rsvpNotifCreator = ([rsvp, notif]) => {
     [0, 1, 1, 1, 1, 0, 6],
   ];
   const elements = elementCreator(schema);
+
   return [elements[0], [elements[3], elements[4], elements[5]], elements[7]];
 };
 

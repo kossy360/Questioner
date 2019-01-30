@@ -20,8 +20,9 @@ import { createQuestions } from '../modules/pagecontrol.js';
 import { imageInputControl } from '../modules/imageControl.js';
 import { populateProfile } from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
-const profile = JSON.parse(window.sessionStorage.getItem('user'));
-if (!profile) window.location.href = '/Quetioner/UI';
+
+const profile = dummydata.user;
+// if (!profile) window.location.href = '/Quetioner/UI';
 
 
 const tabSelector = document.getElementsByClassName('tab-selector');
@@ -122,13 +123,14 @@ const expandMeet = (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
   const [box, rsvps, notif] = meetCreator(container, meetData);
+  box.classList.add('expanded');
   if (meetData.images.length > 0) {
     const imgBtn = imageCreator(meetData.images, container);
     imgBtnControl(imgBtn);
   }
   rsvpControl(rsvps);
   notifContol(notif);
-  createQuestions(container, dummydata.questions);
+  createQuestions(box, dummydata.questions);
 };
 
 const populate = () => {
