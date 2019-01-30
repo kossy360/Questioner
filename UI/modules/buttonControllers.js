@@ -13,7 +13,7 @@ const voteControl = (voteBtn, index, array) => {
   voteBtn.calc = (x) => {
     const num = voteBtn.action;
     voteBtn.qObj.votes += x === 0 ? -num : num;
-    voteBtn.parentElement.lastChild.textContent = voteBtn.qObj.votes;
+    document.getElementById(`vote-count-${voteBtn.qObj.id}`).textContent = voteBtn.qObj.votes;
   };
 
   voteBtn.addEventListener('click', () => {

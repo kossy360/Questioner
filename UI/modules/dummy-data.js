@@ -2,7 +2,7 @@ const data = {
   user: {
     id: 1,
     firstname: 'Kossy',
-    secondname: 'Ugochukwu',
+    lastname: 'Ugochukwu',
     othername: 'Ugochukwu',
     email: 'kossyugochukwu@gmail.com',
     phoneNumber: '08170336933',
@@ -62,7 +62,7 @@ const data = {
     body: 'is this gesture going to continue?',
     votes: 25,
   }, {
-    id: 1,
+    id: 2,
     createdOn: '11/11/11',
     createdBy: 1,
     username: 'kossy360',
@@ -70,7 +70,7 @@ const data = {
     body: 'is this gesture going to continue?',
     votes: 25,
   }, {
-    id: 1,
+    id: 3,
     createdOn: '11/11/11',
     createdBy: 1,
     username: 'kossy360',
@@ -78,7 +78,7 @@ const data = {
     body: 'is this gesture going to continue?',
     votes: 25,
   }, {
-    id: 1,
+    id: 4,
     createdOn: '11/11/11',
     createdBy: 1,
     username: 'kossy360',
