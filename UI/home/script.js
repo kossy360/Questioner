@@ -20,6 +20,7 @@ import { createQuestions } from '../modules/pagecontrol.js';
 import { imageInputControl } from '../modules/imageControl.js';
 import { populateProfile } from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
+import Slide from '../modules/slide.js';
 
 const profile = dummydata.user;
 // if (!profile) window.location.href = '/Quetioner/UI';
@@ -122,11 +123,11 @@ const addBookQuestions = (id, box) => {
 const expandMeet = (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
-  const [box, rsvps, notif] = meetCreator(container, meetData);
+  const [box, rsvps, notif, image] = meetCreator(container, meetData);
   box.classList.add('expanded');
   if (meetData.images.length > 0) {
-    const imgBtn = imageCreator(meetData.images, container);
-    imgBtnControl(imgBtn);
+    const imgArray = imageCreator(meetData.images, image);
+    imgBtnControl(imgArray);
   }
   rsvpControl(rsvps);
   notifContol(notif);

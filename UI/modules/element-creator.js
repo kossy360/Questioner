@@ -1,7 +1,10 @@
+/* eslint-disable import/extensions */
 /* eslint-disable object-curly-newline */
 /* eslint-env browser */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
+
+import Slide from './slide.js';
 
 /**
  *creates a html component based on an inputed
@@ -76,7 +79,7 @@ const meetCreator = (box, data) => {
   });
 
   box.appendChild(elements[0]);
-  return [elements[0], rsvps, notif];
+  return [elements[0], rsvps, notif, elements[2]];
 };
 
 const notifCreator = (box, data) => {
@@ -170,12 +173,12 @@ const questionCreator = (box, data) => {
   const voteArray = [];
   const commentBtns = [];
   data.forEach((quest) => {
+    const questionText = `<span class="question-author">${quest.username}</span>${quest.body}`;
     const schema = [
       [
         { div: { class: 'meet-question-details', id: quest.id } },
         { div: { class: 'meet-question-details-1' } },
-        { span: { class: 'meet-question-name span-flex', text: quest.body } },
-        { span: { class: 'meet-question-author span-flex', text: quest.username } },
+        { span: { class: 'meet-question-name span-flex', text: questionText } },
         { div: { class: 'meet-question-details-2' } },
         { img: { class: 'user-dp-small question-dp', src: data.displaypicture || '../assets/profile.svg' } },
         { div: { class: 'feed-stat-vote' } },
@@ -186,14 +189,14 @@ const questionCreator = (box, data) => {
         { span: { class: 'comment-control span-flex collapsed', action: quest.id } },
         { span: { class: 'comment-exp', text: 'comments' } },
       ],
-      [0, 1, 1, 0, 0, 0, 6, 6, 6, 4, 4, 11],
+      [0, 1, 0, 0, 0, 5, 5, 5, 3, 3, 10],
     ];
 
     const elems = elementCreator(schema);
-    elems[11].container = elems[0];
-    voteArray.push([elems[7], elems[9]]);
-    elems[11].box = elems[0];
-    commentBtns.push(elems[11]);
+    elems[10].container = elems[0];
+    voteArray.push([elems[6], elems[8]]);
+    elems[10].box = elems[0];
+    commentBtns.push(elems[10]);
     box.appendChild(elems[0]);
   });
 
@@ -264,25 +267,40 @@ const rsvpNotifCreator = ([rsvp, notif]) => {
 const imageCreator = (images, box) => {
   const schema = [
     [
-      { div: { class: 'meet-image-outer-container' } },
-      { span: { class: 'meet-image-control' } },
-      { div: { class: 'meet-image-container' } },
-      { div: { class: 'meet-image-container2' } },
+      { div: { class: 'meet-image-window' } },
+      { div: { class: 'meet-image-strip' } },
+      { div: { class: 'meet-image-navigator' } },
+      { div: { class: 'meet-image-nav left', action: 0 } },
+      { div: { class: 'meet-image-nav right', action: 1 } },
+      { div: { class: 'meet-image-tabs' } },
     ],
-    [0, 0, 2],
+    [0, 0, 2, 2, 0],
   ];
 
   const elements = elementCreator(schema);
+  const navArray = [];
 
-  images.forEach((image) => {
+  images.forEach((image, index) => {
     const img = document.createElement('img');
+    const nav = document.createElement('span');
     img.className = 'meet-image';
     img.src = image;
-    elements[3].appendChild(img);
+    nav.className = 'image-nav';
+    nav.tab = index;
+    elements[1].appendChild(img);
+    elements[5].appendChild(nav);
+    navArray.push(nav);
   });
-  elements[1].boxArray = elements.filter(element => element !== elements[1]);
-  box.appendChild(elements[0]);
-  return elements[1];
+
+  const callback = (num) => {
+    navArray.forEach((elem) => {
+      elem.classList.toggle('selected', elem.tab === num);
+    });
+  };
+
+  const slide = new Slide(elements[0], elements[1], images.length - 1, 300, callback);
+  box.parentElement.replaceChild(elements[0], box);
+  return [elements[3], elements[4], navArray, slide];
 };
 
 export {

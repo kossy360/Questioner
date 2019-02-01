@@ -20,7 +20,7 @@ const data = {
     tags: ['infrastructure', 'transport', 'economy', 'technology', 'growth'],
     rsvp: 'yes',
     questions: 50,
-    images: [],
+    images: ['../assets/meeting1.jpg', '../assets/meeting1.jpg', '../assets/meeting1.jpg'],
   }, {
     id: 1,
     title: 'Building of the second Niger Bridge',

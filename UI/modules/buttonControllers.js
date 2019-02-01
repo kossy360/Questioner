@@ -32,18 +32,11 @@ const voteControl = (voteBtn, index, array) => {
   });
 };
 
-const imgBtnControl = (imgBtn) => {
-  console.log(imgBtn.boxArray);
-  const [parent] = imgBtn.boxArray;
-  imgBtn.addEventListener('click', () => {
-    if (parent.classList.contains('showing')) {
-      parent.classList.remove('showing');
-      imgBtn.classList.remove('expanded');
-    } else {
-      parent.classList.add('showing');
-      imgBtn.classList.add('expanded');
-    }
-  });
+const imgBtnControl = ([bwd, fwd, navArray, slide]) => {
+  bwd.addEventListener('click', () => slide.move(0));
+  fwd.addEventListener('click', () => slide.move(1));
+  navArray.forEach(nav => nav.addEventListener('click', () => slide.jump(nav.tab)));
+  slide.initialize();
 };
 
 const askBtnControl = (ask) => {
