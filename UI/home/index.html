@@ -17,19 +17,23 @@
     </header>
     <button class="profile-button" type="button"></button>
     <nav>
-      <span class="tab-selector tab-active">
+      <span class="tab-selector  tab-active" tab-id="meets-section">
         <img class="icon-img" src="../assets/meetup.svg" alt="" srcset="">
         <span class="tab-selector-text">meets</span>
       </span>
-      <span class="tab-selector">
+      <span class="tab-selector" tab-id="booked-section">
         <img class="icon-img" src="../assets/booked.svg" alt="" srcset="">
         <span class="tab-selector-text">booked</span>
       </span>
-      <span class="tab-selector">
+      <span class="tab-selector" tab-id="notif-section">
         <img class="icon-img" src="../assets/notifications.svg" alt="" srcset="">
         <span class="tab-selector-text">notifications</span>
       </span>
-      <span class="tab-selector" id="tab-selector-profile">
+      <span class="tab-selector" tab-id="search-section" id="tab-selector-search">
+        <img class="icon-img" src="../assets/search.svg" alt="" srcset="">
+        <span class="tab-selector-text">search</span>
+      </span>
+      <span class="tab-selector" tab-id="profile-section" id="tab-selector-profile">
         <img class="icon-img profile-icon-img" id="profile-icon" src="../assets/profile.svg" alt="" srcset="">
         <span class="tab-selector-text">profile</span>
       </span>
@@ -42,6 +46,85 @@
     </section>
 
     <section class="main-section" id="notif-section">
+    </section>
+
+    <section class="main-section" id="search-section">
+      <div class="search-input-container">
+        <div class="search-input-main">
+          <input type="text" id="search-input" placeholder="search meetups...">
+          <button type="button" class="search-button">Search</button>
+        </div>
+        <div class="search-history-container">
+          <P class="search-history-text">some search</P>
+          <P class="search-history-text">some search</P>
+          <P class="search-history-text">some search</P>
+          <P class="search-history-text">some search</P>
+        </div>
+      </div>
+      <div class="search-result-container">
+        <div class="result-nav">
+          <span class="result-tab tab-active" id="result-topic-tab" tab-id="result-container-topic">
+            Topic
+          </span>
+          <span class="result-tab" id="result-tag-tab" tab-id="result-container-tag">
+            Tags
+          </span>
+        </div>
+        <div class="topic-result-container result-container result-container-showing" id="result-container-topic">
+          <div class="result-box">
+            <p class="meet-name">meet result 1</p>
+            <div class="meet-stats">
+              <div class="meet-stat date">
+                <span class="meet-icon meet-date-icon"></span>
+                <span class="meet-stat-text meet-date-text">11/11/11</span>
+              </div>
+              <div class="meet-stat time">
+                <span class="meet-icon meet-time-icon"></span>
+                <span class="meet-stat-text meet-time-text">3:00</span>
+              </div>
+              <div class="meet-stat place">
+                <span class="meet-icon meet-place-icon"></span>
+                <span class="meet-stat-text meet-place-text">Abuja</span>
+              </div>
+            </div>
+            <div class="meet-tags-container">
+              <div class="meet-tags">
+                <span class="meet-tag">infrastructure</span>
+                <span class="meet-tag">transport</span>
+                <span class="meet-tag">economy</span>
+                <span class="meet-tag">technology</span>
+                <span class="meet-tag">growth</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tag-result-container result-container" id="result-container-tag">
+          <div class="result-box">
+            <p class="meet-name">meet result 2</p>
+            <div class="meet-stats">
+              <div class="meet-stat date">
+                <span class="meet-icon meet-date-icon"></span>
+                <span class="meet-stat-text meet-date-text">11/11/11</span>
+              </div>
+              <div class="meet-stat time">
+                <span class="meet-icon meet-time-icon"></span>
+                <span class="meet-stat-text meet-time-text">3:00</span>
+              </div>
+              <div class="meet-stat place">
+                <span class="meet-icon meet-place-icon"></span>
+                <span class="meet-stat-text meet-place-text">Abuja</span>
+              </div>
+            </div>
+            <div class="meet-tags-container">
+              <div class="meet-tags">
+                <span class="meet-tag">infrastructure</span>
+                <span class="meet-tag">transport</span>
+                <span class="meet-tag">economy</span>
+                <span class="meet-tag">technology</span>
+                <span class="meet-tag">growth</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="main-section" id="profile-section">

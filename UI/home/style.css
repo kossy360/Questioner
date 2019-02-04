@@ -22,6 +22,7 @@ body {
 
 button {
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .content-container {
@@ -82,7 +83,7 @@ nav {
   height: 2.5rem;
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(4, auto);
+  grid-template-columns: repeat(5, auto);
   text-align: center;
   position: fixed;
   top: 60px;
@@ -101,6 +102,7 @@ nav.top-fix {
   justify-content: center;
   align-items: center;
   height: 2.5rem;
+  cursor: pointer;
   transition: all 0.3s linear;
 }
 
@@ -355,6 +357,92 @@ span.question-feed-stat.vote-stat.flex-left {
   height: 3em;
   z-index: 2;
   cursor: pointer;
+}
+
+/** search box */
+
+.search-result-container {
+  width: 96%;
+  margin: auto;
+  border-width: 1px 1px 0 1px;
+}
+
+.result-box {
+  border: 1px solid #288bd9;
+}
+
+.search-input-container {
+  width: 96%;
+  margin: auto;
+}
+
+.search-input-main {
+  display: flex;
+}
+
+input#search-input {
+  border: 1px solid #288bd9;
+  box-sizing: border-box;
+  height: 2.25em;
+  padding: 5px;
+  width: 95%;
+}
+
+button.search-button {
+  height: 2.25em;
+  background: #288bd9;
+  border: none;
+  width: 10%;
+  min-width: 4em;
+  color: white;
+}
+
+.search-history-text {
+  height: 2em;
+  display: flex;
+  padding-left: 10px;
+  align-items: center;
+  border-bottom: 1px solid #d7e0e8;
+}
+
+.search-history-text:hover {
+  background: #d7e0e8;
+}
+
+.result-nav {
+  height: 2.5em;
+  display: grid;
+  grid-auto-flow: column;
+  text-align: center;
+  background: #0088be;
+}
+
+.result-container {
+  margin-top: 15px;
+  display: none;
+}
+
+.result-tab {
+  font-size: 1.2em;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s linear;
+}
+
+.result-tab:hover {
+  background: #1d7ac4;
+}
+
+.result-tab.tab-active {
+  background: #0762a9;
+  color: white;
+}
+
+.result-container.result-container-showing {
+  display: block;
 }
 
 .meet-container.expanded {
@@ -661,7 +749,7 @@ footer p {
     top: 60px;
     padding-top: 20px;
     grid-template-columns: 100%;
-    grid-template-rows: repeat(4, 4rem);
+    grid-template-rows: repeat(5, 4rem);
   }
 
   nav.top-fix {
@@ -689,7 +777,9 @@ footer p {
   .meet-container,
   .main-notif-container,
   .book-container,
-  .meet-image-outer-container {
+  .meet-image-outer-container,
+  .search-result-container,
+  .search-input-container {
     max-width: 900px;
     overflow: hidden;
   }
