@@ -1580,3 +1580,37 @@ button.modal-opt.true {
 button.modal-opt.false {
   background: red;
 }
+
+/* error-modal */
+
+.error-modal {
+  width: 96%;
+  max-width: 250px;
+  background: #ff1d1da3;
+  margin: 10px;
+  height: 3em;
+  padding: 10px;
+  display: flex;
+  margin: auto;
+}
+
+span.error-icon {
+  display: block;
+  height: 20px;
+  width: 20px;
+  background: red;
+  border-radius: 100%;
+}
+
+span.error-text {
+  margin-left: 10px;
+  color: white;
+  font-size: 1.15em;
+}
+
+.error-modal-container {
+    position: fixed;
+    width: 100%;
+    height: 2.1em;
+    z-index: 3;
+}
