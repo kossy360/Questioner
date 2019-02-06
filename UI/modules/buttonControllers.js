@@ -102,6 +102,23 @@ const addQuestion = (box, question) => {
     commentBtnControl(commentBtn);
   });
 };
+const commentControl = (box, input, commentBtns) => {
+  commentBtns.forEach((btn, index) => {
+    if (index === 0) {
+      btn.input = input;
+      replyBtnControl([btn]);
+    } else {
+      const swith = (id1, showClass) => {
+        const showing = document.querySelector(`.${showClass}`);
+        showing.classList.toggle(showClass);
+        document.getElementById(id1).classList.add(showClass);
+      };
+      btn.addEventListener('click', () => {
+        swith('user-profile', 'section-showing');
+      });
+    }
+  });
+};
 
 const addComments = (id, box) => {
   // get data with id
@@ -119,18 +136,13 @@ const addComments = (id, box) => {
     };
     input.value = '';
     const replyBtn = commentCreator(addComment.box, data);
-
-    replyBtn.input = input;
-    replyBtnControl([replyBtn]);
+    commentControl(box, input, replyBtn);
   });
 
-  replyBtns.forEach((btn) => {
-    btn.input = input;
-  });
-  replyBtnControl(replyBtns);
+  commentControl(box, input, replyBtns);
+
   box.classList.add('populated');
 };
-
 
 export {
   voteControl,

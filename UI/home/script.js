@@ -125,7 +125,13 @@ const expandMeet = (meetData) => {
   }
   rsvpControl(rsvps);
   notifContol(notif);
-  createQuestions(box, dummydata.questions);
+  const profiles = createQuestions(box, dummydata.questions);
+
+  profiles.forEach(((profilee) => {
+    profilee.forEach(elem => elem.addEventListener('click', () => {
+      swith('user-profile', 'section-showing');
+    }));
+  }));
 };
 
 const populate = () => {
