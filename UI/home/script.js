@@ -20,7 +20,6 @@ import { createQuestions } from '../modules/pagecontrol.js';
 import { imageInputControl } from '../modules/imageControl.js';
 import { populateProfile } from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
-import Slide from '../modules/slide.js';
 
 const profile = dummydata.user;
 // if (!profile) window.location.href = '/Quetioner/UI';
@@ -118,8 +117,7 @@ const expandMeet = (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
   const [box, rsvps, notif, image] = meetCreator(container, meetData);
-  box.classList.add('expanded');
-  if (meetData.images.length > 0) {
+  if (meetData.images.length > 1) {
     const imgArray = imageCreator(meetData.images, image);
     imgBtnControl(imgArray);
   }
@@ -134,10 +132,18 @@ const expandMeet = (meetData) => {
   }));
 };
 
+const populateMeet = async () => {
+  try {
+    const meets = await fetchData.meetups();
+    console.log(meets);
+    meets.forEach(meet => addMeet(meet));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const populate = () => {
-  dummydata.meetups.forEach((meet) => {
-    addMeet(meet);
-  });
+  populateMeet();
 
   dummydata.notifications.forEach((notif) => {
     addNotif(notif);

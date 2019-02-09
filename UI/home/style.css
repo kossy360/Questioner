@@ -133,10 +133,10 @@ nav.top-fix {
 
 .main-section {
   margin-bottom: 5rem;
-  margin-top: 119px;
+  margin-top: 6.85em;
   position: relative;
   display: none;
-  padding-top: 20px;
+  padding-top: 1px;
 }
 
 .meet-container,
@@ -158,9 +158,9 @@ nav.top-fix {
   transition: box-shadow 0.3s linear;
 }
 
-.main-container:hover {
+/* .main-container:hover {
   box-shadow: 6px 6px 8px 1px #0000004d;
-}
+} */
 
 .meet-container {
   border-color: #288bd9;
@@ -233,10 +233,14 @@ nav.top-fix {
 }
 
 .meet-tags {
-  display: flex;
+  display: none;
   padding: 5px 1em;
   width: 100%;
   flex-wrap: wrap;
+}
+
+.meet-tags.populated {
+  display: flex;
 }
 
 .meet-tags-title {
@@ -561,6 +565,9 @@ img.meet-image {
   width: 100%;
   box-sizing: border-box;
   display: inline-block;
+  max-height: 500px;
+  object-fit: contain;
+  background: #95cee7;
 }
 
 .meet-image-container {
@@ -864,6 +871,7 @@ button.profile-edit-button {
   position: relative;
   float: right;
   height: 1.3rem;
+  width: auto;
   bottom: 1.6rem;
   border-radius: 5px;
   border: transparent;
@@ -1101,12 +1109,13 @@ button#add-comment-button {
   border-color: inherit;
   height: 3rem;
   padding: 1rem;
+  padding-left: 0;
 }
 
 .rsvp-container {
   display: flex;
   width: 100%;
-  /* border-bottom: 1px solid; */
+  padding-left: 1em;
   border-color: #288bd9;
 }
 
@@ -1131,6 +1140,11 @@ button#add-comment-button {
 
 .rsvp-text {
   margin-right: 5px;
+}
+
+.rsvp-tag-count {
+  margin-right: 10px;
+  font-size: 1.3em;
 }
 
 .notif-icon-container {
@@ -1161,6 +1175,10 @@ button#add-comment-button {
 .rsvp-tag.maybe.active {
   background: orange;
   border: 1px solid orange;
+}
+
+.rsvp-tag.active.admin {
+  transform: scale(1);
 }
 
 .question-feed-container1 {
@@ -1226,7 +1244,7 @@ meet-entry-container.time {
 
 .meet-selected-container {
   display: grid;
-  border: 1px solid;
+  border: 1px solid #d7e0e8;
   height: auto;
   width: 100%;
   grid-template-columns: repeat(3, 33.33%);
@@ -1244,7 +1262,6 @@ meet-entry-container.time {
   margin: 20px;
   min-width: 7rem;
   height: 2.5rem;
-  border-radius: 8px;
   border: transparent;
   background: green;
   font-size: 1.2em;
@@ -1258,13 +1275,17 @@ meet-entry-container.time {
 
 .meet-control-container {
   display: flex;
+  justify-content: flex-end;
+  height: 2em;
+  background: #d7e0e8;
+  padding: 2px;
 }
 
 .meet-control-btn {
-  width: 3rem;
+  min-width: auto;
+  height: 100%;
   margin: 5px;
   border: transparent;
-  border-radius: 5px;
 }
 
 .meet-create-button-container .edit {
@@ -1308,7 +1329,7 @@ meet-entry-container.time {
 }
 
 #create-picture-label {
-  background: grey;
+  background: #288bd9;
   color: white;
   display: inline-block;
   padding: 10px;
@@ -1382,10 +1403,11 @@ span.tag-span-container {
   margin: 3px;
   display: inline-block;
   font-size: 0.8em;
-  padding: 2px;
+  padding-left: 2px;
   border-radius: 6px;
   height: 1.7rem;
   box-sizing: border-box;
+  display: inline-flex;
 }
 
 button.close-btn {
@@ -1395,6 +1417,7 @@ button.close-btn {
   background: transparent;
   color: red;
   cursor: pointer;
+  width: auto;
 }
 
 input#meet-tags-input {
@@ -1407,11 +1430,18 @@ input#meet-tags-input {
   margin: 3px;
 }
 
+span.tag-span {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
 /* carousel */
 
 .meet-image-strip {
-  display: flex;
+  display: grid;
   grid-auto-flow: column;
+  grid-auto-columns: 100%;
   height: max-content;
   position: relative;
 }
@@ -1432,6 +1462,8 @@ input#meet-tags-input {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  height: 500px;
+  background: #95cee7;
 }
 
 .meet-image-navigator {
@@ -1465,7 +1497,7 @@ span.image-nav {
   display: inline-block;
   width: 20px;
   height: 20px;
-  background: #9E9E9E;
+  background: #d7e0e8;
   margin: 5px;
   border-radius: 100%;
   transition: all 0.3s linear;
@@ -1473,7 +1505,7 @@ span.image-nav {
 }
 
 span.image-nav.selected {
-  background: black;
+  background: #288bd9;
   transform: scale(1.2);
 }
 
@@ -1486,7 +1518,6 @@ span.image-nav.selected {
   width: 96%;
   margin: auto;
   margin-top: 20px;
-  /* border: 1px solid #0088be; */
   box-shadow: 1px 1px 8px 1px #0000004d;
 }
 
@@ -1609,8 +1640,9 @@ span.error-text {
 }
 
 .error-modal-container {
-    position: fixed;
-    width: 100%;
-    height: 2.1em;
-    z-index: 3;
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 2.1em;
+  z-index: 3;
 }

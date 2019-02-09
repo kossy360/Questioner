@@ -17,21 +17,27 @@
     </header>
     <button class="profile-button" type="button"></button>
     <nav>
-      <span class="tab-selector tab-active">
+      <span class="tab-selector tab-active" tab-id="meets-section">
         <img class="icon-img" src="../assets/meetup.svg" alt="" srcset="">
         <span class="tab-selector-text">meets</span>
       </span>
 
-      <span class="tab-selector">
+      <span class="tab-selector" tab-id="notif-section">
         <img class="icon-img" src="../assets/notifications.svg" alt="" srcset="">
         <span class="tab-selector-text">notifications</span>
       </span>
 
-      <span class="tab-selector">
+      <span class="tab-selector" tab-id="meet-create-section">
         <img class="icon-img" src="../assets/folder.svg" alt="" srcset="">
         <span class="tab-selector-text">Organize</span>
       </span>
-      <span class="tab-selector" id="tab-selector-profile">
+
+      <span class="tab-selector" tab-id="search-section" id="tab-selector-search">
+        <img class="icon-img" src="../assets/search.svg" alt="" srcset="">
+        <span class="tab-selector-text">search</span>
+      </span>
+
+      <span class="tab-selector" id="tab-selector-profile" tab-id="profile-section">
         <img class="icon-img profile-icon-img" id="profile-icon" src="../assets/profile.svg" alt="" srcset="">
         <span class="tab-selector-text">profile</span>
       </span>
@@ -50,27 +56,28 @@
       <div class="meet-create-container">
         <div class="meet-entry-container title">
           <label class="meet-input-label" for="meet-title-input">TITLE</label>
-          <textarea pointer="title" class="meet-create-input" id="meet-title-input" type="text"></textarea>
+          <textarea pointer="topic" class="meet-create-input" id="meet-title-input" type="text"></textarea>
         </div>
         <div class="meet-entry-container date">
-          <label class="meet-input-label"for="meet-date-input">DATE</label>
+          <label class="meet-input-label" for="meet-date-input">DATE</label>
           <input pointer="date" class="meet-create-input" id="meet-date-input" type="text">
         </div>
         <div class="meet-entry-container time">
-          <label class="meet-input-label"for="meet-time-input">TIME</label>
+          <label class="meet-input-label" for="meet-time-input">TIME</label>
           <input pointer="time" class="meet-create-input" id="meet-time-input" type="text">
         </div>
         <div class="meet-entry-container location">
-          <label class="meet-input-label"for="meet-location-input">LOCATION</label>
+          <label class="meet-input-label" for="meet-location-input">LOCATION</label>
           <input pointer="location" class="meet-create-input" id="meet-location-input" type="text">
         </div>
         <div class="meet-entry-container pictures">
           <label id="create-picture-label" for="meet-picture-input">Add Pictures</label>
-          <input type="file" accept="image/jpeg, image/png" pointer="images" class="meet-create-input" id="meet-picture-input" multiple>
+          <input type="file" accept="image/jpeg, image/png" pointer="images" class="meet-create-input" id="meet-picture-input"
+            multiple>
           <div class="meet-selected-container"></div>
         </div>
         <div class="meet-entry-container tags">
-          <label class="meet-input-label"for="meet-tags-input">TAGS</label>
+          <label class="meet-input-label" for="meet-tags-input">TAGS</label>
           <div class="tag-edit-container meet-create-input" pointer="tags">
             <input class="tags-create-input" id="meet-tags-input" type="text" placeholder="add a tag...">
           </div>
@@ -83,7 +90,86 @@
       </div>
     </section>
 
-    <section class="main-section" id="profile-section">
+    <section class="main-section" id="search-section">
+      <div class="search-input-container">
+        <div class="search-input-main">
+          <input type="text" id="search-input" placeholder="search meetups...">
+          <button type="button" class="search-button">Search</button>
+        </div>
+        <div class="search-history-container">
+          <P class="search-history-text">some search</P>
+          <P class="search-history-text">some search</P>
+          <P class="search-history-text">some search</P>
+          <P class="search-history-text">some search</P>
+        </div>
+      </div>
+      <div class="search-result-container">
+        <div class="result-nav">
+          <span class="result-tab tab-active" id="result-topic-tab" tab-id="result-container-topic">
+            Topic
+          </span>
+          <span class="result-tab" id="result-tag-tab" tab-id="result-container-tag">
+            Tags
+          </span>
+        </div>
+        <div class="topic-result-container result-container result-container-showing" id="result-container-topic">
+          <div class="result-box">
+            <p class="meet-name">meet result 1</p>
+            <div class="meet-stats">
+              <div class="meet-stat date">
+                <span class="meet-icon meet-date-icon"></span>
+                <span class="meet-stat-text meet-date-text">11/11/11</span>
+              </div>
+              <div class="meet-stat time">
+                <span class="meet-icon meet-time-icon"></span>
+                <span class="meet-stat-text meet-time-text">3:00</span>
+              </div>
+              <div class="meet-stat place">
+                <span class="meet-icon meet-place-icon"></span>
+                <span class="meet-stat-text meet-place-text">Abuja</span>
+              </div>
+            </div>
+            <div class="meet-tags-container">
+              <div class="meet-tags">
+                <span class="meet-tag">infrastructure</span>
+                <span class="meet-tag">transport</span>
+                <span class="meet-tag">economy</span>
+                <span class="meet-tag">technology</span>
+                <span class="meet-tag">growth</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tag-result-container result-container" id="result-container-tag">
+          <div class="result-box">
+            <p class="meet-name">meet result 2</p>
+            <div class="meet-stats">
+              <div class="meet-stat date">
+                <span class="meet-icon meet-date-icon"></span>
+                <span class="meet-stat-text meet-date-text">11/11/11</span>
+              </div>
+              <div class="meet-stat time">
+                <span class="meet-icon meet-time-icon"></span>
+                <span class="meet-stat-text meet-time-text">3:00</span>
+              </div>
+              <div class="meet-stat place">
+                <span class="meet-icon meet-place-icon"></span>
+                <span class="meet-stat-text meet-place-text">Abuja</span>
+              </div>
+            </div>
+            <div class="meet-tags-container">
+              <div class="meet-tags">
+                <span class="meet-tag">infrastructure</span>
+                <span class="meet-tag">transport</span>
+                <span class="meet-tag">economy</span>
+                <span class="meet-tag">technology</span>
+                <span class="meet-tag">growth</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+     <section class="main-section" id="profile-section">
       <div class="profile-container-main">
         <div id="profile-picture-container">
           <label id="profile-picture-label" for="profile-picture-input"></label>
@@ -102,12 +188,12 @@
         <button input="profile-first-name" class="profile-edit-button" type="button">edit</button>
       </div>
       <div class="profile-container">
-        <label for="profile-second-name" class="profile-input-label">Second name:</label>
-        <input pointer="secondname" type="text" id="profile-second-name" class="profile-input" disabled>
-        <button input="profile-second-name" class="profile-edit-button" type="button">edit</button>
+        <label for="profile-last-name" class="profile-input-label">Last name:</label>
+        <input pointer="lastname" type="text" id="profile-last-name" class="profile-input" disabled>
+        <button input="profile-last-name" class="profile-edit-button" type="button">edit</button>
       </div>
       <div class="profile-container">
-        <label for="profile-third-name" class="profile-input-label">Other names:</label>
+        <label for="profile-third-name" class="profile-input-label">Other name:</label>
         <input pointer="othername" type="text" id="profile-third-name" class="profile-input" disabled>
         <button input="profile-third-name" class="profile-edit-button" type="button">edit</button>
       </div>
@@ -121,13 +207,86 @@
         <input pointer="phoneNumber" type="text" id="profile-phone" class="profile-input" disabled>
         <button input="profile-phone" class="profile-edit-button" type="button">edit</button>
       </div>
-    </section>
-
-    <section class="meet-expanded-section main-section" id="meet-expanded">
-      <div id="meet-expanded-container">
+      <div class="stat-container">
+        <div class="stat-header">
+          <p class="stat-text">Usage Statistics</p>
+        </div>
+        <div class="usage-stat-container">
+          <div class="booked-meets usage-stat">
+            <p class="stat-text">Meetups booked to attend</p>
+          </div>
+          <div class="question-stat usage-stat">
+            <p class="stat-text">Questions asked</p>
+          </div>
+          <div class="comment-stat usage-stat">
+            <p class="stat-text">Questions commented on</p>
+          </div>
+          <div class="booked-meets-count stat-count">
+            <p class="stat-num" pointer="bookedMeetsCount">10</p>
+          </div>
+          <div class="question-stat-count stat-count">
+            <p class="stat-num" pointer="questionAskedCount">15</p>
+          </div>
+          <div class="comment-stat-count stat-count">
+            <p class="stat-num" pointer="commentCount">20</p>
+          </div>
+        </div>
       </div>
     </section>
 
+    <section class="meet-expanded-section main-section" id="meet-expanded">
+      <div id="meet-expanded-container"></div>
+    </section>
+
+    <section class="user-profile-section main-section" id="user-profile">
+      <div class="btn-container">
+        <button class="back-btn">back</button>
+      </div>
+      <div class="profile-display-container">
+        <div class="user-profile-container">
+          <img src="../assets/profile.svg" alt="">
+          <div class="profile-entry">
+            <span class="profile-key">First name</span>
+            <span class="profile-value" pointer="firstname">ugochukwu</span>
+          </div>
+          <div class="profile-entry">
+            <span class="profile-key">Last name</span>
+            <span class="profile-value" pointer="lastname">ugochukwu</span>
+          </div>
+          <div class="profile-entry">
+            <span class="profile-key">Other name</span>
+            <span class="profile-value" pointer="othername">ugochukwu</span>
+          </div>
+          <div class="profile-entry">
+            <span class="profile-key">Email</span>
+            <span class="profile-value" pointer="email">ugochukwu@ugo.com</span>
+          </div>
+          <div class="profile-entry">
+            <span class="profile-key">Phone</span>
+            <span class="profile-value" pointer="phonenumber">123456</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="modal-container">
+    <div class="modal">
+      <header class="modal-head">Delete Meetup</header>
+      <p class="modal-body">Are you sure of what you are doing</p>
+      <div class="modal-opt-container">
+        <button class="modal-opt true">continue</button>
+        <button class="modal-opt false">cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-modal-container">
+    <div class="error-modal">
+      <span class="error-icon"></span>
+      <span class="error-text">you are not connected</span>
+    </div>
   </div>
 
   <footer>

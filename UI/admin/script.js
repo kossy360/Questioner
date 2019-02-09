@@ -16,10 +16,10 @@ import Tag from '../modules/add-tag.js';
 import { createQuestions } from '../modules/pagecontrol.js';
 import { imageInputControl } from '../modules/imageControl.js';
 import { populateProfile } from '../modules/profileControl.js';
+import fetchData from '../helpers/fetchData.js';
 
 const tabSelector = document.getElementsByClassName('tab-selector');
-const tabs = document.getElementsByClassName('main-section');
-const meetContainer = document.getElementsByClassName('meet-container');
+
 const loop = Array.prototype.forEach;
 const tag = new Tag(
   document.querySelector('.tag-edit-container'),
@@ -27,30 +27,28 @@ const tag = new Tag(
 );
 tag.initialize();
 
-const swith = (e) => {
-  const showing = document.querySelector('.section-showing');
-  showing.classList.toggle('section-showing');
-  let pos = Array.prototype.indexOf.call(tabSelector, e);
-  if (pos === -1) pos = e;
-  tabs[pos].classList.add('section-showing');
+const swith = (id, showClass) => {
+  const showing = document.querySelector(`.${showClass}`);
+  showing.classList.toggle(showClass);
+  document.getElementById(id).classList.add(showClass);
 };
 
-loop.call(tabSelector, (elem) => {
-  elem.addEventListener('click', () => {
-    swith(elem);
-    const active = document.querySelector('.tab-active');
-    if (active === elem) return;
-    active.classList.remove('tab-active');
-    elem.classList.add('tab-active');
+const tabControl = (tabClass, showClass) => {
+  const elements = document.getElementsByClassName(tabClass);
+  loop.call(elements, (elem) => {
+    elem.addEventListener('click', () => {
+      swith(elem.getAttribute('tab-id'), showClass);
+      const active = document.querySelector(`.${tabClass}.tab-active`);
+      if (active === elem) return;
+      active.classList.remove('tab-active');
+      elem.classList.add('tab-active');
+    });
   });
-});
+};
 
-loop.call(meetContainer, (e) => {
-  e.addEventListener('click', () => {
-    swith(4);
-    expandMeet();
-  });
-});
+tabControl('tab-selector', 'section-showing');
+
+tabControl('result-tab', 'result-container-showing');
 
 loop.call(document.getElementsByClassName('create-button'), (button) => {
   const id = button.id;
@@ -179,7 +177,7 @@ const addMeet = (data, replace = false) => {
   );
   main.addEventListener('click', () => {
     expandMeet(data);
-    swith(4);
+    swith('meet-expanded', 'section-showing');
   });
   meetControl(main, edit, cancel);
 };
@@ -191,19 +189,34 @@ const addNotif = (data) => {
 const expandMeet = (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
-  const [box, edit, cancel] = meetCreator(container, meetData);
-  if (meetData.images.length > 0) {
-    const imgBtn = imageCreator(meetData.images, container);
-    imgBtnControl(imgBtn);
+  const [box, edit, cancel, image] = meetCreator(container, meetData);
+  if (meetData.images.length > 1) {
+    const imgArray = imageCreator(meetData.images, image);
+    imgBtnControl(imgArray);
   }
   meetControl(box, edit, cancel);
-  createQuestions(container, dummydata.questions);
+  const profiles = createQuestions(box, dummydata.questions);
+
+  profiles.forEach(((profilee) => {
+    profilee.forEach(elem => elem.addEventListener('click', () => {
+      swith('user-profile', 'section-showing');
+    }));
+  }));
+};
+
+const populateMeet = async () => {
+  try {
+    const meets = await fetchData.meetups();
+    console.log(meets);
+    meets.forEach(meet => addMeet(meet));
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const populate = () => {
-  dummydata.meetups.forEach((meet) => {
-    addMeet(meet);
-  });
+  populateMeet();
+
   dummydata.notifications.forEach((notif) => {
     addNotif(notif);
   });
