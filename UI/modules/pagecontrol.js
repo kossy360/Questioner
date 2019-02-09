@@ -12,7 +12,7 @@ import {
 } from './element-creator.js';
 
 const createQuestions = (container, questionData) => {
-  const [main, ask, voteArray, commentBtns] = questionContainerCreator(
+  const [main, ask, voteArray, commentBtns, profiles] = questionContainerCreator(
     container, questionData,
   );
   askBtnControl(ask);
@@ -22,6 +22,8 @@ const createQuestions = (container, questionData) => {
   commentBtns.forEach((commentBtn) => {
     commentBtnControl(commentBtn);
   });
+
+  return profiles;
 };
 
 export {

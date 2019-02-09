@@ -32,18 +32,11 @@ const voteControl = (voteBtn, index, array) => {
   });
 };
 
-const imgBtnControl = (imgBtn) => {
-  console.log(imgBtn.boxArray);
-  const [parent] = imgBtn.boxArray;
-  imgBtn.addEventListener('click', () => {
-    if (parent.classList.contains('showing')) {
-      parent.classList.remove('showing');
-      imgBtn.classList.remove('expanded');
-    } else {
-      parent.classList.add('showing');
-      imgBtn.classList.add('expanded');
-    }
-  });
+const imgBtnControl = ([bwd, fwd, navArray, slide]) => {
+  bwd.addEventListener('click', () => slide.move(0));
+  fwd.addEventListener('click', () => slide.move(1));
+  navArray.forEach(nav => nav.addEventListener('click', () => slide.jump(nav.tab)));
+  slide.initialize();
 };
 
 const askBtnControl = (ask) => {
@@ -109,6 +102,23 @@ const addQuestion = (box, question) => {
     commentBtnControl(commentBtn);
   });
 };
+const commentControl = (box, input, commentBtns) => {
+  commentBtns.forEach((btn, index) => {
+    if (index === 0) {
+      btn.input = input;
+      replyBtnControl([btn]);
+    } else {
+      const swith = (id1, showClass) => {
+        const showing = document.querySelector(`.${showClass}`);
+        showing.classList.toggle(showClass);
+        document.getElementById(id1).classList.add(showClass);
+      };
+      btn.addEventListener('click', () => {
+        swith('user-profile', 'section-showing');
+      });
+    }
+  });
+};
 
 const addComments = (id, box) => {
   // get data with id
@@ -126,18 +136,13 @@ const addComments = (id, box) => {
     };
     input.value = '';
     const replyBtn = commentCreator(addComment.box, data);
-
-    replyBtn.input = input;
-    replyBtnControl([replyBtn]);
+    commentControl(box, input, replyBtn);
   });
 
-  replyBtns.forEach((btn) => {
-    btn.input = input;
-  });
-  replyBtnControl(replyBtns);
+  commentControl(box, input, replyBtns);
+
   box.classList.add('populated');
 };
-
 
 export {
   voteControl,

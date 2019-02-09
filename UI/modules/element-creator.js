@@ -1,7 +1,10 @@
+/* eslint-disable import/extensions */
 /* eslint-disable object-curly-newline */
 /* eslint-env browser */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
+
+import Slide from './slide.js';
 
 /**
  *creates a html component based on an inputed
@@ -76,7 +79,7 @@ const meetCreator = (box, data) => {
   });
 
   box.appendChild(elements[0]);
-  return [elements[0], rsvps, notif];
+  return [elements[0], rsvps, notif, elements[2]];
 };
 
 const notifCreator = (box, data) => {
@@ -157,27 +160,28 @@ const questionContainerCreator = (box, data) => {
   const elements = elementCreator(schema);
 
 
-  const [voteArray, commentBtns] = questionCreator(elements[1], data);
+  const [voteArray, commentBtns, profiles] = questionCreator(elements[1], data);
 
   elements[6].input = elements[5];
   elements[6].box = elements[1];
 
   box.appendChild(elements[0]);
-  return [elements[0], elements[6], voteArray, commentBtns];
+  return [elements[0], elements[6], voteArray, commentBtns, profiles];
 };
 
 const questionCreator = (box, data) => {
   const voteArray = [];
   const commentBtns = [];
+  const profiles = [];
   data.forEach((quest) => {
     const schema = [
       [
         { div: { class: 'meet-question-details', id: quest.id } },
         { div: { class: 'meet-question-details-1' } },
-        { span: { class: 'meet-question-name span-flex', text: quest.body } },
-        { span: { class: 'meet-question-author span-flex', text: quest.username } },
+        { span: { class: 'meet-question-name span-flex' } },
+        { span: { class: 'question-author', user: quest.createdBy, text: quest.username } },
         { div: { class: 'meet-question-details-2' } },
-        { img: { class: 'user-dp-small question-dp', src: data.displaypicture || '../assets/profile.svg' } },
+        { img: { class: 'user-dp-small question-dp', src: data.displaypicture || '../assets/profile.svg', user: quest.createdBy } },
         { div: { class: 'feed-stat-vote' } },
         { span: { class: 'upvote vote-btn', qObj: quest, action: 1 } },
         { span: { class: 'vote-count', id: `vote-count-${quest.id}`, text: quest.votes } },
@@ -186,18 +190,20 @@ const questionCreator = (box, data) => {
         { span: { class: 'comment-control span-flex collapsed', action: quest.id } },
         { span: { class: 'comment-exp', text: 'comments' } },
       ],
-      [0, 1, 1, 0, 0, 0, 6, 6, 6, 4, 4, 11],
+      [0, 1, 2, 0, 0, 0, 6, 6, 6, 4, 4, 11],
     ];
 
     const elems = elementCreator(schema);
+    elems[3].insertAdjacentHTML('afterend', quest.body);
     elems[11].container = elems[0];
     voteArray.push([elems[7], elems[9]]);
+    profiles.push([elems[5], elems[3]]);
     elems[11].box = elems[0];
     commentBtns.push(elems[11]);
     box.appendChild(elems[0]);
   });
 
-  return [voteArray, commentBtns];
+  return [voteArray, commentBtns, profiles];
 };
 
 const commentBoxCreator = (box, data) => {
@@ -223,23 +229,24 @@ const commentBoxCreator = (box, data) => {
 };
 
 const commentCreator = (box, data) => {
-  const commentText = `<span class="comment-author">${data.username}</span>${data.body}`;
   const schema = [
     [
       { div: { class: 'comment-box' } },
       { img: { class: 'user-dp-small comment-dp', src: data.displaypicture || '../assets/profile.svg' } },
       { div: { class: 'comment-box-text' } },
-      { span: { class: 'comment-text', text: commentText } },
+      { span: { class: 'comment-text' } },
+      { span: { class: 'comment-author', text: data.username } },
       { div: { class: 'comment-options' } },
       { button: { type: 'button', class: 'comment-reply-button', text: 'reply', username: data.username } },
       { span: { class: 'comment-timestamp', text: data.createdOn } },
     ],
-    [0, 0, 2, 0, 4, 4],
+    [0, 0, 2, 3, 0, 5, 5],
   ];
   const elements = elementCreator(schema);
+  elements[4].insertAdjacentText('afterend', data.body);
   box.appendChild(elements[0]);
 
-  return elements[5];
+  return [elements[6], elements[1], elements[4]];
 };
 
 const rsvpNotifCreator = ([rsvp, notif]) => {
@@ -264,25 +271,40 @@ const rsvpNotifCreator = ([rsvp, notif]) => {
 const imageCreator = (images, box) => {
   const schema = [
     [
-      { div: { class: 'meet-image-outer-container' } },
-      { span: { class: 'meet-image-control' } },
-      { div: { class: 'meet-image-container' } },
-      { div: { class: 'meet-image-container2' } },
+      { div: { class: 'meet-image-window' } },
+      { div: { class: 'meet-image-strip' } },
+      { div: { class: 'meet-image-navigator' } },
+      { div: { class: 'meet-image-nav left', action: 0 } },
+      { div: { class: 'meet-image-nav right', action: 1 } },
+      { div: { class: 'meet-image-tabs' } },
     ],
-    [0, 0, 2],
+    [0, 0, 2, 2, 0],
   ];
 
   const elements = elementCreator(schema);
+  const navArray = [];
 
-  images.forEach((image) => {
+  images.forEach((image, index) => {
     const img = document.createElement('img');
+    const nav = document.createElement('span');
     img.className = 'meet-image';
     img.src = image;
-    elements[3].appendChild(img);
+    nav.className = 'image-nav';
+    nav.tab = index;
+    elements[1].appendChild(img);
+    elements[5].appendChild(nav);
+    navArray.push(nav);
   });
-  elements[1].boxArray = elements.filter(element => element !== elements[1]);
-  box.appendChild(elements[0]);
-  return elements[1];
+
+  const callback = (num) => {
+    navArray.forEach((elem) => {
+      elem.classList.toggle('selected', elem.tab === num);
+    });
+  };
+
+  const slide = new Slide(elements[0], elements[1], images.length - 1, 300, callback);
+  box.parentElement.replaceChild(elements[0], box);
+  return [elements[3], elements[4], navArray, slide];
 };
 
 export {

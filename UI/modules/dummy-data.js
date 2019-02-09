@@ -20,7 +20,7 @@ const data = {
     tags: ['infrastructure', 'transport', 'economy', 'technology', 'growth'],
     rsvp: 'yes',
     questions: 50,
-    images: [],
+    images: ['../assets/meeting1.jpg', '../assets/meeting1.jpg', '../assets/meeting1.jpg'],
   }, {
     id: 1,
     title: 'Building of the second Niger Bridge',
@@ -56,7 +56,7 @@ const data = {
   questions: [{
     id: 1,
     createdOn: '11/11/11',
-    createdBy: 1,
+    createdBy: 5,
     username: 'kossy360',
     meetup: 1,
     body: 'is this gesture going to continue?',
@@ -66,13 +66,13 @@ const data = {
     createdOn: '11/11/11',
     createdBy: 1,
     username: 'kossy360',
-    meetup: 1,
+    meetup: 3,
     body: 'is this gesture going to continue?',
     votes: 25,
   }, {
     id: 3,
     createdOn: '11/11/11',
-    createdBy: 1,
+    createdBy: 4,
     username: 'kossy360',
     meetup: 1,
     body: 'is this gesture going to continue?',
@@ -80,7 +80,7 @@ const data = {
   }, {
     id: 4,
     createdOn: '11/11/11',
-    createdBy: 1,
+    createdBy: 2,
     username: 'kossy360',
     meetup: 1,
     body: 'is this gesture going to continue?',

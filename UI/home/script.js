@@ -20,40 +20,35 @@ import { createQuestions } from '../modules/pagecontrol.js';
 import { imageInputControl } from '../modules/imageControl.js';
 import { populateProfile } from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
+import Slide from '../modules/slide.js';
 
 const profile = dummydata.user;
 // if (!profile) window.location.href = '/Quetioner/UI';
 
-
-const tabSelector = document.getElementsByClassName('tab-selector');
-const tabs = document.getElementsByClassName('main-section');
-const meetContainer = document.getElementsByClassName('meet-container');
 const loop = Array.prototype.forEach;
 
-const swith = (e) => {
-  const showing = document.querySelector('.section-showing');
-  showing.classList.toggle('section-showing');
-  let pos = Array.prototype.indexOf.call(tabSelector, e);
-  if (pos === -1) pos = e;
-  tabs[pos].classList.add('section-showing');
+const swith = (id, showClass) => {
+  const showing = document.querySelector(`.${showClass}`);
+  showing.classList.toggle(showClass);
+  document.getElementById(id).classList.add(showClass);
 };
 
-loop.call(tabSelector, (elem) => {
-  elem.addEventListener('click', () => {
-    swith(elem);
-    const active = document.querySelector('.tab-active');
-    if (active === elem) return;
-    active.classList.remove('tab-active');
-    elem.classList.add('tab-active');
+const tabControl = (tabClass, showClass) => {
+  const elements = document.getElementsByClassName(tabClass);
+  loop.call(elements, (elem) => {
+    elem.addEventListener('click', () => {
+      swith(elem.getAttribute('tab-id'), showClass);
+      const active = document.querySelector(`.${tabClass}.tab-active`);
+      if (active === elem) return;
+      active.classList.remove('tab-active');
+      elem.classList.add('tab-active');
+    });
   });
-});
+};
 
-loop.call(meetContainer, (e) => {
-  e.addEventListener('click', () => {
-    swith(4);
-    expandMeet();
-  });
-});
+tabControl('tab-selector', 'section-showing');
+
+tabControl('result-tab', 'result-container-showing');
 
 const rsvpControl = (rsvps, box) => {
   rsvps.forEach((elem) => {
@@ -80,7 +75,7 @@ const addMeet = (data) => {
   main.data = data;
   main.addEventListener('click', () => {
     expandMeet(data);
-    swith(4);
+    swith('meet-expanded', 'section-showing');
   });
   rsvpControl(rsvps);
   notifContol(notif);
@@ -122,15 +117,21 @@ const addBookQuestions = (id, box) => {
 const expandMeet = (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
-  const [box, rsvps, notif] = meetCreator(container, meetData);
+  const [box, rsvps, notif, image] = meetCreator(container, meetData);
   box.classList.add('expanded');
   if (meetData.images.length > 0) {
-    const imgBtn = imageCreator(meetData.images, container);
-    imgBtnControl(imgBtn);
+    const imgArray = imageCreator(meetData.images, image);
+    imgBtnControl(imgArray);
   }
   rsvpControl(rsvps);
   notifContol(notif);
-  createQuestions(box, dummydata.questions);
+  const profiles = createQuestions(box, dummydata.questions);
+
+  profiles.forEach(((profilee) => {
+    profilee.forEach(elem => elem.addEventListener('click', () => {
+      swith('user-profile', 'section-showing');
+    }));
+  }));
 };
 
 const populate = () => {
