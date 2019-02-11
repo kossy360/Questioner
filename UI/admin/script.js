@@ -6,6 +6,7 @@
 import {
   notifCreator,
   imageCreator,
+  searchCreator,
 } from '../modules/element-creator.js';
 
 import { imgBtnControl } from '../modules/buttonControllers.js';
@@ -132,6 +133,17 @@ const editMeet = (data) => {
   }
 };
 
+const tagControl = (tags) => {
+  tags.forEach(tag => tag.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const searchTab = document.getElementById('tab-selector-search');
+    if (searchTab.isSameNode(document.querySelector('.tab-active'))) return;
+    searchTab.click();
+    getResults(tag.tag);
+  }));
+};
+
+
 const createMeet = () => {
   const obj = getData('meet-create-input');
   const dummyData = { id: 1, rsvp: { yes: 0, maybe: 0, no: 0 }, questions: 0 };
@@ -172,13 +184,15 @@ const addMeet = (data, replace = false) => {
       document.getElementsByClassName('meet-container'),
       meet => Number(meet.id) === data.id,
     ) : null;
-  const [main, edit, cancel] = meetCreator(
+  const [main, edit, cancel, tags] = meetCreator(
     document.querySelector('#meets-section'), data, container,
   );
   main.addEventListener('click', () => {
     expandMeet(data);
     swith('meet-expanded', 'section-showing');
   });
+
+  tagControl(tags);
   meetControl(main, edit, cancel);
 };
 
@@ -189,11 +203,12 @@ const addNotif = (data) => {
 const expandMeet = (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
-  const [box, edit, cancel, image] = meetCreator(container, meetData);
+  const [box, edit, cancel, tags, image] = meetCreator(container, meetData);
   if (meetData.images.length > 1) {
     const imgArray = imageCreator(meetData.images, image);
     imgBtnControl(imgArray);
   }
+  tagControl(tags);
   meetControl(box, edit, cancel);
   const profiles = createQuestions(box, dummydata.questions);
 
@@ -220,6 +235,47 @@ const populate = () => {
   dummydata.notifications.forEach((notif) => {
     addNotif(notif);
   });
+};
+
+const populateSearch = ({ tags, topic }) => {
+  const populate1 = (obj, container, type) => {
+    if (!obj.result) container.textContent = 'No meetups found';
+    else {
+      while (container.hasChildNodes()) container.removeChild(container.lastChild);
+      obj.result.forEach((val) => {
+        const [box, tp, tg] = searchCreator(container, val);
+        box.addEventListener('click', () => {
+          expandMeet(val);
+          swith('meet-expanded', 'section-showing');
+        });
+        tagControl(tg);
+        if (type === 'tag') {
+          tg.forEach((tag) => {
+            if (tags.value.includes(tag.tag)) tag.classList.add('highlighted');
+          });
+        } else {
+          const regex = new RegExp(`(${topic.value})`, 'g');
+          console.log(tp.innerHTML);
+          tp.innerHTML = tp.innerHTML.replace(regex,
+            '<span class="search-result">$1</span>');
+        }
+      });
+    }
+  };
+  populate1(tags, document.getElementById('result-container-tag'), 'tag');
+  populate1(topic, document.getElementById('result-container-topic'), 'topic');
+};
+
+const getResults = async (value) => {
+  const topic = value.trim().replace(/ +/g, ' ');
+  const tags = topic.split(' ');
+  document.getElementById('search-input').value = topic;
+  try {
+    const [result] = await fetchData.search({ topic, tags });
+    populateSearch(result);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const profile = new ReadForm().getProfile();

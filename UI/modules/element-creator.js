@@ -69,19 +69,22 @@ const meetCreator = (box, data) => {
 
   const elements = elementCreator(meetSchema);
 
-
   const [main, rsvps, notif] = rsvpNotifCreator([meetData.rsvp, meetData.notif]);
   elements[0].insertBefore(main, elements[3]);
+
+  const tags = [];
 
   meetData.tags.forEach((tag) => {
     const span = document.createElement('span');
     span.className = 'meet-tag';
     span.innerHTML = tag;
+    span.tag = tag;
+    tags.push(span);
     elements[21].appendChild(span);
   });
 
   box.appendChild(elements[0]);
-  return [elements[0], rsvps, notif, elements[2]];
+  return [elements[0], rsvps, notif, tags, elements[2]];
 };
 
 const notifCreator = (box, data) => {
@@ -309,6 +312,45 @@ const imageCreator = (images, box) => {
   return [elements[3], elements[4], navArray, slide];
 };
 
+const searchCreator = (box, data) => {
+  const searchData = data;
+  const { time, date } = convertTime(data.happening);
+  const searchSchema = [
+    [
+      { div: { class: 'result-box', id: searchData.id } },
+      { p: { class: 'meet-name', text: searchData.topic } },
+      { div: { class: 'meet-stats' } },
+      { div: { class: 'meet-stat date' } },
+      { span: { class: 'meet-icon meet-date-icon' } },
+      { span: { class: 'meet-stat-text meet-date-text', text: date } },
+      { div: { class: 'meet-stat time' } },
+      { span: { class: 'meet-icon meet-time-icon' } },
+      { span: { class: 'meet-stat-text meet-time-text', text: time } },
+      { div: { class: 'meet-stat place' } },
+      { span: { class: 'meet-icon meet-place-icon' } },
+      { span: { class: 'meet-stat-text meet-place-text', text: searchData.location } },
+      { div: { class: 'meet-tags-container' } },
+      { div: { class: `meet-tags ${data.tags.length > 0 ? 'populated' : ''}` } },
+    ],
+    [0, 0, 2, 3, 3, 2, 6, 6, 2, 9, 9, 0, 12],
+  ];
+
+  const elements = elementCreator(searchSchema);
+  const tags = [];
+
+  searchData.tags.forEach((tag) => {
+    const span = document.createElement('span');
+    span.className = 'meet-tag';
+    span.innerHTML = tag;
+    span.tag = tag;
+    tags.push(span);
+    elements[13].appendChild(span);
+  });
+
+  box.appendChild(elements[0]);
+  return [elements[0], elements[1], tags];
+};
+
 export {
   elementCreator,
   meetCreator,
@@ -320,4 +362,5 @@ export {
   commentBoxCreator,
   commentCreator,
   imageCreator,
+  searchCreator,
 };

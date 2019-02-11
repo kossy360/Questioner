@@ -226,6 +226,12 @@ nav.top-fix {
   padding: 4px;
   margin: 5px 5px 5px 0;
   box-sizing: border-box;
+  cursor: pointer;
+}
+
+.meet-tag.highlighted {
+  font-weight: bold;
+  background: #ffff0029;
 }
 
 .meet-tag:hover {
@@ -373,12 +379,21 @@ span.question-feed-stat.vote-stat.flex-left {
 
 .search-result-container {
   width: 96%;
-  margin: auto;
+  margin: 15px auto;
   border-width: 1px 1px 0 1px;
 }
 
 .result-box {
   border: 1px solid #288bd9;
+  margin-bottom: 15px;
+}
+
+.result-box p {
+  display: block;
+}
+
+span.search-result {
+  background: #ffff004d;
 }
 
 .search-input-container {

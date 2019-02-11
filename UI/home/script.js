@@ -10,6 +10,7 @@ import {
   bookCreator,
   bookQuestionCreator,
   imageCreator,
+  searchCreator,
 } from '../modules/element-creator.js';
 import {
   imgBtnControl,
@@ -67,8 +68,18 @@ const rsvpControl = (rsvps, box) => {
   });
 };
 
+const tagControl = (tags) => {
+  tags.forEach(tag => tag.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const searchTab = document.getElementById('tab-selector-search');
+    if (searchTab.isSameNode(document.querySelector('.tab-active'))) return;
+    searchTab.click();
+    getResults(tag.tag);
+  }));
+};
+
 const addMeet = (data) => {
-  const [main, rsvps, notif] = meetCreator(
+  const [main, rsvps, notif, tags] = meetCreator(
     document.querySelector('#meets-section'), data,
   );
   main.data = data;
@@ -78,6 +89,7 @@ const addMeet = (data) => {
   });
   rsvpControl(rsvps);
   notifContol(notif);
+  tagControl(tags);
 };
 
 const addNotif = (data) => {
@@ -116,13 +128,14 @@ const addBookQuestions = (id, box) => {
 const expandMeet = (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
-  const [box, rsvps, notif, image] = meetCreator(container, meetData);
+  const [box, rsvps, notif, tags, image] = meetCreator(container, meetData);
   if (meetData.images.length > 1) {
     const imgArray = imageCreator(meetData.images, image);
     imgBtnControl(imgArray);
   }
   rsvpControl(rsvps);
   notifContol(notif);
+  tagControl(tags);
   const profiles = createQuestions(box, dummydata.questions);
 
   profiles.forEach(((profilee) => {
@@ -159,6 +172,53 @@ populateProfile(
   document.getElementsByClassName('profile-edit-button'),
   profile,
 );
+
+const populateSearch = ({ tags, topic }) => {
+  const populate1 = (obj, container, type) => {
+    if (!obj.result) container.textContent = 'No meetups found';
+    else {
+      while (container.hasChildNodes()) container.removeChild(container.lastChild);
+      obj.result.forEach((val) => {
+        const [box, tp, tg] = searchCreator(container, val);
+        box.addEventListener('click', () => {
+          expandMeet(val);
+          swith('meet-expanded', 'section-showing');
+        });
+        tagControl(tg);
+        if (type === 'tag') {
+          tg.forEach((tag) => {
+            if (tags.value.includes(tag.tag)) tag.classList.add('highlighted');
+          });
+        } else {
+          const regex = new RegExp(`(${topic.value})`, 'g');
+          console.log(tp.innerHTML);
+          tp.innerHTML = tp.innerHTML.replace(regex,
+            '<span class="search-result">$1</span>');
+        }
+      });
+    }
+  };
+  populate1(tags, document.getElementById('result-container-tag'), 'tag');
+  populate1(topic, document.getElementById('result-container-topic'), 'topic');
+};
+
+const getResults = async (value) => {
+  const topic = value.trim().replace(/ +/g, ' ');
+  const tags = topic.split(' ');
+  document.getElementById('search-input').value = topic;
+  try {
+    const [result] = await fetchData.search({ topic, tags });
+    populateSearch(result);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+document.getElementById('search-button').addEventListener('click', () => {
+  const input = document.getElementById('search-input').value;
+  if (!input) return;
+  getResults(input);
+});
 
 document.getElementById('profile-picture-input')
   .addEventListener('change', () => {

@@ -51,16 +51,20 @@ const adminMeetCreator = (box, data, replaceBox) => {
   elements[0].data = data;
   elements[0].insertBefore(main, elements[6]);
 
+  const tags = [];
+
   meetData.tags.forEach((tag) => {
     const span = document.createElement('span');
     span.className = 'meet-tag';
     span.innerHTML = tag;
+    span.tag = tag;
+    tags.push(span);
     elements[24].appendChild(span);
   });
 
   if (replaceBox) box.replaceChild(elements[0], replaceBox);
   else box.appendChild(elements[0]);
-  return [elements[0], elements[2], elements[3], elements[5]];
+  return [elements[0], elements[2], elements[3], tags, elements[5]];
 };
 
 const rsvpNotifCreator = ({ yes, maybe, no }) => {

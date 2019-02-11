@@ -29,9 +29,26 @@ const fetchData = {
         method: 'get',
         headers: {
           'content-type': 'application/json',
-          auth: window.sessionStorage.getItem('token'),
           'x-access-token': token,
         },
+      });
+      const data = await response.json();
+      if (data.status >= 400) throw data;
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  search: async (body) => {
+    try {
+      const response = await fetch(`${host}meetups/search`, {
+        method: 'post',
+        headers: {
+          'content-type': 'application/json',
+          'x-access-token': token,
+        },
+        body: JSON.stringify(body),
       });
       const data = await response.json();
       if (data.status >= 400) throw data;
