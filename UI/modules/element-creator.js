@@ -121,7 +121,6 @@ const bookCreator = (box, data) => {
 
   const elements = elementCreator(bookSchema);
 
-
   const [container, rsvps, notif] = rsvpNotifCreator(['yes', 'yes']);
   elements[0].insertBefore(container, elements[2]);
 

@@ -1,8 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable import/extensions */
-/* eslint-disable no-param-reassign */
-/* eslint-env browser */
 import {
   notifCreator,
   imageCreator,
@@ -52,7 +47,7 @@ tabControl('tab-selector', 'section-showing');
 tabControl('result-tab', 'result-container-showing');
 
 loop.call(document.getElementsByClassName('create-button'), (button) => {
-  const id = button.id;
+  const { id } = button;
   if (id === 'meet-create-button') {
     button.addEventListener('click', () => {
       createMeet();
@@ -134,7 +129,7 @@ const editMeet = (data) => {
 };
 
 const tagControl = (tags) => {
-  tags.forEach(tag => tag.addEventListener('click', (e) => {
+  tags.forEach(tg => tg.addEventListener('click', (e) => {
     e.stopPropagation();
     const searchTab = document.getElementById('tab-selector-search');
     if (searchTab.isSameNode(document.querySelector('.tab-active'))) return;
@@ -243,15 +238,15 @@ const populateSearch = ({ tags, topic }) => {
     else {
       while (container.hasChildNodes()) container.removeChild(container.lastChild);
       obj.result.forEach((val) => {
-        const [box, tp, tg] = searchCreator(container, val);
+        const [box, tp, tgs] = searchCreator(container, val);
         box.addEventListener('click', () => {
           expandMeet(val);
           swith('meet-expanded', 'section-showing');
         });
-        tagControl(tg);
+        tagControl(tgs);
         if (type === 'tag') {
-          tg.forEach((tag) => {
-            if (tags.value.includes(tag.tag)) tag.classList.add('highlighted');
+          tgs.forEach((tg) => {
+            if (tags.value.includes(tg.tag)) tg.classList.add('highlighted');
           });
         } else {
           const regex = new RegExp(`(${topic.value})`, 'g');
@@ -292,10 +287,11 @@ document.getElementById('profile-picture-input')
     const input = document.getElementById('profile-picture-input');
     const img = document.getElementById('profile-picture');
     imageInputControl(null, input, img);
-    document.getElementById('profile-icon').src = input.url[0];
+    const [url] = input.url;
+    document.getElementById('profile-icon').src = url;
   });
 
-document.querySelector('.profile-button').addEventListener('click', (e) => {
+document.querySelector('.profile-button').addEventListener('click', () => {
   window.location.href = '../signin';
 });
 

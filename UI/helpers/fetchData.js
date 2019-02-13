@@ -57,6 +57,24 @@ const fetchData = {
       throw error;
     }
   },
+
+  rsvp: async (id, body) => {
+    try {
+      const response = await fetch(`${host}meetups/${id}/rsvps`, {
+        method: 'post',
+        headers: {
+          'content-type': 'application/json',
+          'x-access-token': token,
+        },
+        body: JSON.stringify(body),
+      });
+      const data = await response.json();
+      if (data.status >= 400) throw data;
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default fetchData;

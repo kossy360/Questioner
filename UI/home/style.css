@@ -580,6 +580,7 @@ img.meet-image {
   width: 100%;
   box-sizing: border-box;
   display: inline-block;
+  min-height: 200px;
   max-height: 500px;
   object-fit: contain;
   background: #95cee7;
@@ -1192,17 +1193,22 @@ button#add-comment-button {
   border: 1px solid orange;
 }
 
+span.rsvp-tag.active.loading {
+  opacity: 0.5;
+}
+
 .rsvp-tag.active.admin {
   transform: scale(1);
 }
 
 .question-feed-container1 {
-  height: 0;
+  max-height: 0;
   overflow: hidden;
+  transition: max-height 0.5s linear;
 }
 
 .question-feed-container1.populated.showing {
-  height: auto;
+  max-height: 1000px;
 }
 
 .meet-input-label {
@@ -1478,6 +1484,7 @@ span.tag-span {
   flex-direction: column;
   overflow-x: hidden;
   height: 500px;
+  width: 100%;
   background: #95cee7;
 }
 
