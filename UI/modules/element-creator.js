@@ -2,7 +2,10 @@
 /* eslint-disable prefer-destructuring */
 
 import Slide from './slide.js';
-import convertTime from '../helpers/convertTime.js';
+import {
+  convertTime,
+  fancyTime,
+} from '../helpers/convertTime.js';
 
 /**
  *creates a html component based on an inputed
@@ -187,7 +190,7 @@ const questionCreator = (box, data) => {
         { span: { class: 'upvote vote-btn', qObj: quest, action: 1 } },
         { span: { class: 'vote-count', id: `vote-count-${quest.id}`, text: quest.votes } },
         { span: { class: 'dnvote vote-btn', qObj: quest, action: -1 } },
-        { span: { class: 'meet-question-stat span-flex', text: quest.createdOn } },
+        { span: { class: 'meet-question-stat span-flex', text: fancyTime(quest.created) } },
         { span: { class: 'comment-control span-flex collapsed', action: quest.id } },
         { span: { class: 'comment-exp', text: 'comments' } },
       ],

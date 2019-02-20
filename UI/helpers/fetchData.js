@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-env browser */
-const host = 'https://k-questioner.herokuapp.com/api/v1/';
+const host = 'http://localhost:3000/api/v1/';
 const token = window.sessionStorage.getItem('token');
 const fetchData = {
   auth: async (action, body, btn) => {
@@ -120,11 +120,28 @@ const fetchData = {
       });
       const data = await response.json();
       if (!response.ok) throw data;
-      return data.data;
+      return data.message;
     } catch (error) {
       throw error;
     }
   },
+
+  questions: async (meetId) => {
+    try {
+      const response = await fetch(`${host}questions/${meetId}`, {
+        method: 'get',
+        headers: {
+          'x-access-token': token,
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data.data || data.message;
+    } catch (error) {
+      throw error;
+    }
+  },
+
 };
 
 export default fetchData;

@@ -2,7 +2,7 @@ import {
   elementCreator,
 } from './element-creator.js';
 
-import convertTime from '../helpers/convertTime.js';
+import { convertTime } from '../helpers/convertTime.js';
 
 const adminMeetCreator = (box, data, replaceBox = null) => {
   const meetData = data;

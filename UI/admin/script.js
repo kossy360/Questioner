@@ -11,11 +11,11 @@ import ReadForm from '../modules/formProfileReader.js';
 import Tag from '../modules/add-tag.js';
 import DatePicker from '../modules/DatePicker.js';
 import timeControl from '../helpers/timeControl.js';
-import { createQuestions } from '../modules/pagecontrol.js';
 import { imageInputControl } from '../modules/imageControl.js';
 import { populateProfile } from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
 import createForm from '../helpers/createForm.js';
+import questions from '../helpers/questions.js';
 
 const tabSelector = document.getElementsByClassName('tab-selector');
 
@@ -296,7 +296,7 @@ const addNotif = (data) => {
   notifCreator(document.querySelector('#notif-section'), data);
 };
 
-const expandMeet = (meetData) => {
+const expandMeet = async (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
   const [box, edit, cancel, tags, image] = meetCreator(container, meetData);
@@ -306,13 +306,17 @@ const expandMeet = (meetData) => {
   }
   tagControl(tags);
   meetControl(meetData, edit, cancel);
-  const profiles = createQuestions(box, dummydata.questions);
 
-  profiles.forEach(((profilee) => {
-    profilee.forEach(elem => elem.addEventListener('click', () => {
-      swith('user-profile', 'section-showing');
+  try {
+    const profiles = await questions.get(meetData.id, box);
+    profiles.forEach(((profilee) => {
+      profilee.forEach(elem => elem.addEventListener('click', () => {
+        swith('user-profile', 'section-showing');
+      }));
     }));
-  }));
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const populateMeet = async () => {
