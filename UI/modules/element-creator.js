@@ -1,10 +1,8 @@
-/* eslint-disable import/extensions */
 /* eslint-disable object-curly-newline */
-/* eslint-env browser */
-/* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
 
 import Slide from './slide.js';
+import convertTime from '../helpers/convertTime.js';
 
 /**
  *creates a html component based on an inputed
@@ -37,49 +35,53 @@ const elementCreator = ([tagArray, tree]) => {
 
 const meetCreator = (box, data) => {
   const meetData = data;
+  const { time, date } = convertTime(data.happening);
   const meetSchema = [
     [
       { div: { class: 'meet-container main-container', id: meetData.id } },
-      { p: { class: 'meet-name big', text: meetData.title } },
-      { img: { class: 'meet-image', src: '../assets/meeting1.jpg' } },
+      { p: { class: 'meet-name big', text: meetData.topic } },
+      { img: { class: 'meet-image', src: meetData.images[0] || '../assets/meeting1.jpg' } },
       { div: { class: 'meet-stats' } },
       { div: { class: 'meet-stat date' } },
       { span: { class: 'meet-icon meet-date-icon' } },
-      { span: { class: 'meet-stat-text meet-date-text', text: meetData.date } },
+      { span: { class: 'meet-stat-text meet-date-text', text: date } },
       { div: { class: 'meet-stat time' } },
       { span: { class: 'meet-icon meet-time-icon' } },
-      { span: { class: 'meet-stat-text meet-time-text', text: meetData.time } },
+      { span: { class: 'meet-stat-text meet-time-text', text: time } },
       { div: { class: 'meet-stat place' } },
       { span: { class: 'meet-icon meet-place-icon' } },
       { span: { class: 'meet-stat-text meet-place-text', text: meetData.location } },
       { div: { class: 'meet-stat questions' } },
-      { span: { class: 'question-count', text: `${meetData.questions} Questions` } },
+      { span: { class: 'question-count', text: `${meetData.questions} Question${meetData.questions === 1 ? '' : 's'}` } },
       { div: { class: 'meet-stat pictures' } },
-      { span: { class: 'picture-count', text: `${meetData.images.length} Pictures` } },
+      { span: { class: 'picture-count', text: `${meetData.images.length} Picture${meetData.images.length === 1 ? '' : 's'}` } },
       { div: { class: 'meet-tags-container' } },
       { div: { class: 'meet-tags-title' } },
       { span: { class: 'meet-tags-title-text', text: 'Tags' } },
       { span: { class: 'tags-icon meet-icon' } },
-      { div: { class: 'meet-tags' } },
+      { div: { class: `meet-tags ${data.tags.length > 0 ? 'populated' : ''}` } },
     ],
     [0, 0, 0, 3, 4, 4, 3, 7, 7, 3, 10, 10, 3, 13, 3, 15, 0, 17, 18, 18, 17],
   ];
 
   const elements = elementCreator(meetSchema);
 
-
   const [main, rsvps, notif] = rsvpNotifCreator([meetData.rsvp, meetData.notif]);
   elements[0].insertBefore(main, elements[3]);
+
+  const tags = [];
 
   meetData.tags.forEach((tag) => {
     const span = document.createElement('span');
     span.className = 'meet-tag';
     span.innerHTML = tag;
+    span.tag = tag;
+    tags.push(span);
     elements[21].appendChild(span);
   });
 
   box.appendChild(elements[0]);
-  return [elements[0], rsvps, notif, elements[2]];
+  return [elements[0], rsvps, notif, tags, elements[2]];
 };
 
 const notifCreator = (box, data) => {
@@ -115,7 +117,6 @@ const bookCreator = (box, data) => {
   ];
 
   const elements = elementCreator(bookSchema);
-
 
   const [container, rsvps, notif] = rsvpNotifCreator(['yes', 'yes']);
   elements[0].insertBefore(container, elements[2]);
@@ -307,6 +308,45 @@ const imageCreator = (images, box) => {
   return [elements[3], elements[4], navArray, slide];
 };
 
+const searchCreator = (box, data) => {
+  const searchData = data;
+  const { time, date } = convertTime(data.happening);
+  const searchSchema = [
+    [
+      { div: { class: 'result-box', id: searchData.id } },
+      { p: { class: 'meet-name', text: searchData.topic } },
+      { div: { class: 'meet-stats' } },
+      { div: { class: 'meet-stat date' } },
+      { span: { class: 'meet-icon meet-date-icon' } },
+      { span: { class: 'meet-stat-text meet-date-text', text: date } },
+      { div: { class: 'meet-stat time' } },
+      { span: { class: 'meet-icon meet-time-icon' } },
+      { span: { class: 'meet-stat-text meet-time-text', text: time } },
+      { div: { class: 'meet-stat place' } },
+      { span: { class: 'meet-icon meet-place-icon' } },
+      { span: { class: 'meet-stat-text meet-place-text', text: searchData.location } },
+      { div: { class: 'meet-tags-container' } },
+      { div: { class: `meet-tags ${data.tags.length > 0 ? 'populated' : ''}` } },
+    ],
+    [0, 0, 2, 3, 3, 2, 6, 6, 2, 9, 9, 0, 12],
+  ];
+
+  const elements = elementCreator(searchSchema);
+  const tags = [];
+
+  searchData.tags.forEach((tag) => {
+    const span = document.createElement('span');
+    span.className = 'meet-tag';
+    span.innerHTML = tag;
+    span.tag = tag;
+    tags.push(span);
+    elements[13].appendChild(span);
+  });
+
+  box.appendChild(elements[0]);
+  return [elements[0], elements[1], tags];
+};
+
 export {
   elementCreator,
   meetCreator,
@@ -318,4 +358,5 @@ export {
   commentBoxCreator,
   commentCreator,
   imageCreator,
+  searchCreator,
 };

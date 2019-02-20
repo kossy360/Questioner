@@ -52,14 +52,14 @@
       <div class="search-input-container">
         <div class="search-input-main">
           <input type="text" id="search-input" placeholder="search meetups...">
-          <button type="button" class="search-button">Search</button>
+          <button type="button" class="search-button" id="search-button">Search</button>
         </div>
-        <div class="search-history-container">
+        <!--<div class="search-history-container">
           <P class="search-history-text">some search</P>
           <P class="search-history-text">some search</P>
           <P class="search-history-text">some search</P>
           <P class="search-history-text">some search</P>
-        </div>
+        </div>-->
       </div>
       <div class="search-result-container">
         <div class="result-nav">
@@ -70,60 +70,8 @@
             Tags
           </span>
         </div>
-        <div class="topic-result-container result-container result-container-showing" id="result-container-topic">
-          <div class="result-box">
-            <p class="meet-name">meet result 1</p>
-            <div class="meet-stats">
-              <div class="meet-stat date">
-                <span class="meet-icon meet-date-icon"></span>
-                <span class="meet-stat-text meet-date-text">11/11/11</span>
-              </div>
-              <div class="meet-stat time">
-                <span class="meet-icon meet-time-icon"></span>
-                <span class="meet-stat-text meet-time-text">3:00</span>
-              </div>
-              <div class="meet-stat place">
-                <span class="meet-icon meet-place-icon"></span>
-                <span class="meet-stat-text meet-place-text">Abuja</span>
-              </div>
-            </div>
-            <div class="meet-tags-container">
-              <div class="meet-tags">
-                <span class="meet-tag">infrastructure</span>
-                <span class="meet-tag">transport</span>
-                <span class="meet-tag">economy</span>
-                <span class="meet-tag">technology</span>
-                <span class="meet-tag">growth</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="tag-result-container result-container" id="result-container-tag">
-          <div class="result-box">
-            <p class="meet-name">meet result 2</p>
-            <div class="meet-stats">
-              <div class="meet-stat date">
-                <span class="meet-icon meet-date-icon"></span>
-                <span class="meet-stat-text meet-date-text">11/11/11</span>
-              </div>
-              <div class="meet-stat time">
-                <span class="meet-icon meet-time-icon"></span>
-                <span class="meet-stat-text meet-time-text">3:00</span>
-              </div>
-              <div class="meet-stat place">
-                <span class="meet-icon meet-place-icon"></span>
-                <span class="meet-stat-text meet-place-text">Abuja</span>
-              </div>
-            </div>
-            <div class="meet-tags-container">
-              <div class="meet-tags">
-                <span class="meet-tag">infrastructure</span>
-                <span class="meet-tag">transport</span>
-                <span class="meet-tag">economy</span>
-                <span class="meet-tag">technology</span>
-                <span class="meet-tag">growth</span></div>
-            </div>
-          </div>
-        </div>
+        <div class="topic-result-container result-container result-container-showing" id="result-container-topic"></div>
+        <div class="tag-result-container result-container" id="result-container-tag"></div>
       </div>
     </section>
 
@@ -245,6 +193,7 @@
       <span class="error-text">you are not connected</span>
     </div>
   </div>
+  
   <footer>
     <p>questioner</p>
   </footer>

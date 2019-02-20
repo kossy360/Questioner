@@ -50,10 +50,7 @@ Array.prototype.forEach.call(inputs, (input) => {
   });
 });
 
-const saveData = ({
-  token,
-  user
-}) => {
+const saveData = ({ token, user }) => {
   window.sessionStorage.setItem('token', token);
   window.sessionStorage.setItem('username', user.username);
   window.sessionStorage.setItem('user', JSON.stringify(user));
@@ -72,9 +69,7 @@ button1.addEventListener('click', async () => {
   }
   try {
     const body = getFormData('signup-form-input');
-    const {
-      data
-    } = await fetchData.auth('signup', body, button1);
+    const { data } = await fetchData.auth('signup', body, button1);
     saveData(data[0]);
   } catch (error) {
     console.log(error);
@@ -84,9 +79,7 @@ button1.addEventListener('click', async () => {
 button2.addEventListener('click', async () => {
   try {
     const body = getFormData('signin-form-input');
-    const {
-      data
-    } = await fetchData.auth('login', body, button2);
+    const { data } = await fetchData.auth('login', body, button2);
     saveData(data[0]);
   } catch (error) {
     console.log(error);

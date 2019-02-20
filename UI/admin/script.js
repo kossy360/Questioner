@@ -1,11 +1,7 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable import/extensions */
-/* eslint-disable no-param-reassign */
-/* eslint-env browser */
 import {
   notifCreator,
   imageCreator,
+  searchCreator,
 } from '../modules/element-creator.js';
 
 import { imgBtnControl } from '../modules/buttonControllers.js';
@@ -13,67 +9,107 @@ import meetCreator from '../modules/element-creator-admin.js';
 import dummydata from './modules/dummy-data.js';
 import ReadForm from '../modules/formProfileReader.js';
 import Tag from '../modules/add-tag.js';
+import DatePicker from '../modules/DatePicker.js';
+import timeControl from '../helpers/timeControl.js';
 import { createQuestions } from '../modules/pagecontrol.js';
 import { imageInputControl } from '../modules/imageControl.js';
 import { populateProfile } from '../modules/profileControl.js';
+import fetchData from '../helpers/fetchData.js';
+import createForm from '../helpers/createForm.js';
 
 const tabSelector = document.getElementsByClassName('tab-selector');
-const tabs = document.getElementsByClassName('main-section');
-const meetContainer = document.getElementsByClassName('meet-container');
+
 const loop = Array.prototype.forEach;
+
 const tag = new Tag(
   document.querySelector('.tag-edit-container'),
   document.querySelector('#meet-tags-input'),
 );
-tag.initialize();
 
-const swith = (e) => {
-  const showing = document.querySelector('.section-showing');
-  showing.classList.toggle('section-showing');
-  let pos = Array.prototype.indexOf.call(tabSelector, e);
-  if (pos === -1) pos = e;
-  tabs[pos].classList.add('section-showing');
+const datePicker = new DatePicker(
+  document.getElementById('meet-date-input'),
+  document.getElementById('meet-date-container'),
+);
+
+timeControl(document.getElementById('meet-time-input'), datePicker);
+
+const swith = (id, showClass) => {
+  const showing = document.querySelector(`.${showClass}`);
+  showing.classList.toggle(showClass);
+  document.getElementById(id).classList.add(showClass);
 };
 
-loop.call(tabSelector, (elem) => {
-  elem.addEventListener('click', () => {
-    swith(elem);
-    const active = document.querySelector('.tab-active');
-    if (active === elem) return;
-    active.classList.remove('tab-active');
-    elem.classList.add('tab-active');
+const tabControl = (tabClass, showClass) => {
+  const elements = document.getElementsByClassName(tabClass);
+  loop.call(elements, (elem) => {
+    elem.addEventListener('click', () => {
+      swith(elem.getAttribute('tab-id'), showClass);
+      const active = document.querySelector(`.${tabClass}.tab-active`);
+      if (active === elem) return;
+      active.classList.remove('tab-active');
+      elem.classList.add('tab-active');
+    });
   });
-});
+};
 
-loop.call(meetContainer, (e) => {
-  e.addEventListener('click', () => {
-    swith(4);
-    expandMeet();
+const mergeObj = (newObj, oldObj) => {
+  Object.keys(oldObj).forEach((key) => {
+    if (!newObj[key]) newObj[key] = oldObj[key];
   });
-});
+  return newObj;
+};
+
+const mergeTime = (obj) => {
+  const { time, date } = obj;
+  obj.happening = `${date}T${time}+01:00`;
+  delete obj.time;
+  delete obj.date;
+};
+
+loop.call(
+  document.getElementsByClassName('meet-create-input'),
+  (elem) => {
+    if (elem.id !== 'meet-time-input') {
+      elem.addEventListener('blur', () => {
+        elem.classList.toggle('invalid',
+          elem[elem.tagName === 'INPUT' ? 'value' : 'textContent'] === '');
+      });
+
+      elem.addEventListener('input', () => {
+        elem.classList.remove('invalid');
+      });
+    }
+  },
+);
+
+tabControl('tab-selector', 'section-showing');
+
+tabControl('result-tab', 'result-container-showing');
 
 loop.call(document.getElementsByClassName('create-button'), (button) => {
-  const id = button.id;
+  const { id } = button;
   if (id === 'meet-create-button') {
     button.addEventListener('click', () => {
       createMeet();
     });
   } else if (id === 'meet-create-edit') {
     button.addEventListener('click', () => {
-      editMeet();
+      updateMeet(button.getAttribute('meet-id'));
     });
   } else {
     button.addEventListener('click', () => {
       clearInputs();
       tabSelector[0].click();
-      editMeet(false);
+      updateMeet();
     });
   }
 });
 
 const toggleOrganizer = (title) => {
   const head = document.querySelector('.organizer-header');
-  head.innerHTML = title;
+  const container = document.querySelector('.meet-create-button-container');
+  head.innerHTML = title || 'New Meet';
+  container.classList.toggle('edit', !!title);
 };
 
 const populateEdit = (data) => {
@@ -81,12 +117,24 @@ const populateEdit = (data) => {
   const inputFields = document.getElementsByClassName('meet-create-input');
   loop.call(inputFields, (input) => {
     const pointer = input.getAttribute('pointer');
-    if (pointer === 'tags') {
-      tag.clear();
-      tag.populate(data[pointer]);
-    } else if (pointer === 'images') {
-      imageInputControl(container, input, null, 1, data[pointer]);
-    } else input.value = data[pointer];
+    switch (pointer) {
+      case 'tags':
+        tag.clear();
+        tag.populate(data[pointer]);
+        break;
+      case 'images':
+        imageInputControl(container, input, null, 1, data[pointer]);
+        break;
+      case 'date':
+        datePicker.clear().display(data.happening);
+        break;
+      case 'topic':
+        input.textContent = data[pointer];
+        break;
+      default:
+        input.value = data[pointer];
+        break;
+    }
   });
 };
 
@@ -97,74 +145,131 @@ document.getElementById('meet-picture-input')
     imageInputControl(container, input, null);
   });
 
-const getData = (inputClass, data) => {
+const getData = (inputClass) => {
   const inputFields = document.getElementsByClassName(inputClass);
-  const obj = data || {};
+  const obj = {};
   loop.call(inputFields, (input) => {
     const pointer = input.getAttribute('pointer');
-    if (pointer === 'tags') {
-      obj[pointer] = tag.getTag();
-    } else if (pointer === 'images') {
-      obj[pointer] = input.url;
-      console.log(input.url);
-    } else obj[pointer] = input.value;
+    switch (pointer) {
+      case 'tags':
+        if (tag.getTag()) obj[pointer] = tag.getTag();
+        break;
+      case 'images':
+        if (input.images) obj[pointer] = input.images;
+        break;
+      case 'date':
+        obj[pointer] = datePicker.dateObj.iso;
+        break;
+      case 'topic':
+        obj[pointer] = input.textContent;
+        break;
+      default:
+        obj[pointer] = input.value;
+        break;
+    }
   });
   tag.clear();
   return obj;
 };
 
 const editMeet = (data) => {
-  const container = document.querySelector('.meet-create-button-container');
-  if (data) {
-    container.classList.add('edit');
-    toggleOrganizer(data.title);
-    container.meet = data;
-    populateEdit(data);
-    tabSelector[2].click();
-  } else {
-    // verify inputs
-    if (data !== false) {
-      const obj = getData('meet-create-input', container.meet);
-      addMeet(obj, true);
+  toggleOrganizer(data.topic);
+  populateEdit(data);
+  document.getElementById('meet-create-edit').setAttribute('meet-id', data.id);
+  tabSelector[2].click();
+};
+
+const updateMeet = async (id) => {
+  if (id) {
+    const obj = getData('meet-create-input');
+    mergeTime(obj);
+    const body = createForm(obj);
+    try {
+      const [data] = await fetchData.updateMeet(body, id);
+      addMeet(data, true);
+    } catch (error) {
+      console.log(error);
+      return;
     }
-    // send patch request
+  }
+  // send patch request
+  tabSelector[0].click();
+  toggleOrganizer();
+};
+
+const tagControl = (tags) => {
+  tags.forEach(tg => tg.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const searchTab = document.getElementById('tab-selector-search');
+    if (searchTab.isSameNode(document.querySelector('.tab-active'))) return;
+    searchTab.click();
+    getResults(tg.tag);
+  }));
+};
+
+
+const createMeet = async () => {
+  const obj = getData('meet-create-input');
+  if (!obj) return;
+  mergeTime(obj);
+  const body = createForm(obj);
+  // send post request
+  try {
+    const [data] = await fetchData.createMeet(body);
+    addMeet(data);
     tabSelector[0].click();
-    container.classList.remove('edit');
-    toggleOrganizer('New Meet');
+    clearInputs();
+  } catch (error) {
+    console.log(error);
   }
 };
 
-const createMeet = () => {
-  const obj = getData('meet-create-input');
-  const dummyData = { id: 1, rsvp: { yes: 0, maybe: 0, no: 0 }, questions: 0 };
-  // send post request
-  obj.id = dummyData.id;
-  obj.rsvp = dummyData.rsvp;
-  obj.questions = dummyData.questions;
-  addMeet(obj);
-  tabSelector[0].click();
-  clearInputs();
+const deleteMeet = async (id) => {
+  try {
+    await fetchData.deleteMeetup(id);
+    loop.call(document.getElementsByClassName('meet-container'), (elem) => {
+      if (elem.id === id.toString()) {
+        elem.remove();
+      }
+    });
+    tabSelector[0].click();
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const clearInputs = () => {
   loop.call(document.getElementsByClassName('meet-create-input'), (input) => {
-    input.value = '';
-    const container = document.querySelector('.meet-selected-container');
-    while (container.hasChildNodes()) container.removeChild(container.firstChild);
+    const pointer = input.getAttribute('pointer');
+    switch (pointer) {
+      case 'tags':
+        tag.clear();
+        break;
+      case 'images':
+        input.images = [];
+        break;
+      case 'date':
+        datePicker.display(new Date().toLocaleDateString());
+        break;
+      case 'topic':
+        input.textContent = '';
+        break;
+      default:
+        input.value = '';
+        break;
+    }
   });
-  tag.clear();
 };
 
-const meetControl = (container, edit, cancel) => {
+const meetControl = (data, edit, cancel) => {
   edit.addEventListener('click', (e) => {
     e.stopPropagation();
-    editMeet(container.data);
+    editMeet(data);
   });
 
   cancel.addEventListener('click', (e) => {
     e.stopPropagation();
-    container.parentElement.removeChild(container);
-    tabSelector[0].click();
+    deleteMeet(data.id);
   });
 };
 
@@ -174,14 +279,17 @@ const addMeet = (data, replace = false) => {
       document.getElementsByClassName('meet-container'),
       meet => Number(meet.id) === data.id,
     ) : null;
-  const [main, edit, cancel] = meetCreator(
+  if (replace) mergeObj(data, container.data);
+  const [main, edit, deleteM, tags] = meetCreator(
     document.querySelector('#meets-section'), data, container,
   );
   main.addEventListener('click', () => {
     expandMeet(data);
-    swith(4);
+    swith('meet-expanded', 'section-showing');
   });
-  meetControl(main, edit, cancel);
+
+  tagControl(tags);
+  meetControl(data, edit, deleteM);
 };
 
 const addNotif = (data) => {
@@ -191,22 +299,78 @@ const addNotif = (data) => {
 const expandMeet = (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
-  const [box, edit, cancel] = meetCreator(container, meetData);
-  if (meetData.images.length > 0) {
-    const imgBtn = imageCreator(meetData.images, container);
-    imgBtnControl(imgBtn);
+  const [box, edit, cancel, tags, image] = meetCreator(container, meetData);
+  if (meetData.images.length > 1) {
+    const imgArray = imageCreator(meetData.images, image);
+    imgBtnControl(imgArray);
   }
-  meetControl(box, edit, cancel);
-  createQuestions(container, dummydata.questions);
+  tagControl(tags);
+  meetControl(meetData, edit, cancel);
+  const profiles = createQuestions(box, dummydata.questions);
+
+  profiles.forEach(((profilee) => {
+    profilee.forEach(elem => elem.addEventListener('click', () => {
+      swith('user-profile', 'section-showing');
+    }));
+  }));
+};
+
+const populateMeet = async () => {
+  try {
+    const meets = await fetchData.meetups();
+    meets.forEach(meet => addMeet(meet));
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const populate = () => {
-  dummydata.meetups.forEach((meet) => {
-    addMeet(meet);
-  });
+  populateMeet();
+
   dummydata.notifications.forEach((notif) => {
     addNotif(notif);
   });
+};
+
+const populateSearch = ({ tags, topic }) => {
+  const populate1 = (obj, container, type) => {
+    if (!obj.result) container.textContent = 'No meetups found';
+    else {
+      while (container.hasChildNodes()) container.removeChild(container.lastChild);
+      obj.result.forEach((val) => {
+        const [box, tp, tgs] = searchCreator(container, val);
+        box.addEventListener('click', () => {
+          expandMeet(val);
+          swith('meet-expanded', 'section-showing');
+        });
+        tagControl(tgs);
+        if (type === 'tag') {
+          tgs.forEach((tg) => {
+            if (tags.value.includes(tg.tag)) tg.classList.add('highlighted');
+          });
+        } else {
+          const regex = new RegExp(`(${topic.value})`, 'g');
+          console.log(tp.innerHTML);
+          tp.innerHTML = tp.innerHTML.replace(regex,
+            '<span class="search-result">$1</span>');
+        }
+      });
+    }
+  };
+  populate1(tags, document.getElementById('result-container-tag'), 'tag');
+  populate1(topic, document.getElementById('result-container-topic'), 'topic');
+};
+
+const getResults = async (value) => {
+  const topic = value.trim().replace(/ +/g, ' ');
+  const tags = topic.split(' ');
+  document.getElementById('search-input').value = topic;
+  try {
+    const [result] = await fetchData.search({ topic, tags });
+    populateSearch(result);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const profile = new ReadForm().getProfile();
@@ -223,10 +387,11 @@ document.getElementById('profile-picture-input')
     const input = document.getElementById('profile-picture-input');
     const img = document.getElementById('profile-picture');
     imageInputControl(null, input, img);
-    document.getElementById('profile-icon').src = input.url[0];
+    const [url] = input.url;
+    document.getElementById('profile-icon').src = url;
   });
 
-document.querySelector('.profile-button').addEventListener('click', (e) => {
+document.querySelector('.profile-button').addEventListener('click', () => {
   window.location.href = '../signin';
 });
 
