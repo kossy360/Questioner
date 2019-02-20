@@ -9,19 +9,29 @@ import meetCreator from '../modules/element-creator-admin.js';
 import dummydata from './modules/dummy-data.js';
 import ReadForm from '../modules/formProfileReader.js';
 import Tag from '../modules/add-tag.js';
+import DatePicker from '../modules/DatePicker.js';
+import timeControl from '../helpers/timeControl.js';
 import { createQuestions } from '../modules/pagecontrol.js';
 import { imageInputControl } from '../modules/imageControl.js';
 import { populateProfile } from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
+import createForm from '../helpers/createForm.js';
 
 const tabSelector = document.getElementsByClassName('tab-selector');
 
 const loop = Array.prototype.forEach;
+
 const tag = new Tag(
   document.querySelector('.tag-edit-container'),
   document.querySelector('#meet-tags-input'),
 );
-tag.initialize();
+
+const datePicker = new DatePicker(
+  document.getElementById('meet-date-input'),
+  document.getElementById('meet-date-container'),
+);
+
+timeControl(document.getElementById('meet-time-input'), datePicker);
 
 const swith = (id, showClass) => {
   const showing = document.querySelector(`.${showClass}`);
@@ -42,6 +52,36 @@ const tabControl = (tabClass, showClass) => {
   });
 };
 
+const mergeObj = (newObj, oldObj) => {
+  Object.keys(oldObj).forEach((key) => {
+    if (!newObj[key]) newObj[key] = oldObj[key];
+  });
+  return newObj;
+};
+
+const mergeTime = (obj) => {
+  const { time, date } = obj;
+  obj.happening = `${date}T${time}+01:00`;
+  delete obj.time;
+  delete obj.date;
+};
+
+loop.call(
+  document.getElementsByClassName('meet-create-input'),
+  (elem) => {
+    if (elem.id !== 'meet-time-input') {
+      elem.addEventListener('blur', () => {
+        elem.classList.toggle('invalid',
+          elem[elem.tagName === 'INPUT' ? 'value' : 'textContent'] === '');
+      });
+
+      elem.addEventListener('input', () => {
+        elem.classList.remove('invalid');
+      });
+    }
+  },
+);
+
 tabControl('tab-selector', 'section-showing');
 
 tabControl('result-tab', 'result-container-showing');
@@ -54,20 +94,22 @@ loop.call(document.getElementsByClassName('create-button'), (button) => {
     });
   } else if (id === 'meet-create-edit') {
     button.addEventListener('click', () => {
-      editMeet();
+      updateMeet(button.getAttribute('meet-id'));
     });
   } else {
     button.addEventListener('click', () => {
       clearInputs();
       tabSelector[0].click();
-      editMeet(false);
+      updateMeet();
     });
   }
 });
 
 const toggleOrganizer = (title) => {
   const head = document.querySelector('.organizer-header');
-  head.innerHTML = title;
+  const container = document.querySelector('.meet-create-button-container');
+  head.innerHTML = title || 'New Meet';
+  container.classList.toggle('edit', !!title);
 };
 
 const populateEdit = (data) => {
@@ -75,12 +117,24 @@ const populateEdit = (data) => {
   const inputFields = document.getElementsByClassName('meet-create-input');
   loop.call(inputFields, (input) => {
     const pointer = input.getAttribute('pointer');
-    if (pointer === 'tags') {
-      tag.clear();
-      tag.populate(data[pointer]);
-    } else if (pointer === 'images') {
-      imageInputControl(container, input, null, 1, data[pointer]);
-    } else input.value = data[pointer];
+    switch (pointer) {
+      case 'tags':
+        tag.clear();
+        tag.populate(data[pointer]);
+        break;
+      case 'images':
+        imageInputControl(container, input, null, 1, data[pointer]);
+        break;
+      case 'date':
+        datePicker.clear().display(data.happening);
+        break;
+      case 'topic':
+        input.textContent = data[pointer];
+        break;
+      default:
+        input.value = data[pointer];
+        break;
+    }
   });
 };
 
@@ -91,41 +145,56 @@ document.getElementById('meet-picture-input')
     imageInputControl(container, input, null);
   });
 
-const getData = (inputClass, data) => {
+const getData = (inputClass) => {
   const inputFields = document.getElementsByClassName(inputClass);
-  const obj = data || {};
+  const obj = {};
   loop.call(inputFields, (input) => {
     const pointer = input.getAttribute('pointer');
-    if (pointer === 'tags') {
-      obj[pointer] = tag.getTag();
-    } else if (pointer === 'images') {
-      obj[pointer] = input.url;
-      console.log(input.url);
-    } else obj[pointer] = input.value;
+    switch (pointer) {
+      case 'tags':
+        if (tag.getTag()) obj[pointer] = tag.getTag();
+        break;
+      case 'images':
+        if (input.images) obj[pointer] = input.images;
+        break;
+      case 'date':
+        obj[pointer] = datePicker.dateObj.iso;
+        break;
+      case 'topic':
+        obj[pointer] = input.textContent;
+        break;
+      default:
+        obj[pointer] = input.value;
+        break;
+    }
   });
   tag.clear();
   return obj;
 };
 
 const editMeet = (data) => {
-  const container = document.querySelector('.meet-create-button-container');
-  if (data) {
-    container.classList.add('edit');
-    toggleOrganizer(data.title);
-    container.meet = data;
-    populateEdit(data);
-    tabSelector[2].click();
-  } else {
-    // verify inputs
-    if (data !== false) {
-      const obj = getData('meet-create-input', container.meet);
-      addMeet(obj, true);
+  toggleOrganizer(data.topic);
+  populateEdit(data);
+  document.getElementById('meet-create-edit').setAttribute('meet-id', data.id);
+  tabSelector[2].click();
+};
+
+const updateMeet = async (id) => {
+  if (id) {
+    const obj = getData('meet-create-input');
+    mergeTime(obj);
+    const body = createForm(obj);
+    try {
+      const [data] = await fetchData.updateMeet(body, id);
+      addMeet(data, true);
+    } catch (error) {
+      console.log(error);
+      return;
     }
-    // send patch request
-    tabSelector[0].click();
-    container.classList.remove('edit');
-    toggleOrganizer('New Meet');
   }
+  // send patch request
+  tabSelector[0].click();
+  toggleOrganizer();
 };
 
 const tagControl = (tags) => {
@@ -134,30 +203,48 @@ const tagControl = (tags) => {
     const searchTab = document.getElementById('tab-selector-search');
     if (searchTab.isSameNode(document.querySelector('.tab-active'))) return;
     searchTab.click();
-    getResults(tag.tag);
+    getResults(tg.tag);
   }));
 };
 
 
-const createMeet = () => {
+const createMeet = async () => {
   const obj = getData('meet-create-input');
-  const dummyData = { id: 1, rsvp: { yes: 0, maybe: 0, no: 0 }, questions: 0 };
+  if (!obj) return;
+  mergeTime(obj);
+  const body = createForm(obj);
   // send post request
-  obj.id = dummyData.id;
-  obj.rsvp = dummyData.rsvp;
-  obj.questions = dummyData.questions;
-  addMeet(obj);
-  tabSelector[0].click();
-  clearInputs();
+  try {
+    const [data] = await fetchData.createMeet(body);
+    addMeet(data);
+    tabSelector[0].click();
+    clearInputs();
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const clearInputs = () => {
   loop.call(document.getElementsByClassName('meet-create-input'), (input) => {
-    input.value = '';
-    const container = document.querySelector('.meet-selected-container');
-    while (container.hasChildNodes()) container.removeChild(container.firstChild);
+    const pointer = input.getAttribute('pointer');
+    switch (pointer) {
+      case 'tags':
+        tag.clear();
+        break;
+      case 'images':
+        input.images = [];
+        break;
+      case 'date':
+        datePicker.display(new Date().toLocaleDateString());
+        break;
+      case 'topic':
+        input.textContent = '';
+        break;
+      default:
+        input.value = '';
+        break;
+    }
   });
-  tag.clear();
 };
 
 const meetControl = (container, edit, cancel) => {
@@ -168,7 +255,7 @@ const meetControl = (container, edit, cancel) => {
 
   cancel.addEventListener('click', (e) => {
     e.stopPropagation();
-    container.parentElement.removeChild(container);
+    container.remove();
     tabSelector[0].click();
   });
 };
@@ -179,6 +266,7 @@ const addMeet = (data, replace = false) => {
       document.getElementsByClassName('meet-container'),
       meet => Number(meet.id) === data.id,
     ) : null;
+  if (replace) mergeObj(data, container.data);
   const [main, edit, cancel, tags] = meetCreator(
     document.querySelector('#meets-section'), data, container,
   );
@@ -217,7 +305,6 @@ const expandMeet = (meetData) => {
 const populateMeet = async () => {
   try {
     const meets = await fetchData.meetups();
-    console.log(meets);
     meets.forEach(meet => addMeet(meet));
   } catch (error) {
     console.log(error);

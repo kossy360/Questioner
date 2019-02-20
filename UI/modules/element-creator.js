@@ -1,7 +1,4 @@
-/* eslint-disable import/extensions */
 /* eslint-disable object-curly-newline */
-/* eslint-env browser */
-/* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
 
 import Slide from './slide.js';

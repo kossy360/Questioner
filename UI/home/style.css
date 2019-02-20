@@ -222,7 +222,6 @@ nav.top-fix {
 .meet-tag {
   border: 1px solid;
   border-color: #288bd9;
-  border-radius: 8px;
   padding: 4px;
   margin: 5px 5px 5px 0;
   box-sizing: border-box;
@@ -916,6 +915,12 @@ textarea:focus {
   outline: none;
 }
 
+input,
+textarea,
+button {
+  font-family: inherit;
+}
+
 #profile-picture-container {
   height: 10rem;
   width: 10rem;
@@ -1145,7 +1150,6 @@ button#add-comment-button {
   border-color: #288bd9;
   width: 3.2rem;
   margin: 5px;
-  border-radius: 8px;
   height: 1.5rem;
   display: flex;
   align-items: center;
@@ -1230,10 +1234,12 @@ span.rsvp-tag.active.loading {
   box-sizing: border-box;
   height: 2rem;
   border: 1px solid #288bd9;
-  border-radius: 8px;
   padding: 5px;
   font-size: 1.2em;
-  resize: none;
+}
+
+.meet-create-input.invalid {
+  border-color: red;
 }
 
 textarea.meet-create-input {
@@ -1243,10 +1249,14 @@ textarea.meet-create-input {
 
 .meet-entry-container {
   margin-top: 15px;
+  position: relative;
 }
 
-.meet-entry-container.date,
-meet-entry-container.time {
+.meet-entry-container.date {
+  max-width: 300px;
+}
+
+.meet-entry-container.time {
   display: inline-block;
 }
 
@@ -1265,18 +1275,36 @@ meet-entry-container.time {
 
 .meet-selected-container {
   display: grid;
-  border: 1px solid #d7e0e8;
+  border: 1px solid #288bd9;
   height: auto;
   width: 100%;
-  grid-template-columns: repeat(3, 33.33%);
+  grid-template-columns: 100%;
 }
 
 .meet-selected-container img {
   width: 100%;
-  height: 100px;
-  /* margin: 0 5px; */
   padding: 5px;
   box-sizing: border-box;
+}
+
+.meet-create-image-container {
+  position: relative;
+  margin: 10px;
+  box-shadow: 1px 1px 8px 1px #0000004d;
+}
+
+button.meet-image-delete {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  right: 5px;
+  top: 5px;
+  border-radius: 100%;
+  justify-content: center;
+  font-size: 1.3em;
+  color: #d7e0e8;
+  background: transparent;
 }
 
 .create-button {
@@ -1356,6 +1384,7 @@ meet-entry-container.time {
   padding: 10px;
   margin-bottom: 5px;
   margin-top: 5px;
+  cursor: pointer;
 }
 
 /* usage stats */
@@ -1414,47 +1443,43 @@ p.stat-text {
 
 /* tag input */
 .tag-edit-container.meet-create-input {
-  height: inherit;
+  height: 2rem;
   border: none;
   padding: 0;
 }
 
 span.tag-span-container {
   border: 1px solid #288bd9;
-  margin: 3px;
-  display: inline-block;
-  font-size: 0.8em;
-  padding-left: 2px;
-  border-radius: 6px;
-  height: 1.7rem;
+  margin: 0 3px;
+  height: 100%;
   box-sizing: border-box;
   display: inline-flex;
 }
 
 button.close-btn {
   margin: 0;
-  border: none;
   margin-left: 2px;
   background: transparent;
   color: red;
-  cursor: pointer;
   width: auto;
+  height: 100%;
 }
 
 input#meet-tags-input {
   border: 1px solid #288bd9;
-  height: 1.7rem;
+  height: 100%;
   box-sizing: border-box;
-  border-radius: 6px;
-  font-size: 0.8em;
-  padding-left: 2px;
-  margin: 3px;
+  font-size: 1em;
+  padding: 0 5px;
+  margin: 0 3px;
 }
 
 span.tag-span {
   height: 100%;
   display: flex;
+  padding: 5px;
   align-items: center;
+  box-sizing: border-box;
 }
 
 /* carousel */
@@ -1667,4 +1692,109 @@ span.error-text {
   width: 100%;
   height: 2.1em;
   z-index: 3;
+}
+
+/* date picker */
+
+.day-container {
+  display: grid;
+  grid-template-columns: repeat(7, 14.286%);
+  text-align: center;
+  color: #2196f3;
+  height: 1.7em;
+}
+
+.date-container {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 100%;
+}
+
+.day-box {
+  display: grid;
+  grid-template-columns: repeat(7, 14.286%);
+  grid-template-rows: repeat(6, 1fr);
+  text-align: center;
+  display: none;
+}
+
+span.day-num {
+  height: 1.7em;
+  width: 1.7em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  justify-self: center;
+  cursor: pointer;
+}
+
+.day-box.active {
+  display: grid;
+}
+
+span.day-num.active {
+  background: #2196f3;
+  color: white;
+}
+
+.date-move-container {
+  position: relative;
+  height: 2em;
+  text-align: center;
+}
+
+span.date-text {
+  display: inline-flex;
+  height: 100%;
+  align-items: center;
+}
+
+button.date-move {
+  position: absolute;
+  padding: 0;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  color: #2196f3;
+  width: 60px;
+  background: transparent;
+}
+
+button.date-move.bwd {
+  left: 0;
+}
+
+button.date-move.fwd {
+  right: 0;
+}
+
+button.date-move::after {
+  display: block;
+  border-top: solid;
+  border-left: solid;
+  width: 10px;
+  height: 10px;
+  content: '';
+}
+
+button.date-move.bwd::after {
+  transform: rotate(-45deg);
+}
+
+button.date-move.fwd::after {
+  transform: rotate(135deg);
+}
+
+span.day-num.invalid {
+  color: #7890a6;
+}
+
+.button-container {
+  height: 1.8em;
+  text-align: center;
+}
+
+button.ok-button {
+  margin-right: 20px;
 }

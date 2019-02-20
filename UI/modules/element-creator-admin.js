@@ -1,14 +1,10 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable import/extensions */
-/* eslint-env browser */
 import {
   elementCreator,
 } from './element-creator.js';
 
 import convertTime from '../helpers/convertTime.js';
 
-const adminMeetCreator = (box, data, replaceBox) => {
+const adminMeetCreator = (box, data, replaceBox = null) => {
   const meetData = data;
   const { time, date } = convertTime(data.happening);
   meetData.time = time;

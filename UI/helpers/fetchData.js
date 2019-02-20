@@ -75,6 +75,40 @@ const fetchData = {
       throw error;
     }
   },
+
+  createMeet: async (body) => {
+    try {
+      const response = await fetch(`${host}meetups`, {
+        method: 'post',
+        headers: {
+          'x-access-token': token,
+        },
+        body,
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateMeet: async (body, id) => {
+    try {
+      const response = await fetch(`${host}meetups/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'x-access-token': token,
+        },
+        body,
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default fetchData;

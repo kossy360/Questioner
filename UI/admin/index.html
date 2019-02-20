@@ -15,7 +15,9 @@
     <header class="header">
       <p class="logo">Questioner</p>
     </header>
+
     <button class="profile-button" type="button"></button>
+
     <nav>
       <span class="tab-selector tab-active" tab-id="meets-section">
         <img class="icon-img" src="../assets/meetup.svg" alt="" srcset="">
@@ -56,31 +58,32 @@
       <div class="meet-create-container">
         <div class="meet-entry-container title">
           <label class="meet-input-label" for="meet-title-input">TITLE</label>
-          <textarea pointer="topic" class="meet-create-input" id="meet-title-input" type="text"></textarea>
+          <div contenteditable="true" pointer="topic" class="meet-create-input" id="meet-title-input" type="text"></div>
         </div>
         <div class="meet-entry-container date">
           <label class="meet-input-label" for="meet-date-input">DATE</label>
-          <input pointer="date" class="meet-create-input" id="meet-date-input" type="text">
+          <div pointer="date" class="meet-create-input" id="meet-date-input"></div>
+          <div class="meet-date-container" id="meet-date-container"></div>
         </div>
         <div class="meet-entry-container time">
           <label class="meet-input-label" for="meet-time-input">TIME</label>
-          <input pointer="time" class="meet-create-input" id="meet-time-input" type="text">
+          <input pointer="time" class="meet-create-input" id="meet-time-input" type="text" placeholder="hh:mm">
         </div>
         <div class="meet-entry-container location">
           <label class="meet-input-label" for="meet-location-input">LOCATION</label>
           <input pointer="location" class="meet-create-input" id="meet-location-input" type="text">
-        </div>
-        <div class="meet-entry-container pictures">
-          <label id="create-picture-label" for="meet-picture-input">Add Pictures</label>
-          <input type="file" accept="image/jpeg, image/png" pointer="images" class="meet-create-input" id="meet-picture-input"
-            multiple>
-          <div class="meet-selected-container"></div>
         </div>
         <div class="meet-entry-container tags">
           <label class="meet-input-label" for="meet-tags-input">TAGS</label>
           <div class="tag-edit-container meet-create-input" pointer="tags">
             <input class="tags-create-input" id="meet-tags-input" type="text" placeholder="add a tag...">
           </div>
+        </div>
+        <div class="meet-entry-container pictures">
+          <div class="meet-selected-container"></div>
+          <label id="create-picture-label" for="meet-picture-input">Add Pictures</label>
+          <input type="file" accept="image/jpeg, image/png" pointer="images" class="meet-create-input" id="meet-picture-input"
+            multiple>
         </div>
       </div>
       <div class="meet-create-button-container">
@@ -96,12 +99,6 @@
           <input type="text" id="search-input" placeholder="search meetups...">
           <button type="button" class="search-button" id="search-button">Search</button>
         </div>
-        <!--<div class="search-history-container">
-          <P class="search-history-text">some search</P>
-          <P class="search-history-text">some search</P>
-          <P class="search-history-text">some search</P>
-          <P class="search-history-text">some search</P>
-        </div>-->
       </div>
       <div class="search-result-container">
         <div class="result-nav">

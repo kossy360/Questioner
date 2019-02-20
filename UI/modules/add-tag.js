@@ -5,6 +5,7 @@ class AddTag {
     this.input = input;
     this.tagArray = [];
     this.tags = [];
+    this.initialize();
   }
 
   createTag(string) {
@@ -17,7 +18,7 @@ class AddTag {
 
     const close = document.createElement('button');
     close.type = 'button';
-    close.textContent = 'X';
+    close.textContent = '✖';
     close.className = 'close-btn';
 
     tagContainer.appendChild(span);
@@ -53,7 +54,7 @@ class AddTag {
   }
 
   getTag() {
-    return this.tagArray;
+    return this.tagArray.length > 0 ? this.tagArray : false;
   }
 
   clear() {
