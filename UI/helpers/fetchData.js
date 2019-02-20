@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-env browser */
-const host = 'http://localhost:3000/api/v1/';
+const host = 'https://k-questioner.herokuapp.com/api/v1/';
 const token = window.sessionStorage.getItem('token');
 const fetchData = {
   auth: async (action, body, btn) => {
