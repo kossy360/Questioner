@@ -224,6 +224,20 @@ const createMeet = async () => {
   }
 };
 
+const deleteMeet = async (id) => {
+  try {
+    await fetchData.deleteMeetup(id);
+    loop.call(document.getElementsByClassName('meet-container'), (elem) => {
+      if (elem.id === id.toString()) {
+        elem.remove();
+      }
+    });
+    tabSelector[0].click();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const clearInputs = () => {
   loop.call(document.getElementsByClassName('meet-create-input'), (input) => {
     const pointer = input.getAttribute('pointer');
@@ -247,16 +261,15 @@ const clearInputs = () => {
   });
 };
 
-const meetControl = (container, edit, cancel) => {
+const meetControl = (data, edit, cancel) => {
   edit.addEventListener('click', (e) => {
     e.stopPropagation();
-    editMeet(container.data);
+    editMeet(data);
   });
 
   cancel.addEventListener('click', (e) => {
     e.stopPropagation();
-    container.remove();
-    tabSelector[0].click();
+    deleteMeet(data.id);
   });
 };
 
@@ -267,7 +280,7 @@ const addMeet = (data, replace = false) => {
       meet => Number(meet.id) === data.id,
     ) : null;
   if (replace) mergeObj(data, container.data);
-  const [main, edit, cancel, tags] = meetCreator(
+  const [main, edit, deleteM, tags] = meetCreator(
     document.querySelector('#meets-section'), data, container,
   );
   main.addEventListener('click', () => {
@@ -276,7 +289,7 @@ const addMeet = (data, replace = false) => {
   });
 
   tagControl(tags);
-  meetControl(main, edit, cancel);
+  meetControl(data, edit, deleteM);
 };
 
 const addNotif = (data) => {
@@ -292,7 +305,7 @@ const expandMeet = (meetData) => {
     imgBtnControl(imgArray);
   }
   tagControl(tags);
-  meetControl(box, edit, cancel);
+  meetControl(meetData, edit, cancel);
   const profiles = createQuestions(box, dummydata.questions);
 
   profiles.forEach(((profilee) => {
