@@ -142,6 +142,22 @@ const fetchData = {
     }
   },
 
+  vote: async (questionId, vote) => {
+    try {
+      const response = await fetch(`${host}questions/${questionId}/${vote}`, {
+        method: 'PATCH',
+        headers: {
+          'x-access-token': token,
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data.data || data.message;
+    } catch (error) {
+      throw error;
+    }
+  },
+
 };
 
 export default fetchData;

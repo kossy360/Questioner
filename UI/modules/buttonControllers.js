@@ -9,24 +9,30 @@ import {
   questionCreator,
 } from './element-creator.js';
 
-const voteControl = (voteBtn, index, array) => {
-  voteBtn.calc = (x) => {
-    const num = voteBtn.action;
-    voteBtn.qObj.votes += x === 0 ? -num : num;
-    document.getElementById(`vote-count-${voteBtn.qObj.id}`).textContent = voteBtn.qObj.votes;
-  };
+import fetchData from '../helpers/fetchData.js';
 
-  voteBtn.addEventListener('click', () => {
+const voteControl = (voteBtn, index, array) => {
+  const { id } = voteBtn.qObj;
+  const count = document.getElementById(`vote-count-${id}`);
+
+  voteBtn.addEventListener('click', async () => {
     if (voteBtn.classList.contains('active')) {
-      voteBtn.classList.remove('active');
-      voteBtn.calc(0);
+      try {
+        const [data] = await fetchData.vote(id, 'clear');
+        count.textContent = data.votes;
+        voteBtn.classList.remove('active');
+      } catch (error) {
+        console.log(error);
+      }
     } else {
-      voteBtn.classList.add('active');
-      voteBtn.calc(1);
-      const enemy = array[index === 0 ? 1 : 0];
-      if (enemy.classList.contains('active')) {
+      try {
+        const [data] = await fetchData.vote(id, voteBtn.action);
+        count.textContent = data.votes;
+        voteBtn.classList.add('active');
+        const enemy = array[index === 0 ? 1 : 0];
         enemy.classList.remove('active');
-        enemy.calc(0);
+      } catch (error) {
+        console.log(error);
       }
     }
   });
