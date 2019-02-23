@@ -156,14 +156,12 @@ const questionContainerCreator = (box, data) => {
       { label: { class: 'question-input-label', for: 'question-input', text: 'Ask a question' } },
       { div: { class: 'question-input-box' } },
       { input: { id: 'question-input', type: 'text', placeholder: 'question here...' } },
-      { button: { id: 'question-input-button', type: 'button', text: 'Ask!' } },
+      { button: { id: 'question-input-button', type: 'button', text: 'Ask!', meetup: data.id } },
     ],
     [0, 0, 2, 2, 4, 4],
   ];
 
   const elements = elementCreator(schema);
-
-
   const [voteArray, commentBtns, profiles] = questionCreator(elements[1], data);
 
   elements[6].input = elements[5];

@@ -158,6 +158,24 @@ const fetchData = {
     }
   },
 
+  createQuestion: async (body) => {
+    try {
+      const response = await fetch(`${host}questions`, {
+        method: 'post',
+        headers: {
+          'content-type': 'application/json',
+          'x-access-token': token,
+        },
+        body: JSON.stringify(body),
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data.data || data.message;
+    } catch (error) {
+      throw error;
+    }
+  },
+
 };
 
 export default fetchData;

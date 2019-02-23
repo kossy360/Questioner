@@ -6,7 +6,7 @@ const questions = {
     try {
       const data = await fetchData.questions(id);
       const result = typeof data === 'string' ? [] : data;
-      return createQuestions(container, result);
+      return createQuestions(container, result, id);
     } catch (error) {
       throw error;
     }

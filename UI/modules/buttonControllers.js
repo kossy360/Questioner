@@ -45,23 +45,22 @@ const imgBtnControl = ([bwd, fwd, navArray, slide]) => {
   slide.initialize();
 };
 
-const askBtnControl = (ask) => {
-  ask.addEventListener('click', () => {
+const askBtnControl = (ask, meetup) => {
+  ask.addEventListener('click', async () => {
+    const { input } = ask;
+    if (!input.value) return;
     const questObj = {
-      id: 1,
-      createdOn: '11/11/11',
-      createdBy: 1,
-      username: 'kossy360',
-      meetup: 1,
-      body: ask.input.value,
-      votes: 0,
-      comments: false,
+      meetup,
+      body: input.value,
     };
-    // posts and waits for response
-    addQuestion(ask.box, {
-      data: [questObj],
-    });
-    ask.input.value = '';
+    try {
+      const data = await fetchData.createQuestion(questObj);
+      console.log(data[0]);
+      addQuestion(ask.box, data);
+      ask.input.value = '';
+    } catch (error) {
+      console.log(error);
+    }
   });
 };
 
@@ -97,8 +96,8 @@ const notifContol = (notif) => {
   });
 };
 
-const addQuestion = (box, question) => {
-  const [voteArray, commentBtns] = questionCreator(box, question.data);
+const addQuestion = (box, data) => {
+  const [voteArray, commentBtns] = questionCreator(box, data);
 
   voteArray.forEach((voteBtns) => {
     voteBtns.forEach(voteControl);
@@ -108,6 +107,7 @@ const addQuestion = (box, question) => {
     commentBtnControl(commentBtn);
   });
 };
+
 const commentControl = (box, input, commentBtns) => {
   commentBtns.forEach((btn, index) => {
     if (index === 0) {

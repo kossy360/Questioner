@@ -11,11 +11,12 @@ import {
   questionContainerCreator,
 } from './element-creator.js';
 
-const createQuestions = (container, questionData) => {
+const createQuestions = (container, questionData, id) => {
   const [main, ask, voteArray, commentBtns, profiles] = questionContainerCreator(
     container, questionData,
   );
-  askBtnControl(ask);
+  askBtnControl(ask, id);
+
   voteArray.forEach((voteBtns) => {
     voteBtns.forEach(voteControl);
   });
