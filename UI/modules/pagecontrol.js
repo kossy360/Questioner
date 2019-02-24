@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable import/prefer-default-export */
-/* eslint-disable import/extensions */
 import {
   voteControl,
   commentBtnControl,
@@ -12,7 +10,7 @@ import {
 } from './element-creator.js';
 
 const createQuestions = (container, questionData, id) => {
-  const [main, ask, voteArray, commentBtns, profiles] = questionContainerCreator(
+  const [, ask, voteArray, commentBtns, profiles] = questionContainerCreator(
     container, questionData,
   );
   askBtnControl(ask, id);

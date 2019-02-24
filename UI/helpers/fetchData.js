@@ -176,6 +176,21 @@ const fetchData = {
     }
   },
 
+  comments: async (question) => {
+    try {
+      const response = await fetch(`${host}comments/${question}`, {
+        method: 'get',
+        headers: {
+          'x-access-token': token,
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data.data || data.message;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default fetchData;

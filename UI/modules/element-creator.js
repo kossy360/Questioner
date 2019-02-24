@@ -220,14 +220,14 @@ const commentBoxCreator = (box, data) => {
     [0, 0, 2, 2],
   ];
   const elements = elementCreator(boxSchema);
-  const replyBtns = [];
-  data.forEach(comment => replyBtns.push(commentCreator(elements[1], comment)));
+  const profiles = [];
+  data.forEach(comment => profiles.push(commentCreator(elements[1], comment)));
   elements[4].box = elements[1];
-  box.classList.add('populated');
-  box.comment = elements[0];
+  elements[4].container = box;
+  box.commentContainer = elements[0];
   box.appendChild(elements[0]);
 
-  return [elements[4], elements[3], replyBtns];
+  return [elements[4], elements[3], profiles];
 };
 
 const commentCreator = (box, data) => {
@@ -239,16 +239,15 @@ const commentCreator = (box, data) => {
       { span: { class: 'comment-text' } },
       { span: { class: 'comment-author', text: data.username } },
       { div: { class: 'comment-options' } },
-      { button: { type: 'button', class: 'comment-reply-button', text: 'reply', username: data.username } },
-      { span: { class: 'comment-timestamp', text: data.createdOn } },
+      { span: { class: 'comment-timestamp', text: fancyTime(data.created) } },
     ],
-    [0, 0, 2, 3, 0, 5, 5],
+    [0, 0, 2, 3, 0, 5],
   ];
   const elements = elementCreator(schema);
-  elements[4].insertAdjacentText('afterend', data.body);
+  elements[4].insertAdjacentText('afterend', data.comment);
   box.appendChild(elements[0]);
 
-  return [elements[6], elements[1], elements[4]];
+  return [elements[1], elements[4]];
 };
 
 const rsvpNotifCreator = ([rsvp, notif]) => {

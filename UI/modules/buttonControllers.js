@@ -1,8 +1,3 @@
-/* eslint-disable prefer-destructuring */
-/* eslint-disable import/extensions */
-/* eslint-disable no-param-reassign */
-/* eslint-env browser */
-
 import {
   commentCreator,
   commentBoxCreator,
@@ -66,7 +61,7 @@ const askBtnControl = (ask, meetup) => {
 
 const commentBtnControl = (commentBtn) => {
   commentBtn.addEventListener('click', () => {
-    const box = commentBtn.box.comment;
+    const box = commentBtn.box.commentContainer;
     if (commentBtn.classList.contains('collapsed')) {
       if (!box) {
         addComments(commentBtn.action, commentBtn.box);
@@ -77,15 +72,6 @@ const commentBtnControl = (commentBtn) => {
       commentBtn.classList.replace('expanded', 'collapsed');
       box.classList.remove('showing');
     }
-  });
-};
-
-const replyBtnControl = (btns) => {
-  btns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      btn.input.value = `@${btn.username} ${btn.input.value}`;
-      btn.input.focus();
-    });
   });
 };
 
@@ -108,29 +94,23 @@ const addQuestion = (box, data) => {
   });
 };
 
-const commentControl = (box, input, commentBtns) => {
-  commentBtns.forEach((btn, index) => {
-    if (index === 0) {
-      btn.input = input;
-      replyBtnControl([btn]);
-    } else {
-      const swith = (id1, showClass) => {
-        const showing = document.querySelector(`.${showClass}`);
-        showing.classList.toggle(showClass);
-        document.getElementById(id1).classList.add(showClass);
-      };
+const commentControl = (profiles) => {
+  profiles.forEach((btns) => {
+    const swith = (id1, showClass) => {
+      const showing = document.querySelector(`.${showClass}`);
+      showing.classList.toggle(showClass);
+      document.getElementById(id1).classList.add(showClass);
+    };
+    btns.forEach((btn) => {
       btn.addEventListener('click', () => {
         swith('user-profile', 'section-showing');
       });
-    }
+    });
   });
 };
 
-const addComments = (id, box) => {
-  // get data with id
-  const [addComment, input, replyBtns] = commentBoxCreator(box, []);
-
-  addComment.addEventListener('click', () => {
+const addComment = (comment, input) => {
+  comment.addEventListener('click', () => {
     if (input.value === '') return;
     const data = {
       id: 0,
@@ -141,12 +121,23 @@ const addComments = (id, box) => {
       body: input.value,
     };
     input.value = '';
-    const replyBtn = commentCreator(addComment.box, data);
-    commentControl(box, input, replyBtn);
+    const replyBtn = commentCreator(comment.box, data);
+    commentControl(null, input, replyBtn);
   });
+};
 
-  commentControl(box, input, replyBtns);
-
+const addComments = async (id, box) => {
+  console.log('yeah');
+  // get data with id
+  try {
+    const data = await fetchData.comments(id);
+    const result = typeof data === 'string' ? [] : data;
+    const [comment, input, profiles] = commentBoxCreator(box, result);
+    addComment(comment, input);
+    commentControl(profiles);
+  } catch (error) {
+    console.log(error);
+  }
   box.classList.add('populated');
 };
 
