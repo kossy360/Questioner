@@ -1016,7 +1016,7 @@ img.user-dp-small {
 }
 
 .comment-dp {
-  grid-row: 1/3;
+  grid-row: 1;
 }
 
 .comment-box-details {
@@ -1026,14 +1026,16 @@ img.user-dp-small {
 }
 
 .comment-timestamp {
-  text-align: end;
-  display: block;
+  text-align: start;
+  display: grid;
   width: 100%;
+  grid-column: 1/3;
 }
 
 .comment-options {
   margin-top: 3px;
   display: flex;
+  grid-column: 2/3;
 }
 
 .comment-reply-button {

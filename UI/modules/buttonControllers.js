@@ -109,31 +109,31 @@ const commentControl = (profiles) => {
   });
 };
 
-const addComment = (comment, input) => {
-  comment.addEventListener('click', () => {
+const addComment = (question, comment, input) => {
+  comment.addEventListener('click', async () => {
     if (input.value === '') return;
-    const data = {
-      id: 0,
-      createdOn: new Date().toLocaleDateString(),
-      createdBy: 1,
-      username: 'tester',
-      question: 1,
-      body: input.value,
+    const obj = {
+      question,
+      comment: input.value,
     };
-    input.value = '';
-    const replyBtn = commentCreator(comment.box, data);
-    commentControl(null, input, replyBtn);
+    try {
+      const [data] = await fetchData.createComment(obj);
+      console.log(data);
+      const profile = commentCreator(comment.box, data);
+      commentControl([profile]);
+      input.value = '';
+    } catch (error) {
+      console.log(error);
+    }
   });
 };
 
 const addComments = async (id, box) => {
-  console.log('yeah');
-  // get data with id
   try {
     const data = await fetchData.comments(id);
     const result = typeof data === 'string' ? [] : data;
     const [comment, input, profiles] = commentBoxCreator(box, result);
-    addComment(comment, input);
+    addComment(id, comment, input);
     commentControl(profiles);
   } catch (error) {
     console.log(error);
