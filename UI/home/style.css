@@ -709,6 +709,7 @@ span.comment-text {
 }
 
 .comment-control {
+  display: flex;
   justify-content: flex-end;
 }
 
@@ -731,6 +732,7 @@ span.comment-text {
   background-repeat: no-repeat;
   transform: rotate(180deg);
   transition: all 0.5s linear;
+  cursor: pointer;
 }
 
 .comment-control.collapsed::after {

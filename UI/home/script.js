@@ -16,6 +16,7 @@ import { imageInputControl } from '../modules/imageControl.js';
 import { populateProfile } from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
 import RsvpControl from '../helpers/rsvpControl.js';
+import questions from '../helpers/questions.js';
 
 const profile = dummydata.user;
 // if (!profile) window.location.href = '/Quetioner/UI';
@@ -54,10 +55,7 @@ const rsvpControl = (rsvps, box, id, value, meet) => {
       e.stopPropagation();
       control.newVal(elem.textContent);
       if (!elem.classList.contains('yes')) {
-        if (box) box.parentElement.removeChild(box);
-      } else {
-        // create rsvp record
-        // addBook(dummydata.rsvps[0]);
+        if (box) box.remove();
       }
     });
   });
@@ -106,21 +104,30 @@ const addBook = (booked) => {
       btn.classList.replace('expanded', 'collapsed');
       qbox.classList.remove('showing');
     }
-    btn.textContent = btn.classList.contains('expanded') ? 'collapse' : 'expand';
   });
 
   notifContol(notif);
-  rsvpControl(rsvps, main);
+  rsvpControl(rsvps, main, booked.id, booked.rsvp, booked);
 };
 
-const addBookQuestions = (id, box) => {
-  // get data with id
-  const voteCount = bookQuestionCreator(box, dummydata.questions);
-  box.classList.add('populated');
-  return voteCount;
+const addBookQuestions = async (id, box) => {
+  try {
+    let data = await fetchData.questions(id);
+    console.log(data);
+    if (typeof data === 'string') {
+      box.textContent = 'There are no questions for this meetup';
+      data = [];
+    }
+    data = data.sort((m1, m2) => m1.questions - m2.questions).splice(0, 5);
+    const voteCount = bookQuestionCreator(box, data);
+    box.classList.add('populated');
+    return voteCount;
+  } catch (error) {
+    throw error;
+  }
 };
 
-const expandMeet = (meetData) => {
+const expandMeet = async (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
   const [box, rsvps, notif, tags, image] = meetCreator(container, meetData);
@@ -131,34 +138,48 @@ const expandMeet = (meetData) => {
   rsvpControl(rsvps, null, meetData.id, meetData.rsvp, meetData);
   notifContol(notif);
   tagControl(tags, true);
-  const profiles = createQuestions(box, dummydata.questions);
 
-  profiles.forEach(((profilee) => {
-    profilee.forEach(elem => elem.addEventListener('click', () => {
-      swith('user-profile', 'section-showing');
+  try {
+    const profiles = await questions.get(meetData.id, box);
+    profiles.forEach(((profilee) => {
+      profilee.forEach(elem => elem.addEventListener('click', () => {
+        swith('user-profile', 'section-showing');
+      }));
     }));
-  }));
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const populateMeet = async () => {
   try {
     const meets = await fetchData.meetups();
     console.log(meets);
+    const upcoming = meets.filter(mt => mt.rsvp === 'yes');
     meets.forEach(meet => addMeet(meet));
+    upcoming.forEach(meet => addBook(meet));
+    console.log(upcoming);
   } catch (error) {
     console.log(error);
   }
 };
+
+const getBooked = async () => {
+  try {
+    const meets = await fetchData.upcoming();
+    console.log(meets);
+    meets.forEach(meet => addBook(meet));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
 const populate = () => {
   populateMeet();
 
   dummydata.notifications.forEach((notif) => {
     addNotif(notif);
-  });
-
-  dummydata.rsvps.forEach((rsvp) => {
-    addBook(rsvp);
   });
 };
 

@@ -110,13 +110,14 @@ const bookCreator = (box, data) => {
 
   const bookSchema = [
     [
-      { div: { class: 'book-container main-container', meetup: bookData.meetup } },
-      { p: { class: 'meet-name small', text: bookData.title } },
+      { div: { class: 'book-container main-container', meetup: bookData.id } },
+      { p: { class: 'meet-name small', text: bookData.topic } },
       { div: { class: 'question-feed-container' } },
-      { p: { class: 'question-feed-dir collapsed', text: 'expand' } },
+      { span: { class: 'question-feed-dir comment-control collapsed' } },
+      { span: { class: 'comment-exp', text: 'top questions' } },
       { div: { class: 'question-feed-container1' } },
     ],
-    [0, 0, 2, 2],
+    [0, 0, 2, 3, 2],
   ];
 
   const elements = elementCreator(bookSchema);
@@ -125,7 +126,7 @@ const bookCreator = (box, data) => {
   elements[0].insertBefore(container, elements[2]);
 
   box.appendChild(elements[0]);
-  return [elements[0], elements[4], elements[3], rsvps, notif];
+  return [elements[0], elements[5], elements[3], rsvps, notif];
 };
 
 const bookQuestionCreator = (box, data) => {
@@ -139,7 +140,6 @@ const bookQuestionCreator = (box, data) => {
       ],
       [0, 0],
     ];
-
     const sub = elementCreator(schema);
     voteCount.push(sub[2]);
     box.appendChild(sub[0]);
@@ -185,9 +185,9 @@ const questionCreator = (box, data) => {
         { div: { class: 'meet-question-details-2' } },
         { img: { class: 'user-dp-small question-dp', src: data.displaypicture || '../assets/profile.svg', user: quest.createdBy } },
         { div: { class: 'feed-stat-vote' } },
-        { span: { class: `upvote vote-btn ${quest.votes > 0 ? 'active' : ''}`, qObj: quest, action: 'upvote' } },
+        { span: { class: `upvote vote-btn ${quest.response > 0 ? 'active' : ''}`, qObj: quest, action: 'upvote' } },
         { span: { class: 'vote-count', id: `vote-count-${quest.id}`, text: quest.votes } },
-        { span: { class: `dnvote vote-btn ${quest.votes < 0 ? 'active' : ''}`, qObj: quest, action: 'downvote' } },
+        { span: { class: `dnvote vote-btn ${quest.response < 0 ? 'active' : ''}`, qObj: quest, action: 'downvote' } },
         { span: { class: 'meet-question-stat span-flex', text: fancyTime(quest.created) } },
         { span: { class: 'comment-control span-flex collapsed', action: quest.id } },
         { span: { class: 'comment-exp', text: 'comments' } },

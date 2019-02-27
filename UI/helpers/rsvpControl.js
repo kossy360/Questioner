@@ -36,6 +36,7 @@ class RsvpControl {
     this.value = response;
     this.updateMeetup(response);
     if (response !== 'clear') this[response].classList.add('active');
+    if (response === 'yes') this.bkCntrl(this.meetup);
     const containers = document.querySelectorAll(`#rsvp-${this.id}`);
     Array.prototype.forEach.call(containers, (elem) => {
       elem.control.updateRsvp(response);
@@ -46,7 +47,6 @@ class RsvpControl {
     try {
       await fetchData.rsvp(this.id, { response });
       this.updateRsvp(response);
-      // if (response === 'yes') this.bkCntrl(dummydata.rsvps[0]);
       this.active = false;
     } catch (error) {
       if (response !== 'clear') this[this.value].classList.remove('loading');
