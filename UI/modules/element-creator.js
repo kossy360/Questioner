@@ -69,7 +69,7 @@ const meetCreator = (box, data) => {
 
   const elements = elementCreator(meetSchema);
 
-  const [main, rsvps, notif] = rsvpNotifCreator([meetData.rsvp, meetData.notif]);
+  const [main, rsvps, notif] = rsvpNotifCreator([meetData.rsvp, meetData.notification]);
   elements[0].insertBefore(main, elements[3]);
 
   const tags = [];
@@ -87,20 +87,58 @@ const meetCreator = (box, data) => {
   return [elements[0], rsvps, notif, tags, elements[2]];
 };
 
-const notifCreator = (box, data) => {
-  const notifData = data;
-
-  const notifSchema = [
+const notifContainerCreator = (box, data) => {
+  const schema = [
     [
       { div: { class: 'main-notif-container main-container' } },
-      { p: { class: 'meet-name small', text: notifData.title } },
+      { p: { class: 'meet-name small' } },
+      { div: { class: 'notif-stat-container' } },
+      { span: { class: 'notif-question-count' } },
+      { div: { class: 'notif-icon-container' } },
+      { span: { class: 'meet-notif meet-icon active yes', action: 'no' } },
+      { span: { class: 'question-feed-dir comment-control collapsed' } },
+      { span: { class: 'comment-exp', text: 'new questions' } },
       { div: { class: 'sub-notif-container' } },
-      { p: { class: 'notif-message', text: `${notifData.count} new questions` } },
     ],
-    [0, 0, 2],
+    [0, 0, 2, 2, 4, 0, 6, 0],
+  ];
+
+  const notifObj = {};
+
+  data.forEach((notif) => {
+    if (notifObj[notif.meetup]) {
+      const container = notifObj[notif.meetup][4];
+      const notifBox = notifCreator(container, notif);
+      notifObj[notif.meetup][3].push(notifBox);
+    } else {
+      const elements = elementCreator(schema);
+      elements[0].meetup = notif.meetup;
+      elements[1].textContent = notif.topic;
+      elements[6].qbox = elements[8];
+      const notifBox = notifCreator(elements[8], notif);
+      notifObj[notif.meetup] = [
+        elements[0], elements[5], elements[6], elements[3], [notifBox], elements[8]];
+      box.appendChild(elements[0]);
+    }
+  });
+
+  return Object.keys(notifObj).map(elem => notifObj[elem]);
+};
+
+const notifCreator = (box, data) => {
+  const notifSchema = [
+    [
+      { div: { class: 'sub-notif-container2' } },
+      { div: { class: 'notif-question' } },
+      { span: { class: 'notif-question-body', text: `${data.body}` } },
+      { span: { class: 'notif-question-user', text: `${data.username}` } },
+      { span: { class: 'notif-question-votes', text: `${data.votes}` } },
+    ],
+    [0, 1, 1, 1],
   ];
 
   const elements = elementCreator(notifSchema);
+  elements[0].data = data;
   box.appendChild(elements[0]);
   return elements[0];
 };
@@ -122,7 +160,7 @@ const bookCreator = (box, data) => {
 
   const elements = elementCreator(bookSchema);
 
-  const [container, rsvps, notif] = rsvpNotifCreator(['yes', 'yes']);
+  const [container, rsvps, notif] = rsvpNotifCreator(['yes', data.notification]);
   elements[0].insertBefore(container, elements[2]);
 
   box.appendChild(elements[0]);
@@ -256,11 +294,11 @@ const rsvpNotifCreator = ([rsvp, notif]) => {
       { div: { class: 'rsvp-notif-container' } },
       { div: { class: 'rsvp-container' } },
       { span: { class: 'rsvp-text', text: 'RSVP' } },
-      { span: { class: `rsvp-tag yes${rsvp === 'yes' ? ' active' : ''}`, action: 'yes', text: 'yes' } },
-      { span: { class: `rsvp-tag maybe${rsvp === 'maybe' ? ' active' : ''}`, action: 'maybe', text: 'maybe' } },
-      { span: { class: `rsvp-tag no${rsvp === 'no' ? ' active' : ''}`, action: 'no', text: 'no' } },
+      { span: { class: `rsvp-tag yes ${rsvp === 'yes' ? 'active' : ''}`, action: 'yes', text: 'yes' } },
+      { span: { class: `rsvp-tag maybe ${rsvp === 'maybe' ? 'active' : ''}`, action: 'maybe', text: 'maybe' } },
+      { span: { class: `rsvp-tag no ${rsvp === 'no' ? 'active' : ''}`, action: 'no', text: 'no' } },
       { div: { class: 'notif-icon-container' } },
-      { span: { class: `meet-notif meet-icon${notif === 'yes' ? ' active' : ''}`, action: 'no' } },
+      { span: { class: `meet-notif meet-icon ${notif ? 'yes' : 'no'}`, action: 'no' } },
     ],
     [0, 1, 1, 1, 1, 0, 6],
   ];
@@ -350,6 +388,7 @@ const searchCreator = (box, data) => {
 export {
   elementCreator,
   meetCreator,
+  notifContainerCreator,
   notifCreator,
   bookCreator,
   questionCreator,

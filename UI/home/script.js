@@ -1,6 +1,6 @@
 import {
   meetCreator,
-  notifCreator,
+  notifContainerCreator,
   bookCreator,
   bookQuestionCreator,
   imageCreator,
@@ -11,12 +11,13 @@ import {
   notifContol,
 } from '../modules/buttonControllers.js';
 import dummydata from '../modules/dummy-data.js';
-import { createQuestions } from '../modules/pagecontrol.js';
 import { imageInputControl } from '../modules/imageControl.js';
 import { populateProfile } from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
 import RsvpControl from '../helpers/rsvpControl.js';
 import questions from '../helpers/questions.js';
+import notification from '../helpers/notification.js';
+import setHeight from '../helpers/setHeight.js';
 
 const profile = dummydata.user;
 // if (!profile) window.location.href = '/Quetioner/UI';
@@ -78,10 +79,9 @@ const addMeet = (data) => {
   main.data = data;
   main.addEventListener('click', () => {
     expandMeet(data);
-    swith('meet-expanded', 'section-showing');
   });
   rsvpControl(rsvps, null, data.id, data.rsvp, data);
-  notifContol(notif);
+  notifContol(notif, data.id);
   tagControl(tags);
 };
 
@@ -93,20 +93,23 @@ const addBook = (booked) => {
   const container = document.getElementById('booked-section');
   const [main, qbox, btn, rsvps, notif] = bookCreator(container, booked);
 
-  btn.addEventListener('click', () => {
+  setHeight(qbox, true);
+  btn.addEventListener('click', async () => {
     if (btn.classList.contains('collapsed')) {
       if (!qbox.classList.contains('populated')) {
-        addBookQuestions(main.meetup, qbox);
+        await addBookQuestions(main.meetup, qbox);
       }
       btn.classList.replace('collapsed', 'expanded');
       qbox.classList.add('showing');
+      setHeight(qbox, false);
     } else {
       btn.classList.replace('expanded', 'collapsed');
       qbox.classList.remove('showing');
+      setHeight(qbox, true);
     }
   });
 
-  notifContol(notif);
+  notifContol(notif, booked.id);
   rsvpControl(rsvps, main, booked.id, booked.rsvp, booked);
 };
 
@@ -115,7 +118,7 @@ const addBookQuestions = async (id, box) => {
     let data = await fetchData.questions(id);
     console.log(data);
     if (typeof data === 'string') {
-      box.textContent = 'There are no questions for this meetup';
+      box.innerHTML = '<span class="book-error">There are no questions for this meetup<span>';
       data = [];
     }
     data = data.sort((m1, m2) => m1.questions - m2.questions).splice(0, 5);
@@ -136,7 +139,7 @@ const expandMeet = async (meetData) => {
     imgBtnControl(imgArray);
   }
   rsvpControl(rsvps, null, meetData.id, meetData.rsvp, meetData);
-  notifContol(notif);
+  notifContol(notif, meetData.id);
   tagControl(tags, true);
 
   try {
@@ -149,6 +152,9 @@ const expandMeet = async (meetData) => {
   } catch (error) {
     console.log(error);
   }
+
+  swith('meet-expanded', 'section-showing');
+  return true;
 };
 
 const populateMeet = async () => {
@@ -164,23 +170,26 @@ const populateMeet = async () => {
   }
 };
 
-const getBooked = async () => {
+const populateNotif = async () => {
   try {
-    const meets = await fetchData.upcoming();
-    console.log(meets);
-    meets.forEach(meet => addBook(meet));
+    let data = await fetchData.notifications();
+    console.log(data);
+    data = typeof data === 'string' ? [] : data;
+    const elements = notifContainerCreator(document.querySelector('#notif-section'), data);
+    elements.forEach((elem) => {
+      const [container, notifBtn, expBtn, count, quest] = elem;
+      count.textContent = `${quest.length} new question${quest.length > 1 ? 's' : ''}`;
+      notification(container, quest, expBtn, expandMeet);
+      notifContol(notifBtn);
+    });
   } catch (error) {
     console.log(error);
   }
 };
 
-
 const populate = () => {
   populateMeet();
-
-  dummydata.notifications.forEach((notif) => {
-    addNotif(notif);
-  });
+  populateNotif();
 };
 
 populateProfile(

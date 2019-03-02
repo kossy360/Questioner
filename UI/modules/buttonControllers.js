@@ -5,6 +5,7 @@ import {
 } from './element-creator.js';
 
 import fetchData from '../helpers/fetchData.js';
+import setHeight from '../helpers/setHeight.js';
 
 const voteControl = (voteBtn, index, array) => {
   const { id } = voteBtn.qObj;
@@ -60,25 +61,38 @@ const askBtnControl = (ask, meetup) => {
 };
 
 const commentBtnControl = (commentBtn) => {
-  commentBtn.addEventListener('click', () => {
-    const box = commentBtn.box.commentContainer;
+  commentBtn.addEventListener('click', async () => {
+    let box = commentBtn.box.commentContainer;
     if (commentBtn.classList.contains('collapsed')) {
       if (!box) {
-        addComments(commentBtn.action, commentBtn.box);
+        await addComments(commentBtn.action, commentBtn.box);
+        box = commentBtn.box.commentContainer;
+        setHeight(box, true);
       }
       commentBtn.classList.replace('collapsed', 'expanded');
-      if (box) box.classList.add('showing');
+      box.classList.add('showing');
+      setHeight(box, false);
     } else {
       commentBtn.classList.replace('expanded', 'collapsed');
       box.classList.remove('showing');
+      setHeight(box, true);
     }
   });
 };
 
-const notifContol = (notif) => {
-  notif.addEventListener('click', (e) => {
+const notifContol = (notif, id) => {
+  notif.id = `notif-${id}`;
+  notif.addEventListener('click', async (e) => {
+    console.log('notif');
     e.stopPropagation();
-    notif.classList.toggle('yes', !notif.classList.contains('yes'));
+    try {
+      const msg = await fetchData[notif.classList.contains('yes') ? 'clear' : 'register'](id);
+      console.log(msg);
+      const brothers = document.querySelectorAll(`#notif-${id}`);
+      Array.prototype.forEach.call(brothers, bro => bro.classList.toggle('yes', !bro.classList.contains('yes')));
+    } catch (error) {
+      console.log(error);
+    }
   });
 };
 

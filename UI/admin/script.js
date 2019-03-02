@@ -1,12 +1,11 @@
 import {
-  notifCreator,
+  notifContainerCreator,
   imageCreator,
   searchCreator,
 } from '../modules/element-creator.js';
 
-import { imgBtnControl } from '../modules/buttonControllers.js';
+import { imgBtnControl, notifContol } from '../modules/buttonControllers.js';
 import meetCreator from '../modules/element-creator-admin.js';
-import dummydata from './modules/dummy-data.js';
 import ReadForm from '../modules/formProfileReader.js';
 import Tag from '../modules/add-tag.js';
 import DatePicker from '../modules/DatePicker.js';
@@ -16,6 +15,7 @@ import { populateProfile } from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
 import createForm from '../helpers/createForm.js';
 import questions from '../helpers/questions.js';
+import notification from '../helpers/notification.js';
 
 const tabSelector = document.getElementsByClassName('tab-selector');
 
@@ -292,10 +292,6 @@ const addMeet = (data, replace = false) => {
   meetControl(data, edit, deleteM);
 };
 
-const addNotif = (data) => {
-  notifCreator(document.querySelector('#notif-section'), data);
-};
-
 const expandMeet = async (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
@@ -328,12 +324,26 @@ const populateMeet = async () => {
   }
 };
 
+const populateNotif = async () => {
+  try {
+    let data = await fetchData.notifications();
+    console.log(data);
+    data = typeof data === 'string' ? [] : data;
+    const elements = notifContainerCreator(document.querySelector('#notif-section'), data);
+    elements.forEach((elem) => {
+      const [container, notifBtn, expBtn, count, quest] = elem;
+      count.textContent = `${quest.length} new question${quest.length > 1 ? 's' : ''}`;
+      notification(container, quest, expBtn, expandMeet);
+      notifContol(notifBtn);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const populate = () => {
   populateMeet();
-
-  dummydata.notifications.forEach((notif) => {
-    addNotif(notif);
-  });
+  populateNotif();
 };
 
 const populateSearch = ({ tags, topic }) => {

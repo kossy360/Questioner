@@ -226,6 +226,70 @@ const fetchData = {
       throw error;
     }
   },
+
+  notifications: async () => {
+    try {
+      const response = await fetch(`${host}notifications`, {
+        method: 'get',
+        headers: {
+          'x-access-token': token,
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data.data || data.message;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  reset: async (meetup) => {
+    try {
+      const response = await fetch(`${host}notifications/${meetup}/reset`, {
+        method: 'PATCH',
+        headers: {
+          'x-access-token': token,
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data.message;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  clear: async (meetup) => {
+    try {
+      const response = await fetch(`${host}notifications/${meetup}/clear`, {
+        method: 'delete',
+        headers: {
+          'x-access-token': token,
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data.message;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  register: async (meetup) => {
+    try {
+      const response = await fetch(`${host}notifications/${meetup}/register`, {
+        method: 'post',
+        headers: {
+          'x-access-token': token,
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data.message;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default fetchData;
