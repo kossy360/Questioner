@@ -9,6 +9,7 @@ import {
 import {
   imgBtnControl,
   notifContol,
+  profileControl,
 } from '../modules/buttonControllers.js';
 import {
   populateProfile,
@@ -151,11 +152,7 @@ const expandMeet = async (meetData) => {
 
   try {
     const profiles = await questions.get(meetData.id, box);
-    profiles.forEach(((profilee) => {
-      profilee.forEach(elem => elem.addEventListener('click', () => {
-        swith('user-profile', 'section-showing');
-      }));
-    }));
+    profileControl(profiles, swith);
   } catch (error) {
     console.log(error);
   }

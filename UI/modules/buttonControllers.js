@@ -156,10 +156,46 @@ const addComments = async (id, box) => {
   box.classList.add('populated');
 };
 
+const getProfile = async (userId, swith) => {
+  try {
+    const [data] = await fetchData.getProfile(userId);
+    const fields = document.getElementsByClassName('profile-value');
+    Array.prototype.forEach.call(fields, (field) => {
+      const pointer = field.getAttribute('pointer');
+      if (data[pointer]) {
+        field.parentElement.style.display = 'block';
+        field.textContent = data[pointer];
+      } else {
+        field.parentElement.style.display = 'none';
+      }
+    });
+    document.getElementById('show-profile-dp').src = data.displaypicture || '../assets/profile.svg';
+    swith('user-profile', 'section-showing');
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const profileControl = (profiles, swith) => {
+  swith('meet-expanded', 'section-showing');
+  document.getElementById('profile-display-back').addEventListener(
+    'click',
+    () => swith('meet-expanded', 'section-showing'),
+  );
+  profiles.forEach((profs) => {
+    profs.forEach((prof) => {
+      prof.addEventListener('click', () => {
+        getProfile(prof.user, swith);
+      });
+    });
+  });
+};
+
 export {
   voteControl,
   imgBtnControl,
   askBtnControl,
   commentBtnControl,
   notifContol,
+  profileControl,
 };

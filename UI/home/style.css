@@ -1603,10 +1603,21 @@ span.image-nav.selected {
   font-size: 1.2em;
 }
 
+.profile-entry.displaypicture {
+  min-height: 200px;
+  max-width: 500px;
+}
+
+img#show-profile-dp {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
 .profile-key,
 .profile-value {
   height: 100%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   padding-left: 10px;
 }

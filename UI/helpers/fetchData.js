@@ -40,6 +40,22 @@ const fetchData = {
     }
   },
 
+  getProfile: async (userId) => {
+    try {
+      const response = await fetch(`${host}users/profile/${userId}`, {
+        method: 'get',
+        headers: {
+          'x-access-token': token,
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   getStat: async () => {
     try {
       const response = await fetch(`${host}users/stats`, {

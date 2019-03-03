@@ -4,7 +4,11 @@ import {
   searchCreator,
 } from '../modules/element-creator.js';
 
-import { imgBtnControl, notifContol } from '../modules/buttonControllers.js';
+import {
+  imgBtnControl,
+  notifContol,
+  profileControl,
+} from '../modules/buttonControllers.js';
 import meetCreator from '../modules/element-creator-admin.js';
 import Tag from '../modules/add-tag.js';
 import DatePicker from '../modules/DatePicker.js';
@@ -317,11 +321,7 @@ const expandMeet = async (meetData) => {
 
   try {
     const profiles = await questions.get(meetData.id, box);
-    profiles.forEach(((profilee) => {
-      profilee.forEach(elem => elem.addEventListener('click', () => {
-        swith('user-profile', 'section-showing');
-      }));
-    }));
+    profileControl(profiles, swith);
   } catch (error) {
     console.log(error);
   }
