@@ -129,6 +129,7 @@ nav.top-fix {
   box-sizing: border-box;
   width: 2.1rem;
   height: 2.1rem;
+  object-fit: contain;
 }
 
 .main-section {
@@ -336,8 +337,6 @@ span.notif-question-votes {
   display: flex;
   justify-content: flex-end;
 }
-
-.sub-notif-container.showing {}
 
 .notif-stat-container {
   display: grid;
@@ -949,12 +948,16 @@ button {
 #profile-picture-container {
   height: 10rem;
   width: 10rem;
+  border: 1px solid #288bd9;
   border-radius: 100%;
   position: relative;
   margin: auto;
   margin-bottom: 10px;
   top: 0;
   box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #profile-picture-label {
@@ -979,6 +982,7 @@ button {
   width: 100%;
   border-radius: 100%;
   box-sizing: border-box;
+  object-fit: contain;
 }
 
 #profile-picture-input {
@@ -1025,10 +1029,10 @@ span.comment-author {
   transition: all 0.3s ease-out;
 }
 
-.comment-box-container.showing {}
-
 img.user-dp-small {
   width: 40px;
+  height: 40px;
+  object-fit: contain;
   border-radius: 100%;
   display: flex;
   position: relative;
@@ -1234,8 +1238,6 @@ span.rsvp-tag.active.loading {
   overflow: hidden;
   transition: height 0.3s ease-out;
 }
-
-.question-feed-container1.populated.showing {}
 
 .meet-input-label {
   display: block;

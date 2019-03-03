@@ -10,19 +10,29 @@ import {
   imgBtnControl,
   notifContol,
 } from '../modules/buttonControllers.js';
-import dummydata from '../modules/dummy-data.js';
-import { imageInputControl } from '../modules/imageControl.js';
-import { populateProfile } from '../modules/profileControl.js';
+import {
+  populateProfile,
+  updateDp,
+} from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
 import RsvpControl from '../helpers/rsvpControl.js';
 import questions from '../helpers/questions.js';
 import notification from '../helpers/notification.js';
 import setHeight from '../helpers/setHeight.js';
 
-const profile = dummydata.user;
+const profile = JSON.parse(window.sessionStorage.getItem('user'));
+const dps = [document.getElementById('profile-picture'), document.getElementById('profile-icon')];
 // if (!profile) window.location.href = '/Quetioner/UI';
 
 const loop = Array.prototype.forEach;
+
+(async () => {
+  if (profile.displaypicture) {
+    dps.forEach((dp) => {
+      dp.src = profile.displaypicture;
+    });
+  }
+})();
 
 const swith = (id, showClass) => {
   const showing = document.querySelector(`.${showClass}`);
@@ -83,10 +93,6 @@ const addMeet = (data) => {
   rsvpControl(rsvps, null, data.id, data.rsvp, data);
   notifContol(notif, data.id);
   tagControl(tags);
-};
-
-const addNotif = (data) => {
-  notifCreator(document.querySelector('#notif-section'), data);
 };
 
 const addBook = (booked) => {
@@ -246,12 +252,11 @@ document.getElementById('search-button').addEventListener('click', () => {
 });
 
 document.getElementById('profile-picture-input')
-  .addEventListener('change', () => {
-    const input = document.getElementById('profile-picture-input');
-    const img = document.getElementById('profile-picture');
-    imageInputControl(null, input, img);
-    const [url] = input.url;
-    document.getElementById('profile-icon').src = url;
+  .addEventListener('change', (e) => {
+    const input = e.target;
+    // imageInputControl(null, input, img);
+    // const [url] = input.url;
+    updateDp([input.files[0]], dps);
   });
 
 document.querySelector('.profile-button').addEventListener('click', () => {

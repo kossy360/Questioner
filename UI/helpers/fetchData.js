@@ -23,6 +23,23 @@ const fetchData = {
     }
   },
 
+  updateUser: async (body) => {
+    try {
+      const response = await fetch(`${host}users`, {
+        method: 'PATCH',
+        headers: {
+          'x-access-token': token,
+        },
+        body,
+      });
+      const data = await response.json();
+      if (data.status >= 400) throw data;
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   meetups: async () => {
     try {
       const response = await fetch(`${host}meetups`, {

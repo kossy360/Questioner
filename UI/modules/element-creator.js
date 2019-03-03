@@ -107,9 +107,9 @@ const notifContainerCreator = (box, data) => {
 
   data.forEach((notif) => {
     if (notifObj[notif.meetup]) {
-      const container = notifObj[notif.meetup][4];
+      const container = notifObj[notif.meetup][5];
       const notifBox = notifCreator(container, notif);
-      notifObj[notif.meetup][3].push(notifBox);
+      notifObj[notif.meetup][4].push(notifBox);
     } else {
       const elements = elementCreator(schema);
       elements[0].meetup = notif.meetup;
@@ -221,7 +221,7 @@ const questionCreator = (box, data) => {
         { span: { class: 'meet-question-name span-flex' } },
         { span: { class: 'question-author', user: quest.createdBy, text: quest.username } },
         { div: { class: 'meet-question-details-2' } },
-        { img: { class: 'user-dp-small question-dp', src: data.displaypicture || '../assets/profile.svg', user: quest.createdBy } },
+        { img: { class: 'user-dp-small question-dp', src: quest.displaypicture || '../assets/profile.svg', user: quest.createdBy } },
         { div: { class: 'feed-stat-vote' } },
         { span: { class: `upvote vote-btn ${quest.response > 0 ? 'active' : ''}`, qObj: quest, action: 'upvote' } },
         { span: { class: 'vote-count', id: `vote-count-${quest.id}`, text: quest.votes } },

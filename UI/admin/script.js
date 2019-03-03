@@ -6,20 +6,31 @@ import {
 
 import { imgBtnControl, notifContol } from '../modules/buttonControllers.js';
 import meetCreator from '../modules/element-creator-admin.js';
-import ReadForm from '../modules/formProfileReader.js';
 import Tag from '../modules/add-tag.js';
 import DatePicker from '../modules/DatePicker.js';
 import timeControl from '../helpers/timeControl.js';
 import { imageInputControl } from '../modules/imageControl.js';
-import { populateProfile } from '../modules/profileControl.js';
+import {
+  populateProfile,
+  updateDp,
+} from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
 import createForm from '../helpers/createForm.js';
 import questions from '../helpers/questions.js';
 import notification from '../helpers/notification.js';
 
 const tabSelector = document.getElementsByClassName('tab-selector');
-
+const profile = JSON.parse(window.sessionStorage.getItem('user'));
+const dps = [document.getElementById('profile-picture'), document.getElementById('profile-icon')];
 const loop = Array.prototype.forEach;
+
+(async () => {
+  if (profile.displaypicture) {
+    dps.forEach((dp) => {
+      dp.src = profile.displaypicture;
+    });
+  }
+})();
 
 const tag = new Tag(
   document.querySelector('.tag-edit-container'),
@@ -153,6 +164,7 @@ const getData = (inputClass) => {
     switch (pointer) {
       case 'tags':
         if (tag.getTag()) obj[pointer] = tag.getTag();
+        tag.clear();
         break;
       case 'images':
         if (input.images) obj[pointer] = input.images;
@@ -168,7 +180,6 @@ const getData = (inputClass) => {
         break;
     }
   });
-  tag.clear();
   return obj;
 };
 
@@ -387,9 +398,6 @@ const getResults = async (value) => {
   }
 };
 
-const profile = new ReadForm().getProfile();
-
-
 populateProfile(
   document.getElementsByClassName('profile-input'),
   document.getElementsByClassName('profile-edit-button'),
@@ -397,12 +405,11 @@ populateProfile(
 );
 
 document.getElementById('profile-picture-input')
-  .addEventListener('change', () => {
-    const input = document.getElementById('profile-picture-input');
-    const img = document.getElementById('profile-picture');
-    imageInputControl(null, input, img);
-    const [url] = input.url;
-    document.getElementById('profile-icon').src = url;
+  .addEventListener('change', (e) => {
+    const input = e.target;
+    // imageInputControl(null, input, img);
+    // const [url] = input.url;
+    updateDp([input.files[0]], dps);
   });
 
 document.querySelector('.profile-button').addEventListener('click', () => {
