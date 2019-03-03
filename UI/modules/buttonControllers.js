@@ -123,7 +123,7 @@ const commentControl = (profiles) => {
   });
 };
 
-const addComment = (question, comment, input) => {
+const addComment = (question, comment, input, box) => {
   comment.addEventListener('click', async () => {
     if (input.value === '') return;
     const obj = {
@@ -135,6 +135,7 @@ const addComment = (question, comment, input) => {
       console.log(data);
       const profile = commentCreator(comment.box, data);
       commentControl([profile]);
+      setHeight(box, false);
       input.value = '';
     } catch (error) {
       console.log(error);
@@ -147,7 +148,7 @@ const addComments = async (id, box) => {
     const data = await fetchData.comments(id);
     const result = typeof data === 'string' ? [] : data;
     const [comment, input, profiles] = commentBoxCreator(box, result);
-    addComment(id, comment, input);
+    addComment(id, comment, input, box.commentContainer);
     commentControl(profiles);
   } catch (error) {
     console.log(error);

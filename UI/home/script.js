@@ -19,6 +19,7 @@ import RsvpControl from '../helpers/rsvpControl.js';
 import questions from '../helpers/questions.js';
 import notification from '../helpers/notification.js';
 import setHeight from '../helpers/setHeight.js';
+import updateStats from '../helpers/updateStats.js';
 
 const profile = JSON.parse(window.sessionStorage.getItem('user'));
 const dps = [document.getElementById('profile-picture'), document.getElementById('profile-icon')];
@@ -196,6 +197,7 @@ const populateNotif = async () => {
 const populate = () => {
   populateMeet();
   populateNotif();
+  updateStats();
 };
 
 populateProfile(

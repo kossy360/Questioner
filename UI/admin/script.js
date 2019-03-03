@@ -18,6 +18,7 @@ import fetchData from '../helpers/fetchData.js';
 import createForm from '../helpers/createForm.js';
 import questions from '../helpers/questions.js';
 import notification from '../helpers/notification.js';
+import updateStats from '../helpers/updateStats.js';
 
 const tabSelector = document.getElementsByClassName('tab-selector');
 const profile = JSON.parse(window.sessionStorage.getItem('user'));
@@ -355,6 +356,7 @@ const populateNotif = async () => {
 const populate = () => {
   populateMeet();
   populateNotif();
+  updateStats();
 };
 
 const populateSearch = ({ tags, topic }) => {

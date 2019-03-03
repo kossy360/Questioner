@@ -1427,6 +1427,10 @@ button.meet-image-delete {
   border: 1px solid #288bd9;
 }
 
+.usage-stat-container.admin {
+  grid-template-columns: 50% 50%;
+}
+
 .usage-stat-container div {
   height: 100%;
   display: flex;

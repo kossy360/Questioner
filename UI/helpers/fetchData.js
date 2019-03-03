@@ -40,6 +40,22 @@ const fetchData = {
     }
   },
 
+  getStat: async () => {
+    try {
+      const response = await fetch(`${host}users/stats`, {
+        method: 'get',
+        headers: {
+          'x-access-token': token,
+        },
+      });
+      const data = await response.json();
+      if (data.status >= 400) throw data;
+      return data.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   meetups: async () => {
     try {
       const response = await fetch(`${host}meetups`, {
