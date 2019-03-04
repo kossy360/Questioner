@@ -38,16 +38,16 @@ const schemas = {
     happening: joi.date().iso().min('now').required(),
     location: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
     topic: joi.string().replace(/^ *$/g, '').concat(joi.string().trim().required()),
-    images: joi.array().items(joi.string().required()),
-    tags: joi.array().items(joi.string().required()),
+    images: joi.alternatives().try(joi.string(), joi.array().items(joi.string())),
+    tags: joi.alternatives().try(joi.string(), joi.array().items(joi.string())),
   }),
 
   updateMeetup: joi.object().keys({
     happening: joi.date().iso().min('now'),
     location: joi.string().replace(/^ *$/g, '').concat(joi.string().trim()).min(3),
     topic: joi.string().replace(/^ *$/g, '').concat(joi.string().trim()),
-    images: joi.array().items(joi.string()),
-    tags: joi.array().items(joi.string().required()),
+    images: joi.alternatives().try(joi.string().allow(''), joi.array().items(joi.string())),
+    tags: joi.alternatives().try(joi.string(), joi.array().items(joi.string())),
   }),
 
   meetSearch: joi.object().keys({
@@ -66,10 +66,11 @@ const schemas = {
   }),
 
   rsvps: joi.object().keys({
-    response: joi.string().trim().equal('yes', 'no', 'maybe').insensitive().required(),
+    response: joi.string().trim().equal('yes', 'no', 'maybe', 'clear').insensitive().required(),
   }),
 
   requestId: joi.object().keys({
+    userId: joi.number().integer().min(1),
     meetupId: joi.number().integer().min(1),
     questionId: joi.number().integer().min(1),
     vote: joi.string().trim().equal('upvote', 'downvote', 'clear').insensitive(),

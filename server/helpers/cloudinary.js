@@ -66,6 +66,7 @@ const imageUpload = (req, user = null) => new Promise((res, rej) => {
           return;
         }
         const { secure_url } = image;
+        if (!secure_url) rej(image);
         if (!user) req = updateImage(req, secure_url);
         else req.body.displaypicture = secure_url;
         rescount += 1;

@@ -13,6 +13,12 @@ const deleteImg = async (images) => {
   }
 };
 
+const toArray = (value) => {
+  if (value instanceof Array) return value;
+  if (!value) return [];
+  return value.replace(/ +/g, '').split(',');
+};
+
 const control = {
   getAll: async (req, res) => {
     try {
@@ -61,12 +67,15 @@ const control = {
     if (req.decoded.isAdmin) {
       try {
         await validator(req, 'meetup');
+        if (req.body.tags) req.body.tags = toArray(req.body.tags);
+        if (req.body.images) req.body.images = toArray(req.body.images);
+
         await imageUpload(req);
         const { rows, rowCount } = await meetupQuery.createNew(req.body);
         if (rowCount > 0) res.status(201).json(success(201, rows));
         else next(500);
       } catch (error) {
-        if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
+        if (error.isJoi) createError(422, res, error.details[0].message.replace(/"/g, ''));
         else createError(500, res);
       }
     } else createError(403, res, 'only users with administrative rights can create meetups');
@@ -98,6 +107,8 @@ const control = {
       try {
         const { meetupId } = await validator(req.params, 'requestId');
         await validator(req, 'updateMeetup');
+        if ('tags' in req.body) req.body.tags = toArray(req.body.tags);
+        if ('images' in req.body) req.body.images = toArray(req.body.images);
         await imageUpload(req);
         const { rows } = await meetupQuery.update(req.body, meetupId);
         if (rows.length > 0) {
@@ -109,7 +120,7 @@ const control = {
           createError(404, res, 'meetup does not exist');
         }
       } catch (error) {
-        if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
+        if (error.isJoi) createError(422, res, error.details[0].message.replace(/"/g, ''));
         else createError(500, res);
       }
     } else createError(403, res, 'only users with administrative rights can update meetups');

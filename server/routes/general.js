@@ -19,9 +19,13 @@ router.use('/', (req, res, next) => {
 
 router.get('/users/lookup', users.lookup);
 
+router.get('/users/stats', check, users.getStat);
+
+router.get('/users/profile/:userId', check, users.getProfile);
+
 router.get('/meetups/upcoming', check, meetups.getUpcoming);
 
-router.get('/meetups/search', check, meetSearch.search);
+router.post('/meetups/search', check, meetSearch.search);
 
 router.get('/meetups/:meetupId', check, meetups.getSpecific);
 

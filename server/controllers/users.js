@@ -30,8 +30,8 @@ const controller = {
           status: 200,
           message: 'user is already registered',
         });
-      } else if (error.details[0].type === 'string.regex.base') createError(422, res, 'password must contain 6 - 12 characters');
-      else if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
+      } else if (error.isJoi && error.details[0].type === 'string.regex.base') createError(422, res, 'password must contain 6 - 12 characters');
+      else if (error.isJoi) createError(422, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
     }
   },
@@ -70,9 +70,9 @@ const controller = {
       if (error.code === '23505') {
         res.status(200).json({
           status: 200,
-          message: 'email already in use',
+          message: 'email or username already in use',
         });
-      } else if (error.details[0]) createError(422, res, error.details[0].message.replace(/"/g, ''));
+      } else if (error.isJoi) createError(422, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
     }
   },
@@ -96,6 +96,29 @@ const controller = {
     } catch (error) {
       if (error.isJoi) createError(422, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
+    }
+  },
+
+  getStat: async (req, res) => {
+    try {
+      const { rows, rowCount } = await userQuery.getStat(req.decoded.user);
+      if (rowCount > 0) res.status(200).send(success(200, rows));
+      else throw req;
+    } catch (error) {
+      createError(500, res);
+    }
+  },
+
+  getProfile: async (req, res) => {
+    try {
+      const { userId } = await validator(req.params, 'requestId');
+      const { rows, rowCount } = await userQuery.getProfile(userId);
+      if (rowCount > 0) res.status(200).send(success(200, rows));
+      else createError(404, res, 'user not found');
+    } catch (error) {
+      console.log(error)
+      if (error.isJoi) createError(422, res, error.details[0].message.replace(/"/g, ''));
+      createError(500, res);
     }
   },
 };

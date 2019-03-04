@@ -9,7 +9,7 @@ const control = {
     try {
       const { meetupId } = await validator(req.params, 'requestId');
       const { rowCount } = await notificationsQuery.register(req.decoded.user, meetupId);
-      if (rowCount > 0) {
+      if (rowCount) {
         res.status(201).json({
           status: 201,
           message: `notifications registered for meetup ${meetupId}`,
@@ -17,11 +17,8 @@ const control = {
       }
     } catch (error) {
       if (error.code === '23503') {
-        res.status(200).json({
-          status: 200,
-          message: 'you have already set up notifications for this meetup',
-        });
-      } else if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+        createError(404, res, 'meetup not found');
+      } else if (error.isJoi) createError(400, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
     }
   },
@@ -37,7 +34,7 @@ const control = {
         });
       } else createError(404, res, 'meetup not registered for notifications or meetup does not exist');
     } catch (error) {
-      if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      if (error.isJoi) createError(400, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
     }
   },
@@ -53,7 +50,7 @@ const control = {
         });
       } else createError(404, res, 'meetup not registered for notifications or meetup does not exist');
     } catch (error) {
-      if (error.details[0]) createError(400, res, error.details[0].message.replace(/"/g, ''));
+      if (error.isJoi) createError(400, res, error.details[0].message.replace(/"/g, ''));
       else createError(500, res);
     }
   },
