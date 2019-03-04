@@ -1,7 +1,7 @@
 import fetchData from './fetchData.js';
 
 class RsvpControl {
-  constructor(yes, maybe, no, id, value, bkCntrl, meetup) {
+  constructor(yes, maybe, no, id, value, bkCntrl, meetup, box) {
     this.yes = yes;
     this.maybe = maybe;
     this.no = no;
@@ -10,6 +10,7 @@ class RsvpControl {
     this.active = false;
     this.bkCntrl = bkCntrl;
     this.meetup = meetup;
+    this.box = box;
   }
 
   newVal(rsvp) {
@@ -36,6 +37,16 @@ class RsvpControl {
     this.value = response;
     this.updateMeetup(response);
     if (response !== 'clear') this[response].classList.add('active');
+    if (response === 'yes') this.bkCntrl(this.meetup);
+    else {
+      Array.prototype.forEach.call(
+        document.getElementsByClassName('book-container'),
+        (container) => {
+          if (container.meetup === this.id) container.remove();
+        },
+      );
+      if (this.box) this.box.remove();
+    }
     const containers = document.querySelectorAll(`#rsvp-${this.id}`);
     Array.prototype.forEach.call(containers, (elem) => {
       elem.control.updateRsvp(response);
@@ -46,7 +57,6 @@ class RsvpControl {
     try {
       await fetchData.rsvp(this.id, { response });
       this.updateRsvp(response);
-      // if (response === 'yes') this.bkCntrl(dummydata.rsvps[0]);
       this.active = false;
     } catch (error) {
       if (response !== 'clear') this[this.value].classList.remove('loading');

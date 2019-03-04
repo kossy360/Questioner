@@ -6,7 +6,6 @@ const createForm = (data) => {
     else if (value.length) value.forEach(val => form.append(key, val));
     else form.append(key, '');
   });
-  form.forEach((val, key) => console.log(val, key));
   return form;
 };
 

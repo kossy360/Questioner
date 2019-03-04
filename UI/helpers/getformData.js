@@ -1,4 +1,3 @@
-/* eslint-env browser */
 const getFormData = (classname) => {
   const dataInput = document.getElementsByClassName(classname);
   const object = {};

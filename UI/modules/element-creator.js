@@ -2,7 +2,10 @@
 /* eslint-disable prefer-destructuring */
 
 import Slide from './slide.js';
-import convertTime from '../helpers/convertTime.js';
+import {
+  convertTime,
+  fancyTime,
+} from '../helpers/convertTime.js';
 
 /**
  *creates a html component based on an inputed
@@ -66,7 +69,7 @@ const meetCreator = (box, data) => {
 
   const elements = elementCreator(meetSchema);
 
-  const [main, rsvps, notif] = rsvpNotifCreator([meetData.rsvp, meetData.notif]);
+  const [main, rsvps, notif] = rsvpNotifCreator([meetData.rsvp, meetData.notification]);
   elements[0].insertBefore(main, elements[3]);
 
   const tags = [];
@@ -84,20 +87,58 @@ const meetCreator = (box, data) => {
   return [elements[0], rsvps, notif, tags, elements[2]];
 };
 
-const notifCreator = (box, data) => {
-  const notifData = data;
-
-  const notifSchema = [
+const notifContainerCreator = (box, data) => {
+  const schema = [
     [
       { div: { class: 'main-notif-container main-container' } },
-      { p: { class: 'meet-name small', text: notifData.title } },
+      { p: { class: 'meet-name small' } },
+      { div: { class: 'notif-stat-container' } },
+      { span: { class: 'notif-question-count' } },
+      { div: { class: 'notif-icon-container' } },
+      { span: { class: 'meet-notif meet-icon active yes', action: 'no' } },
+      { span: { class: 'question-feed-dir comment-control collapsed' } },
+      { span: { class: 'comment-exp', text: 'new questions' } },
       { div: { class: 'sub-notif-container' } },
-      { p: { class: 'notif-message', text: `${notifData.count} new questions` } },
     ],
-    [0, 0, 2],
+    [0, 0, 2, 2, 4, 0, 6, 0],
+  ];
+
+  const notifObj = {};
+
+  data.forEach((notif) => {
+    if (notifObj[notif.meetup]) {
+      const container = notifObj[notif.meetup][5];
+      const notifBox = notifCreator(container, notif);
+      notifObj[notif.meetup][4].push(notifBox);
+    } else {
+      const elements = elementCreator(schema);
+      elements[0].meetup = notif.meetup;
+      elements[1].textContent = notif.topic;
+      elements[6].qbox = elements[8];
+      const notifBox = notifCreator(elements[8], notif);
+      notifObj[notif.meetup] = [
+        elements[0], elements[5], elements[6], elements[3], [notifBox], elements[8]];
+      box.appendChild(elements[0]);
+    }
+  });
+
+  return Object.keys(notifObj).map(elem => notifObj[elem]);
+};
+
+const notifCreator = (box, data) => {
+  const notifSchema = [
+    [
+      { div: { class: 'sub-notif-container2' } },
+      { div: { class: 'notif-question' } },
+      { span: { class: 'notif-question-body', text: `${data.body}` } },
+      { span: { class: 'notif-question-user', text: `${data.username}` } },
+      { span: { class: 'notif-question-votes', text: `${data.votes}` } },
+    ],
+    [0, 1, 1, 1],
   ];
 
   const elements = elementCreator(notifSchema);
+  elements[0].data = data;
   box.appendChild(elements[0]);
   return elements[0];
 };
@@ -107,22 +148,23 @@ const bookCreator = (box, data) => {
 
   const bookSchema = [
     [
-      { div: { class: 'book-container main-container', meetup: bookData.meetup } },
-      { p: { class: 'meet-name small', text: bookData.title } },
+      { div: { class: 'book-container main-container', meetup: bookData.id } },
+      { p: { class: 'meet-name small', text: bookData.topic } },
       { div: { class: 'question-feed-container' } },
-      { p: { class: 'question-feed-dir collapsed', text: 'expand' } },
+      { span: { class: 'question-feed-dir comment-control collapsed' } },
+      { span: { class: 'comment-exp', text: 'top questions' } },
       { div: { class: 'question-feed-container1' } },
     ],
-    [0, 0, 2, 2],
+    [0, 0, 2, 3, 2],
   ];
 
   const elements = elementCreator(bookSchema);
 
-  const [container, rsvps, notif] = rsvpNotifCreator(['yes', 'yes']);
+  const [container, rsvps, notif] = rsvpNotifCreator(['yes', data.notification]);
   elements[0].insertBefore(container, elements[2]);
 
   box.appendChild(elements[0]);
-  return [elements[0], elements[4], elements[3], rsvps, notif];
+  return [elements[0], elements[5], elements[3], rsvps, notif];
 };
 
 const bookQuestionCreator = (box, data) => {
@@ -136,7 +178,6 @@ const bookQuestionCreator = (box, data) => {
       ],
       [0, 0],
     ];
-
     const sub = elementCreator(schema);
     voteCount.push(sub[2]);
     box.appendChild(sub[0]);
@@ -153,14 +194,12 @@ const questionContainerCreator = (box, data) => {
       { label: { class: 'question-input-label', for: 'question-input', text: 'Ask a question' } },
       { div: { class: 'question-input-box' } },
       { input: { id: 'question-input', type: 'text', placeholder: 'question here...' } },
-      { button: { id: 'question-input-button', type: 'button', text: 'Ask!' } },
+      { button: { id: 'question-input-button', type: 'button', text: 'Ask!', meetup: data.id } },
     ],
     [0, 0, 2, 2, 4, 4],
   ];
 
   const elements = elementCreator(schema);
-
-
   const [voteArray, commentBtns, profiles] = questionCreator(elements[1], data);
 
   elements[6].input = elements[5];
@@ -180,14 +219,14 @@ const questionCreator = (box, data) => {
         { div: { class: 'meet-question-details', id: quest.id } },
         { div: { class: 'meet-question-details-1' } },
         { span: { class: 'meet-question-name span-flex' } },
-        { span: { class: 'question-author', user: quest.createdBy, text: quest.username } },
+        { span: { class: 'question-author', user: quest.user, text: quest.username } },
         { div: { class: 'meet-question-details-2' } },
-        { img: { class: 'user-dp-small question-dp', src: data.displaypicture || '../assets/profile.svg', user: quest.createdBy } },
+        { img: { class: 'user-dp-small question-dp', src: quest.displaypicture || '../assets/profile.svg', user: quest.user } },
         { div: { class: 'feed-stat-vote' } },
-        { span: { class: 'upvote vote-btn', qObj: quest, action: 1 } },
+        { span: { class: `upvote vote-btn ${quest.response > 0 ? 'active' : ''}`, qObj: quest, action: 'upvote' } },
         { span: { class: 'vote-count', id: `vote-count-${quest.id}`, text: quest.votes } },
-        { span: { class: 'dnvote vote-btn', qObj: quest, action: -1 } },
-        { span: { class: 'meet-question-stat span-flex', text: quest.createdOn } },
+        { span: { class: `dnvote vote-btn ${quest.response < 0 ? 'active' : ''}`, qObj: quest, action: 'downvote' } },
+        { span: { class: 'meet-question-stat span-flex', text: fancyTime(quest.created) } },
         { span: { class: 'comment-control span-flex collapsed', action: quest.id } },
         { span: { class: 'comment-exp', text: 'comments' } },
       ],
@@ -219,35 +258,34 @@ const commentBoxCreator = (box, data) => {
     [0, 0, 2, 2],
   ];
   const elements = elementCreator(boxSchema);
-  const replyBtns = [];
-  data.forEach(comment => replyBtns.push(commentCreator(elements[1], comment)));
+  const profiles = [];
+  data.forEach(comment => profiles.push(commentCreator(elements[1], comment)));
   elements[4].box = elements[1];
-  box.classList.add('populated');
-  box.comment = elements[0];
+  elements[4].container = box;
+  box.commentContainer = elements[0];
   box.appendChild(elements[0]);
 
-  return [elements[4], elements[3], replyBtns];
+  return [elements[4], elements[3], profiles];
 };
 
 const commentCreator = (box, data) => {
   const schema = [
     [
       { div: { class: 'comment-box' } },
-      { img: { class: 'user-dp-small comment-dp', src: data.displaypicture || '../assets/profile.svg' } },
+      { img: { class: 'user-dp-small comment-dp', src: data.displaypicture || '../assets/profile.svg', user: data.user } },
       { div: { class: 'comment-box-text' } },
       { span: { class: 'comment-text' } },
-      { span: { class: 'comment-author', text: data.username } },
+      { span: { class: 'comment-author', text: data.username, user: data.user } },
       { div: { class: 'comment-options' } },
-      { button: { type: 'button', class: 'comment-reply-button', text: 'reply', username: data.username } },
-      { span: { class: 'comment-timestamp', text: data.createdOn } },
+      { span: { class: 'comment-timestamp', text: fancyTime(data.created) } },
     ],
-    [0, 0, 2, 3, 0, 5, 5],
+    [0, 0, 2, 3, 0, 5],
   ];
   const elements = elementCreator(schema);
-  elements[4].insertAdjacentText('afterend', data.body);
+  elements[4].insertAdjacentText('afterend', data.comment);
   box.appendChild(elements[0]);
 
-  return [elements[6], elements[1], elements[4]];
+  return [elements[1], elements[4]];
 };
 
 const rsvpNotifCreator = ([rsvp, notif]) => {
@@ -256,11 +294,11 @@ const rsvpNotifCreator = ([rsvp, notif]) => {
       { div: { class: 'rsvp-notif-container' } },
       { div: { class: 'rsvp-container' } },
       { span: { class: 'rsvp-text', text: 'RSVP' } },
-      { span: { class: `rsvp-tag yes${rsvp === 'yes' ? ' active' : ''}`, action: 'yes', text: 'yes' } },
-      { span: { class: `rsvp-tag maybe${rsvp === 'maybe' ? ' active' : ''}`, action: 'maybe', text: 'maybe' } },
-      { span: { class: `rsvp-tag no${rsvp === 'no' ? ' active' : ''}`, action: 'no', text: 'no' } },
+      { span: { class: `rsvp-tag yes ${rsvp === 'yes' ? 'active' : ''}`, action: 'yes', text: 'yes' } },
+      { span: { class: `rsvp-tag maybe ${rsvp === 'maybe' ? 'active' : ''}`, action: 'maybe', text: 'maybe' } },
+      { span: { class: `rsvp-tag no ${rsvp === 'no' ? 'active' : ''}`, action: 'no', text: 'no' } },
       { div: { class: 'notif-icon-container' } },
-      { span: { class: `meet-notif meet-icon${notif === 'yes' ? ' active' : ''}`, action: 'no' } },
+      { span: { class: `meet-notif meet-icon ${notif ? 'yes' : 'no'}`, action: 'no' } },
     ],
     [0, 1, 1, 1, 1, 0, 6],
   ];
@@ -350,6 +388,7 @@ const searchCreator = (box, data) => {
 export {
   elementCreator,
   meetCreator,
+  notifContainerCreator,
   notifCreator,
   bookCreator,
   questionCreator,

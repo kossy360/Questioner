@@ -1,25 +1,43 @@
 import {
-  notifCreator,
+  notifContainerCreator,
   imageCreator,
   searchCreator,
 } from '../modules/element-creator.js';
 
-import { imgBtnControl } from '../modules/buttonControllers.js';
+import {
+  imgBtnControl,
+  notifContol,
+  profileControl,
+} from '../modules/buttonControllers.js';
 import meetCreator from '../modules/element-creator-admin.js';
-import dummydata from './modules/dummy-data.js';
-import ReadForm from '../modules/formProfileReader.js';
 import Tag from '../modules/add-tag.js';
 import DatePicker from '../modules/DatePicker.js';
 import timeControl from '../helpers/timeControl.js';
-import { createQuestions } from '../modules/pagecontrol.js';
 import { imageInputControl } from '../modules/imageControl.js';
-import { populateProfile } from '../modules/profileControl.js';
+import {
+  populateProfile,
+  updateDp,
+} from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
 import createForm from '../helpers/createForm.js';
+import questions from '../helpers/questions.js';
+import notification from '../helpers/notification.js';
+import updateStats from '../helpers/updateStats.js';
+import confirmAct from '../helpers/confirmAct.js';
+import errorHandler from '../helpers/errorHandler.js';
 
 const tabSelector = document.getElementsByClassName('tab-selector');
-
+const profile = JSON.parse(window.sessionStorage.getItem('user'));
+const dps = [document.getElementById('profile-picture'), document.getElementById('profile-icon')];
 const loop = Array.prototype.forEach;
+
+(async () => {
+  if (profile.displaypicture) {
+    dps.forEach((dp) => {
+      dp.src = profile.displaypicture;
+    });
+  }
+})();
 
 const tag = new Tag(
   document.querySelector('.tag-edit-container'),
@@ -149,10 +167,15 @@ const getData = (inputClass) => {
   const inputFields = document.getElementsByClassName(inputClass);
   const obj = {};
   loop.call(inputFields, (input) => {
+    if (input.classList.contains('invalid')) {
+      errorHandler('check your data and try again');
+      return;
+    }
     const pointer = input.getAttribute('pointer');
     switch (pointer) {
       case 'tags':
         if (tag.getTag()) obj[pointer] = tag.getTag();
+        tag.clear();
         break;
       case 'images':
         if (input.images) obj[pointer] = input.images;
@@ -168,7 +191,6 @@ const getData = (inputClass) => {
         break;
     }
   });
-  tag.clear();
   return obj;
 };
 
@@ -185,14 +207,18 @@ const updateMeet = async (id) => {
     mergeTime(obj);
     const body = createForm(obj);
     try {
+      const decision = await confirmAct(
+        'Modify Meetup',
+        'Are you sure you want to continue',
+      );
+      if (!decision) return;
       const [data] = await fetchData.updateMeet(body, id);
       addMeet(data, true);
     } catch (error) {
-      console.log(error);
+      errorHandler(error);
       return;
     }
   }
-  // send patch request
   tabSelector[0].click();
   toggleOrganizer();
 };
@@ -220,12 +246,18 @@ const createMeet = async () => {
     tabSelector[0].click();
     clearInputs();
   } catch (error) {
-    console.log(error);
+    errorHandler(error);
+    errorHandler(error);
   }
 };
 
 const deleteMeet = async (id) => {
   try {
+    const decision = await confirmAct(
+      'Delete Meetup',
+      'Are you sure you want to continue',
+    );
+    if (!decision) return;
     await fetchData.deleteMeetup(id);
     loop.call(document.getElementsByClassName('meet-container'), (elem) => {
       if (elem.id === id.toString()) {
@@ -234,7 +266,7 @@ const deleteMeet = async (id) => {
     });
     tabSelector[0].click();
   } catch (error) {
-    console.log(error);
+    errorHandler(error);
   }
 };
 
@@ -292,11 +324,7 @@ const addMeet = (data, replace = false) => {
   meetControl(data, edit, deleteM);
 };
 
-const addNotif = (data) => {
-  notifCreator(document.querySelector('#notif-section'), data);
-};
-
-const expandMeet = (meetData) => {
+const expandMeet = async (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
   const [box, edit, cancel, tags, image] = meetCreator(container, meetData);
@@ -306,13 +334,13 @@ const expandMeet = (meetData) => {
   }
   tagControl(tags);
   meetControl(meetData, edit, cancel);
-  const profiles = createQuestions(box, dummydata.questions);
 
-  profiles.forEach(((profilee) => {
-    profilee.forEach(elem => elem.addEventListener('click', () => {
-      swith('user-profile', 'section-showing');
-    }));
-  }));
+  try {
+    const profiles = await questions.get(meetData.id, box);
+    profileControl(profiles, swith);
+  } catch (error) {
+    errorHandler(error);
+  }
 };
 
 const populateMeet = async () => {
@@ -320,16 +348,30 @@ const populateMeet = async () => {
     const meets = await fetchData.meetups();
     meets.forEach(meet => addMeet(meet));
   } catch (error) {
-    console.log(error);
+    errorHandler(error);
+  }
+};
+
+const populateNotif = async () => {
+  try {
+    let data = await fetchData.notifications();
+    data = typeof data === 'string' ? [] : data;
+    const elements = notifContainerCreator(document.querySelector('#notif-section'), data);
+    elements.forEach((elem) => {
+      const [container, notifBtn, expBtn, count, quest] = elem;
+      count.textContent = `${quest.length} new question${quest.length > 1 ? 's' : ''}`;
+      notification(container, quest, expBtn, expandMeet);
+      notifContol(notifBtn);
+    });
+  } catch (error) {
+    errorHandler(error);
   }
 };
 
 const populate = () => {
   populateMeet();
-
-  dummydata.notifications.forEach((notif) => {
-    addNotif(notif);
-  });
+  populateNotif();
+  updateStats();
 };
 
 const populateSearch = ({ tags, topic }) => {
@@ -369,12 +411,15 @@ const getResults = async (value) => {
     const [result] = await fetchData.search({ topic, tags });
     populateSearch(result);
   } catch (error) {
-    console.log(error);
+    errorHandler(error);
   }
 };
 
-const profile = new ReadForm().getProfile();
-
+document.getElementById('search-button').addEventListener('click', () => {
+  const input = document.getElementById('search-input').value;
+  if (!input) return;
+  getResults(input);
+});
 
 populateProfile(
   document.getElementsByClassName('profile-input'),
@@ -383,12 +428,11 @@ populateProfile(
 );
 
 document.getElementById('profile-picture-input')
-  .addEventListener('change', () => {
-    const input = document.getElementById('profile-picture-input');
-    const img = document.getElementById('profile-picture');
-    imageInputControl(null, input, img);
-    const [url] = input.url;
-    document.getElementById('profile-icon').src = url;
+  .addEventListener('change', (e) => {
+    const input = e.target;
+    // imageInputControl(null, input, img);
+    // const [url] = input.url;
+    updateDp([input.files[0]], dps);
   });
 
 document.querySelector('.profile-button').addEventListener('click', () => {

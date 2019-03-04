@@ -1,32 +1,35 @@
-/* eslint-disable prefer-destructuring */
-/* eslint-disable import/extensions */
-/* eslint-disable no-param-reassign */
-/* eslint-env browser */
-
 import {
   commentCreator,
   commentBoxCreator,
   questionCreator,
 } from './element-creator.js';
 
-const voteControl = (voteBtn, index, array) => {
-  voteBtn.calc = (x) => {
-    const num = voteBtn.action;
-    voteBtn.qObj.votes += x === 0 ? -num : num;
-    document.getElementById(`vote-count-${voteBtn.qObj.id}`).textContent = voteBtn.qObj.votes;
-  };
+import fetchData from '../helpers/fetchData.js';
+import setHeight from '../helpers/setHeight.js';
+import errorHandler from '../helpers/errorHandler.js';
 
-  voteBtn.addEventListener('click', () => {
+const voteControl = (voteBtn, index, array) => {
+  const { id } = voteBtn.qObj;
+  const count = document.getElementById(`vote-count-${id}`);
+
+  voteBtn.addEventListener('click', async () => {
     if (voteBtn.classList.contains('active')) {
-      voteBtn.classList.remove('active');
-      voteBtn.calc(0);
+      try {
+        const [data] = await fetchData.vote(id, 'clear');
+        count.textContent = data.votes;
+        voteBtn.classList.remove('active');
+      } catch (error) {
+        errorHandler(error);
+      }
     } else {
-      voteBtn.classList.add('active');
-      voteBtn.calc(1);
-      const enemy = array[index === 0 ? 1 : 0];
-      if (enemy.classList.contains('active')) {
+      try {
+        const [data] = await fetchData.vote(id, voteBtn.action);
+        count.textContent = data.votes;
+        voteBtn.classList.add('active');
+        const enemy = array[index === 0 ? 1 : 0];
         enemy.classList.remove('active');
-        enemy.calc(0);
+      } catch (error) {
+        errorHandler(error);
       }
     }
   });
@@ -39,60 +42,60 @@ const imgBtnControl = ([bwd, fwd, navArray, slide]) => {
   slide.initialize();
 };
 
-const askBtnControl = (ask) => {
-  ask.addEventListener('click', () => {
+const askBtnControl = (ask, meetup) => {
+  ask.addEventListener('click', async () => {
+    const { input } = ask;
+    if (!input.value) return;
     const questObj = {
-      id: 1,
-      createdOn: '11/11/11',
-      createdBy: 1,
-      username: 'kossy360',
-      meetup: 1,
-      body: ask.input.value,
-      votes: 0,
-      comments: false,
+      meetup,
+      body: input.value,
     };
-    // posts and waits for response
-    addQuestion(ask.box, {
-      data: [questObj],
-    });
-    ask.input.value = '';
-  });
-};
-
-const commentBtnControl = (commentBtn) => {
-  commentBtn.addEventListener('click', () => {
-    const box = commentBtn.box.comment;
-    if (commentBtn.classList.contains('collapsed')) {
-      if (!box) {
-        addComments(commentBtn.action, commentBtn.box);
-      }
-      commentBtn.classList.replace('collapsed', 'expanded');
-      if (box) box.classList.add('showing');
-    } else {
-      commentBtn.classList.replace('expanded', 'collapsed');
-      box.classList.remove('showing');
+    try {
+      const data = await fetchData.createQuestion(questObj);
+      addQuestion(ask.box, data);
+      ask.input.value = '';
+    } catch (error) {
+      errorHandler(error);
     }
   });
 };
 
-const replyBtnControl = (btns) => {
-  btns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      btn.input.value = `@${btn.username} ${btn.input.value}`;
-      btn.input.focus();
-    });
+const commentBtnControl = (commentBtn) => {
+  commentBtn.addEventListener('click', async () => {
+    let box = commentBtn.box.commentContainer;
+    if (commentBtn.classList.contains('collapsed')) {
+      if (!box) {
+        await addComments(commentBtn.action, commentBtn.box);
+        box = commentBtn.box.commentContainer;
+        setHeight(box, true);
+      }
+      commentBtn.classList.replace('collapsed', 'expanded');
+      box.classList.add('showing');
+      setHeight(box, false);
+    } else {
+      commentBtn.classList.replace('expanded', 'collapsed');
+      box.classList.remove('showing');
+      setHeight(box, true);
+    }
   });
 };
 
-const notifContol = (notif) => {
-  notif.addEventListener('click', (e) => {
+const notifContol = (notif, id) => {
+  notif.id = `notif-${id}`;
+  notif.addEventListener('click', async (e) => {
     e.stopPropagation();
-    notif.classList.toggle('yes', !notif.classList.contains('yes'));
+    try {
+      await fetchData[notif.classList.contains('yes') ? 'clear' : 'register'](id);
+      const brothers = document.querySelectorAll(`#notif-${id}`);
+      Array.prototype.forEach.call(brothers, bro => bro.classList.toggle('yes', !bro.classList.contains('yes')));
+    } catch (error) {
+      errorHandler(error);
+    }
   });
 };
 
-const addQuestion = (box, question) => {
-  const [voteArray, commentBtns] = questionCreator(box, question.data);
+const addQuestion = (box, data) => {
+  const [voteArray, commentBtns] = questionCreator(box, data);
 
   voteArray.forEach((voteBtns) => {
     voteBtns.forEach(voteControl);
@@ -102,46 +105,87 @@ const addQuestion = (box, question) => {
     commentBtnControl(commentBtn);
   });
 };
-const commentControl = (box, input, commentBtns) => {
-  commentBtns.forEach((btn, index) => {
-    if (index === 0) {
-      btn.input = input;
-      replyBtnControl([btn]);
-    } else {
-      const swith = (id1, showClass) => {
-        const showing = document.querySelector(`.${showClass}`);
-        showing.classList.toggle(showClass);
-        document.getElementById(id1).classList.add(showClass);
-      };
+
+const commentControl = (profiles) => {
+  profiles.forEach((btns) => {
+    const swith = (id1, showClass) => {
+      const showing = document.querySelector(`.${showClass}`);
+      showing.classList.toggle(showClass);
+      document.getElementById(id1).classList.add(showClass);
+    };
+    btns.forEach((btn) => {
       btn.addEventListener('click', () => {
         swith('user-profile', 'section-showing');
       });
+    });
+  });
+};
+
+const addComment = (question, comment, input, box) => {
+  comment.addEventListener('click', async () => {
+    if (input.value === '') return;
+    const obj = {
+      question,
+      comment: input.value,
+    };
+    try {
+      const [data] = await fetchData.createComment(obj);
+      const profile = commentCreator(comment.box, data);
+      commentControl([profile]);
+      setHeight(box, false);
+      input.value = '';
+    } catch (error) {
+      errorHandler(error);
     }
   });
 };
 
-const addComments = (id, box) => {
-  // get data with id
-  const [addComment, input, replyBtns] = commentBoxCreator(box, []);
-
-  addComment.addEventListener('click', () => {
-    if (input.value === '') return;
-    const data = {
-      id: 0,
-      createdOn: new Date().toLocaleDateString(),
-      createdBy: 1,
-      username: 'tester',
-      question: 1,
-      body: input.value,
-    };
-    input.value = '';
-    const replyBtn = commentCreator(addComment.box, data);
-    commentControl(box, input, replyBtn);
-  });
-
-  commentControl(box, input, replyBtns);
-
+const addComments = async (id, box) => {
+  try {
+    const data = await fetchData.comments(id);
+    const result = typeof data === 'string' ? [] : data;
+    const [comment, input, profiles] = commentBoxCreator(box, result);
+    addComment(id, comment, input, box.commentContainer);
+    commentControl(profiles);
+  } catch (error) {
+    errorHandler(error);
+  }
   box.classList.add('populated');
+};
+
+const getProfile = async (userId, swith) => {
+  try {
+    const [data] = await fetchData.getProfile(userId);
+    const fields = document.getElementsByClassName('profile-value');
+    Array.prototype.forEach.call(fields, (field) => {
+      const pointer = field.getAttribute('pointer');
+      if (data[pointer]) {
+        field.parentElement.style.display = 'block';
+        field.textContent = data[pointer];
+      } else {
+        field.parentElement.style.display = 'none';
+      }
+    });
+    document.getElementById('show-profile-dp').src = data.displaypicture || '../assets/profile.svg';
+    swith('user-profile', 'section-showing');
+  } catch (error) {
+    errorHandler(error);
+  }
+};
+
+const profileControl = (profiles, swith) => {
+  swith('meet-expanded', 'section-showing');
+  document.getElementById('profile-display-back').addEventListener(
+    'click',
+    () => swith('meet-expanded', 'section-showing'),
+  );
+  profiles.forEach((profs) => {
+    profs.forEach((prof) => {
+      prof.addEventListener('click', () => {
+        getProfile(prof.user, swith);
+      });
+    });
+  });
 };
 
 export {
@@ -150,4 +194,5 @@ export {
   askBtnControl,
   commentBtnControl,
   notifContol,
+  profileControl,
 };

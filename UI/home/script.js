@@ -1,6 +1,6 @@
 import {
   meetCreator,
-  notifCreator,
+  notifContainerCreator,
   bookCreator,
   bookQuestionCreator,
   imageCreator,
@@ -9,18 +9,34 @@ import {
 import {
   imgBtnControl,
   notifContol,
+  profileControl,
 } from '../modules/buttonControllers.js';
-import dummydata from '../modules/dummy-data.js';
-import { createQuestions } from '../modules/pagecontrol.js';
-import { imageInputControl } from '../modules/imageControl.js';
-import { populateProfile } from '../modules/profileControl.js';
+import {
+  populateProfile,
+  updateDp,
+} from '../modules/profileControl.js';
 import fetchData from '../helpers/fetchData.js';
 import RsvpControl from '../helpers/rsvpControl.js';
+import questions from '../helpers/questions.js';
+import notification from '../helpers/notification.js';
+import setHeight from '../helpers/setHeight.js';
+import updateStats from '../helpers/updateStats.js';
+import confirmAct from '../helpers/confirmAct.js';
+import errorHandler from '../helpers/errorHandler.js';
 
-const profile = dummydata.user;
+const profile = JSON.parse(window.sessionStorage.getItem('user'));
+const dps = [document.getElementById('profile-picture'), document.getElementById('profile-icon')];
 // if (!profile) window.location.href = '/Quetioner/UI';
 
 const loop = Array.prototype.forEach;
+
+(async () => {
+  if (profile.displaypicture) {
+    dps.forEach((dp) => {
+      dp.src = profile.displaypicture;
+    });
+  }
+})();
 
 const swith = (id, showClass) => {
   const showing = document.querySelector(`.${showClass}`);
@@ -46,19 +62,20 @@ tabControl('tab-selector', 'section-showing');
 tabControl('result-tab', 'result-container-showing');
 
 const rsvpControl = (rsvps, box, id, value, meet) => {
-  const control = new RsvpControl(rsvps[0], rsvps[1], rsvps[2], id, value, addBook, meet);
+  const control = new RsvpControl(rsvps[0], rsvps[1], rsvps[2], id, value, addBook, meet, box);
   rsvps[0].parentElement.control = control;
   rsvps[0].parentElement.id = `rsvp-${id}`;
   rsvps.forEach((elem) => {
-    elem.addEventListener('click', (e) => {
+    elem.addEventListener('click', async (e) => {
       e.stopPropagation();
-      control.newVal(elem.textContent);
-      if (!elem.classList.contains('yes')) {
-        if (box) box.parentElement.removeChild(box);
-      } else {
-        // create rsvp record
-        // addBook(dummydata.rsvps[0]);
+      if (box) {
+        const decision = await confirmAct(
+          'Change Response',
+          'Are you sure you want to continue',
+        );
+        if (!decision) return;
       }
+      control.newVal(elem.textContent);
     });
   });
 };
@@ -80,47 +97,54 @@ const addMeet = (data) => {
   main.data = data;
   main.addEventListener('click', () => {
     expandMeet(data);
-    swith('meet-expanded', 'section-showing');
   });
   rsvpControl(rsvps, null, data.id, data.rsvp, data);
-  notifContol(notif);
+  notifContol(notif, data.id);
   tagControl(tags);
-};
-
-const addNotif = (data) => {
-  notifCreator(document.querySelector('#notif-section'), data);
 };
 
 const addBook = (booked) => {
   const container = document.getElementById('booked-section');
   const [main, qbox, btn, rsvps, notif] = bookCreator(container, booked);
 
-  btn.addEventListener('click', () => {
+  setHeight(qbox, true);
+  btn.addEventListener('click', async () => {
     if (btn.classList.contains('collapsed')) {
       if (!qbox.classList.contains('populated')) {
-        addBookQuestions(main.meetup, qbox);
+        await addBookQuestions(main.meetup, qbox);
       }
       btn.classList.replace('collapsed', 'expanded');
       qbox.classList.add('showing');
+      setHeight(qbox, false);
     } else {
       btn.classList.replace('expanded', 'collapsed');
       qbox.classList.remove('showing');
+      setHeight(qbox, true);
     }
-    btn.textContent = btn.classList.contains('expanded') ? 'collapse' : 'expand';
   });
 
-  notifContol(notif);
-  rsvpControl(rsvps, main);
+  notifContol(notif, booked.id);
+  rsvpControl(rsvps, main, booked.id, booked.rsvp, booked);
 };
 
-const addBookQuestions = (id, box) => {
-  // get data with id
-  const voteCount = bookQuestionCreator(box, dummydata.questions);
-  box.classList.add('populated');
-  return voteCount;
+const addBookQuestions = async (id, box) => {
+  try {
+    let data = await fetchData.questions(id);
+    if (typeof data === 'string') {
+      box.innerHTML = '<span class="book-error">There are no questions for this meetup<span>';
+      data = [];
+    }
+    data = data.sort((m1, m2) => m1.questions - m2.questions).splice(0, 5);
+    const voteCount = bookQuestionCreator(box, data);
+    box.classList.add('populated');
+    return voteCount;
+  } catch (error) {
+    errorHandler(error);
+  }
+  return 0;
 };
 
-const expandMeet = (meetData) => {
+const expandMeet = async (meetData) => {
   const container = document.getElementById('meet-expanded-container');
   while (container.hasChildNodes()) container.removeChild(container.lastChild);
   const [box, rsvps, notif, tags, image] = meetCreator(container, meetData);
@@ -129,37 +153,51 @@ const expandMeet = (meetData) => {
     imgBtnControl(imgArray);
   }
   rsvpControl(rsvps, null, meetData.id, meetData.rsvp, meetData);
-  notifContol(notif);
+  notifContol(notif, meetData.id);
   tagControl(tags, true);
-  const profiles = createQuestions(box, dummydata.questions);
 
-  profiles.forEach(((profilee) => {
-    profilee.forEach(elem => elem.addEventListener('click', () => {
-      swith('user-profile', 'section-showing');
-    }));
-  }));
+  try {
+    const profiles = await questions.get(meetData.id, box);
+    profileControl(profiles, swith);
+  } catch (error) {
+    errorHandler(error);
+  }
+
+  swith('meet-expanded', 'section-showing');
+  return true;
 };
 
 const populateMeet = async () => {
   try {
     const meets = await fetchData.meetups();
-    console.log(meets);
+    const upcoming = meets.filter(mt => mt.rsvp === 'yes');
     meets.forEach(meet => addMeet(meet));
+    upcoming.forEach(meet => addBook(meet));
   } catch (error) {
-    console.log(error);
+    errorHandler(error);
+  }
+};
+
+const populateNotif = async () => {
+  try {
+    let data = await fetchData.notifications();
+    data = typeof data === 'string' ? [] : data;
+    const elements = notifContainerCreator(document.querySelector('#notif-section'), data);
+    elements.forEach((elem) => {
+      const [container, notifBtn, expBtn, count, quest] = elem;
+      count.textContent = `${quest.length} new question${quest.length > 1 ? 's' : ''}`;
+      notification(container, quest, expBtn, expandMeet);
+      notifContol(notifBtn);
+    });
+  } catch (error) {
+    errorHandler(error);
   }
 };
 
 const populate = () => {
   populateMeet();
-
-  dummydata.notifications.forEach((notif) => {
-    addNotif(notif);
-  });
-
-  dummydata.rsvps.forEach((rsvp) => {
-    addBook(rsvp);
-  });
+  populateNotif();
+  updateStats();
 };
 
 populateProfile(
@@ -186,7 +224,6 @@ const populateSearch = ({ tags, topic }) => {
           });
         } else {
           const regex = new RegExp(`(${topic.value})`, 'g');
-          console.log(tp.innerHTML);
           tp.innerHTML = tp.innerHTML.replace(regex,
             '<span class="search-result">$1</span>');
         }
@@ -205,7 +242,7 @@ const getResults = async (value) => {
     const [result] = await fetchData.search({ topic, tags });
     populateSearch(result);
   } catch (error) {
-    console.log(error);
+    errorHandler(error);
   }
 };
 
@@ -216,12 +253,11 @@ document.getElementById('search-button').addEventListener('click', () => {
 });
 
 document.getElementById('profile-picture-input')
-  .addEventListener('change', () => {
-    const input = document.getElementById('profile-picture-input');
-    const img = document.getElementById('profile-picture');
-    imageInputControl(null, input, img);
-    const [url] = input.url;
-    document.getElementById('profile-icon').src = url;
+  .addEventListener('change', (e) => {
+    const input = e.target;
+    // imageInputControl(null, input, img);
+    // const [url] = input.url;
+    updateDp([input.files[0]], dps);
   });
 
 document.querySelector('.profile-button').addEventListener('click', () => {

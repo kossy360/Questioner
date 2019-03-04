@@ -110,7 +110,7 @@
       </div>
       <div class="profile-container">
         <label for="profile-phone" class="profile-input-label">Phone:</label>
-        <input pointer="phoneNumber" type="text" id="profile-phone" class="profile-input" disabled>
+        <input pointer="phonenumber" type="text" id="profile-phone" class="profile-input" disabled>
         <button input="profile-phone" class="profile-edit-button" type="button">edit</button>
       </div>
       <div class="stat-container">
@@ -128,13 +128,13 @@
             <p class="stat-text">Questions commented on</p>
           </div>
           <div class="booked-meets-count stat-count">
-            <p class="stat-num" pointer="bookedMeetsCount">10</p>
+            <p class="stat-num" pointer="booked">0</p>
           </div>
           <div class="question-stat-count stat-count">
-            <p class="stat-num" pointer="questionAskedCount">15</p>
+            <p class="stat-num" pointer="questions">0</p>
           </div>
           <div class="comment-stat-count stat-count">
-            <p class="stat-num" pointer="commentCount">20</p>
+            <p class="stat-num" pointer="commentedon">0</p>
           </div>
         </div>
       </div>
@@ -150,7 +150,13 @@
       </div>
       <div class="profile-display-container">
         <div class="user-profile-container">
-          <img src="../assets/profile.svg" alt="">
+           <div class="profile-entry displaypicture">
+            <img id="show-profile-dp" src="../assets/profile.svg" alt="">
+          </div>
+          <div class="profile-entry">
+            <span class="profile-key">Username</span>
+            <span class="profile-value" pointer="username">ugochukwu</span>
+          </div>
           <div class="profile-entry">
             <span class="profile-key">First name</span>
             <span class="profile-value" pointer="firstname">ugochukwu</span>
@@ -176,10 +182,10 @@
     </section>
   </div>
 
-  <div class="modal-container">
+  <div class="modal-container" style="display: none;">
     <div class="modal">
-      <header class="modal-head">Delete Meetup</header>
-      <p class="modal-body">Are you sure of what you are doing</p>
+      <header id="modal-head" class="modal-head">Delete Meetup</header>
+      <p id="modal-body-text" class="modal-body">Are you sure of what you are doing</p>
       <div class="modal-opt-container">
         <button class="modal-opt true">continue</button>
         <button class="modal-opt false">cancel</button>
@@ -188,7 +194,7 @@
   </div>
 
   <div class="error-modal-container">
-    <div class="error-modal">
+    <div class="error-modal" style="height:0em;">
       <span class="error-icon"></span>
       <span class="error-text">you are not connected</span>
     </div>

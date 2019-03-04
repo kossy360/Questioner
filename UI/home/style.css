@@ -129,6 +129,7 @@ nav.top-fix {
   box-sizing: border-box;
   width: 2.1rem;
   height: 2.1rem;
+  object-fit: contain;
 }
 
 .main-section {
@@ -314,12 +315,33 @@ span.question-feed-stat.vote-stat.flex-left {
   margin-top: 15px;
   width: 95%;
   border: 2px transparent;
-  border-radius: 5px;
   background: #d7e0e8;
 }
 
 .sub-notif-container {
+  transition: all 0.3s ease-out;
+}
+
+.notif-question {
+  display: grid;
+  grid-template-columns: auto auto;
+  border-top: 1px solid #288bd9;
   padding: 8px;
+}
+
+span.notif-question-body {
+  grid-column: 1/3;
+}
+
+span.notif-question-votes {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.notif-stat-container {
+  display: grid;
+  padding: 8px;
+  grid-template-columns: auto auto;
 }
 
 .notif-message {
@@ -709,6 +731,7 @@ span.comment-text {
 }
 
 .comment-control {
+  display: flex;
   justify-content: flex-end;
 }
 
@@ -730,7 +753,8 @@ span.comment-text {
   background-position-y: 1px;
   background-repeat: no-repeat;
   transform: rotate(180deg);
-  transition: all 0.5s linear;
+  transition: all 0.3s linear;
+  cursor: pointer;
 }
 
 .comment-control.collapsed::after {
@@ -924,12 +948,16 @@ button {
 #profile-picture-container {
   height: 10rem;
   width: 10rem;
+  border: 1px solid #288bd9;
   border-radius: 100%;
   position: relative;
   margin: auto;
   margin-bottom: 10px;
   top: 0;
   box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #profile-picture-label {
@@ -954,6 +982,7 @@ button {
   width: 100%;
   border-radius: 100%;
   box-sizing: border-box;
+  object-fit: contain;
 }
 
 #profile-picture-input {
@@ -995,18 +1024,15 @@ span.comment-author {
 }
 
 .comment-box-container {
-  max-height: 0;
   grid-column: 2/4;
   overflow: hidden;
-  transition: all 0.5s linear;
-}
-
-.comment-box-container.showing {
-  max-height: 800px;
+  transition: all 0.3s ease-out;
 }
 
 img.user-dp-small {
   width: 40px;
+  height: 40px;
+  object-fit: contain;
   border-radius: 100%;
   display: flex;
   position: relative;
@@ -1016,7 +1042,7 @@ img.user-dp-small {
 }
 
 .comment-dp {
-  grid-row: 1/3;
+  grid-row: 1;
 }
 
 .comment-box-details {
@@ -1026,14 +1052,16 @@ img.user-dp-small {
 }
 
 .comment-timestamp {
-  text-align: end;
-  display: block;
+  text-align: start;
+  display: grid;
   width: 100%;
+  grid-column: 1/3;
 }
 
 .comment-options {
   margin-top: 3px;
   display: flex;
+  grid-column: 2/3;
 }
 
 .comment-reply-button {
@@ -1045,8 +1073,9 @@ img.user-dp-small {
 
 .add-comment-container {
   width: 90%;
-  margin: 1rem auto 0.2rem;
-  padding-top: 0.5rem;
+  margin: 0 auto 0.2rem;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
   display: flex;
   border-top: 1px solid #d7e0e8;
 }
@@ -1206,13 +1235,8 @@ span.rsvp-tag.active.loading {
 }
 
 .question-feed-container1 {
-  max-height: 0;
   overflow: hidden;
-  transition: max-height 0.5s linear;
-}
-
-.question-feed-container1.populated.showing {
-  max-height: 1000px;
+  transition: height 0.3s ease-out;
 }
 
 .meet-input-label {
@@ -1403,6 +1427,10 @@ button.meet-image-delete {
   border: 1px solid #288bd9;
 }
 
+.usage-stat-container.admin {
+  grid-template-columns: 50% 50%;
+}
+
 .usage-stat-container div {
   height: 100%;
   display: flex;
@@ -1575,10 +1603,21 @@ span.image-nav.selected {
   font-size: 1.2em;
 }
 
+.profile-entry.displaypicture {
+  min-height: 200px;
+  max-width: 500px;
+}
+
+img#show-profile-dp {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
 .profile-key,
 .profile-value {
   height: 100%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   padding-left: 10px;
 }
@@ -1600,7 +1639,11 @@ section#user-profile {
 /* modal */
 
 .modal-container {
-  display: none;
+  position: fixed;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  background: #288bd9ad;
 }
 
 .modal-container.show {
@@ -1618,6 +1661,7 @@ section#user-profile {
   width: 96%;
   max-width: 500px;
   background: white;
+  margin: auto;
 }
 
 header.modal-head {
@@ -1665,11 +1709,12 @@ button.modal-opt.false {
   width: 96%;
   max-width: 250px;
   background: #ff1d1da3;
-  margin: 10px;
   height: 3em;
-  padding: 10px;
+  padding-left: 10px;
   display: flex;
   margin: auto;
+  transition: height 0.3s ease-out;
+  overflow: hidden;
 }
 
 span.error-icon {
@@ -1687,10 +1732,9 @@ span.error-text {
 }
 
 .error-modal-container {
-  display: none;
+  /* display: none; */
   position: fixed;
   width: 100%;
-  height: 2.1em;
   z-index: 3;
 }
 
