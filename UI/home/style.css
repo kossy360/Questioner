@@ -1639,7 +1639,11 @@ section#user-profile {
 /* modal */
 
 .modal-container {
-  display: none;
+  position: fixed;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  background: #288bd9ad;
 }
 
 .modal-container.show {
@@ -1657,6 +1661,7 @@ section#user-profile {
   width: 96%;
   max-width: 500px;
   background: white;
+  margin: auto;
 }
 
 header.modal-head {
@@ -1704,11 +1709,12 @@ button.modal-opt.false {
   width: 96%;
   max-width: 250px;
   background: #ff1d1da3;
-  margin: 10px;
   height: 3em;
-  padding: 10px;
+  padding-left: 10px;
   display: flex;
   margin: auto;
+  transition: height 0.3s ease-out;
+  overflow: hidden;
 }
 
 span.error-icon {
@@ -1726,10 +1732,9 @@ span.error-text {
 }
 
 .error-modal-container {
-  display: none;
+  /* display: none; */
   position: fixed;
   width: 100%;
-  height: 2.1em;
   z-index: 3;
 }
 

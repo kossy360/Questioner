@@ -6,6 +6,7 @@ import {
 
 import fetchData from '../helpers/fetchData.js';
 import setHeight from '../helpers/setHeight.js';
+import errorHandler from '../helpers/errorHandler.js';
 
 const voteControl = (voteBtn, index, array) => {
   const { id } = voteBtn.qObj;
@@ -18,7 +19,7 @@ const voteControl = (voteBtn, index, array) => {
         count.textContent = data.votes;
         voteBtn.classList.remove('active');
       } catch (error) {
-        console.log(error);
+        errorHandler(error);
       }
     } else {
       try {
@@ -28,7 +29,7 @@ const voteControl = (voteBtn, index, array) => {
         const enemy = array[index === 0 ? 1 : 0];
         enemy.classList.remove('active');
       } catch (error) {
-        console.log(error);
+        errorHandler(error);
       }
     }
   });
@@ -51,11 +52,10 @@ const askBtnControl = (ask, meetup) => {
     };
     try {
       const data = await fetchData.createQuestion(questObj);
-      console.log(data[0]);
       addQuestion(ask.box, data);
       ask.input.value = '';
     } catch (error) {
-      console.log(error);
+      errorHandler(error);
     }
   });
 };
@@ -83,15 +83,13 @@ const commentBtnControl = (commentBtn) => {
 const notifContol = (notif, id) => {
   notif.id = `notif-${id}`;
   notif.addEventListener('click', async (e) => {
-    console.log('notif');
     e.stopPropagation();
     try {
-      const msg = await fetchData[notif.classList.contains('yes') ? 'clear' : 'register'](id);
-      console.log(msg);
+      await fetchData[notif.classList.contains('yes') ? 'clear' : 'register'](id);
       const brothers = document.querySelectorAll(`#notif-${id}`);
       Array.prototype.forEach.call(brothers, bro => bro.classList.toggle('yes', !bro.classList.contains('yes')));
     } catch (error) {
-      console.log(error);
+      errorHandler(error);
     }
   });
 };
@@ -132,13 +130,12 @@ const addComment = (question, comment, input, box) => {
     };
     try {
       const [data] = await fetchData.createComment(obj);
-      console.log(data);
       const profile = commentCreator(comment.box, data);
       commentControl([profile]);
       setHeight(box, false);
       input.value = '';
     } catch (error) {
-      console.log(error);
+      errorHandler(error);
     }
   });
 };
@@ -151,7 +148,7 @@ const addComments = async (id, box) => {
     addComment(id, comment, input, box.commentContainer);
     commentControl(profiles);
   } catch (error) {
-    console.log(error);
+    errorHandler(error);
   }
   box.classList.add('populated');
 };
@@ -172,7 +169,7 @@ const getProfile = async (userId, swith) => {
     document.getElementById('show-profile-dp').src = data.displaypicture || '../assets/profile.svg';
     swith('user-profile', 'section-showing');
   } catch (error) {
-    console.log(error);
+    errorHandler(error);
   }
 };
 

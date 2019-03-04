@@ -21,6 +21,8 @@ import questions from '../helpers/questions.js';
 import notification from '../helpers/notification.js';
 import setHeight from '../helpers/setHeight.js';
 import updateStats from '../helpers/updateStats.js';
+import confirmAct from '../helpers/confirmAct.js';
+import errorHandler from '../helpers/errorHandler.js';
 
 const profile = JSON.parse(window.sessionStorage.getItem('user'));
 const dps = [document.getElementById('profile-picture'), document.getElementById('profile-icon')];
@@ -60,16 +62,20 @@ tabControl('tab-selector', 'section-showing');
 tabControl('result-tab', 'result-container-showing');
 
 const rsvpControl = (rsvps, box, id, value, meet) => {
-  const control = new RsvpControl(rsvps[0], rsvps[1], rsvps[2], id, value, addBook, meet);
+  const control = new RsvpControl(rsvps[0], rsvps[1], rsvps[2], id, value, addBook, meet, box);
   rsvps[0].parentElement.control = control;
   rsvps[0].parentElement.id = `rsvp-${id}`;
   rsvps.forEach((elem) => {
-    elem.addEventListener('click', (e) => {
+    elem.addEventListener('click', async (e) => {
       e.stopPropagation();
-      control.newVal(elem.textContent);
-      if (!elem.classList.contains('yes')) {
-        if (box) box.remove();
+      if (box) {
+        const decision = await confirmAct(
+          'Change Response',
+          'Are you sure you want to continue',
+        );
+        if (!decision) return;
       }
+      control.newVal(elem.textContent);
     });
   });
 };
@@ -124,7 +130,6 @@ const addBook = (booked) => {
 const addBookQuestions = async (id, box) => {
   try {
     let data = await fetchData.questions(id);
-    console.log(data);
     if (typeof data === 'string') {
       box.innerHTML = '<span class="book-error">There are no questions for this meetup<span>';
       data = [];
@@ -134,8 +139,9 @@ const addBookQuestions = async (id, box) => {
     box.classList.add('populated');
     return voteCount;
   } catch (error) {
-    throw error;
+    errorHandler(error);
   }
+  return 0;
 };
 
 const expandMeet = async (meetData) => {
@@ -154,7 +160,7 @@ const expandMeet = async (meetData) => {
     const profiles = await questions.get(meetData.id, box);
     profileControl(profiles, swith);
   } catch (error) {
-    console.log(error);
+    errorHandler(error);
   }
 
   swith('meet-expanded', 'section-showing');
@@ -164,20 +170,17 @@ const expandMeet = async (meetData) => {
 const populateMeet = async () => {
   try {
     const meets = await fetchData.meetups();
-    console.log(meets);
     const upcoming = meets.filter(mt => mt.rsvp === 'yes');
     meets.forEach(meet => addMeet(meet));
     upcoming.forEach(meet => addBook(meet));
-    console.log(upcoming);
   } catch (error) {
-    console.log(error);
+    errorHandler(error);
   }
 };
 
 const populateNotif = async () => {
   try {
     let data = await fetchData.notifications();
-    console.log(data);
     data = typeof data === 'string' ? [] : data;
     const elements = notifContainerCreator(document.querySelector('#notif-section'), data);
     elements.forEach((elem) => {
@@ -187,7 +190,7 @@ const populateNotif = async () => {
       notifContol(notifBtn);
     });
   } catch (error) {
-    console.log(error);
+    errorHandler(error);
   }
 };
 
@@ -221,7 +224,6 @@ const populateSearch = ({ tags, topic }) => {
           });
         } else {
           const regex = new RegExp(`(${topic.value})`, 'g');
-          console.log(tp.innerHTML);
           tp.innerHTML = tp.innerHTML.replace(regex,
             '<span class="search-result">$1</span>');
         }
@@ -240,7 +242,7 @@ const getResults = async (value) => {
     const [result] = await fetchData.search({ topic, tags });
     populateSearch(result);
   } catch (error) {
-    console.log(error);
+    errorHandler(error);
   }
 };
 

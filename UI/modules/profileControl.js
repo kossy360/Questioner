@@ -1,5 +1,6 @@
 import fetchData from '../helpers/fetchData.js';
 import createForm from '../helpers/createForm.js';
+import errorHandler from '../helpers/errorHandler.js';
 
 let initial = '';
 
@@ -26,7 +27,7 @@ const update = async (obj, input) => {
     updateData(data);
   } catch (error) {
     input.value = initial;
-    console.log(error);
+    errorHandler(error);
   }
 };
 
@@ -45,7 +46,6 @@ const populateProfile = (inputFields, editBtns, profile) => {
       elem.innerHTML = input.disabled ? 'edit' : 'ok';
       elem.classList.toggle('active', !input.disabled);
       if (input.disabled) {
-        console.log(initial);
         if (!input.value) {
           input.value = initial;
           return;

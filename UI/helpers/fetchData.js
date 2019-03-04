@@ -33,7 +33,7 @@ const fetchData = {
         body,
       });
       const data = await response.json();
-      if (data.status >= 400) throw data;
+      if (!response.ok || data.message) throw data;
       return data.data;
     } catch (error) {
       throw error;

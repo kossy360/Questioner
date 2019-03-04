@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 const loop = Array.prototype.forEach;
 
 const imageInputControl = (container, input, imagee, action, data = null) => {
@@ -12,7 +11,6 @@ const imageInputControl = (container, input, imagee, action, data = null) => {
   }
 
   const files = data || input.files;
-  console.log(files.length);
   loop.call(files, (img) => {
     input.images.push(img);
     const div = document.createElement('div');
@@ -23,7 +21,6 @@ const imageInputControl = (container, input, imagee, action, data = null) => {
     button.addEventListener('click', () => {
       div.remove();
       input.images.splice(input.images.indexOf(img), 1);
-      console.log(input.images);
     });
     div.appendChild(button);
     const image = imagee || document.createElement('img');
@@ -34,7 +31,6 @@ const imageInputControl = (container, input, imagee, action, data = null) => {
     div.appendChild(image);
     container.appendChild(div);
     document.getElementById('profile-picture').src = url;
-    console.log(input.images);
   });
 };
 
