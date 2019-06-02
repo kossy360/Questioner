@@ -47,16 +47,17 @@ const meetupQuery = {
 };
 
 const questionQuery = {
-  fields: 'q.id, q.user_id as user, u.username, u.displaypicture, q.meetup, q.body, q.created, q.votes',
+  fields: 'q.id, q.user_id as user, u.username, u.displaypicture, q.meetup, q.body, q.created, q.votes, v.response',
 
-  getAll: meetupId => querydb.query(
-    `SELECT ${questionQuery.fields} FROM public.questions q LEFT JOIN public.user u ON q.user_id = u.id WHERE q.meetup = $1 ORDER BY (votes, created) DESC`,
-    [meetupId],
+  getAll: (meetupId, userId) => querydb.query(
+    `SELECT ${questionQuery.fields} FROM public.questions q LEFT JOIN public.user u ON q.user_id = u.id 
+    LEFT JOIN public.vote v ON v.question = q.id and v.user_id = $2 WHERE q.meetup = $1 ORDER BY (votes, created) DESC`,
+    [meetupId, userId],
   ),
 
   createNew: (userId, body) => {
     const { key1, key2, values } = queryGenerator.insertFields(body);
-    return querydb.query(`INSERT INTO public.questions (${key1}, user_id) VALUES (${key2}, ${userId}) RETURNING user_id, meetup, body`, values);
+    return querydb.query(`INSERT INTO public.questions (${key1}, user_id) VALUES (${key2}, ${userId}) RETURNING *`, values);
   },
 
   vote: (userId, questionId, vote) => querydb.query('SELECT * FROM update_votes($1, $2, $3)', [userId, questionId, vote]),

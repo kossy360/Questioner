@@ -8,14 +8,8 @@ const control = {
   getAll: async (req, res) => {
     try {
       const { questionId } = await validator(req.params, 'requestId');
-      const { rows, rowCount } = await commentsQuery.getall(questionId);
-      if (rowCount > 0) res.status(200).json(success(200, rows));
-      else {
-        res.status(200).send({
-          status: 200,
-          message: `there are no comments for the question with id: ${questionId}`,
-        });
-      }
+      const { rows } = await commentsQuery.getall(questionId);
+      res.status(200).json(success(200, rows));
     } catch (error) {
       createError(500, res);
     }

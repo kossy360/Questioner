@@ -16,14 +16,8 @@ const control = {
   getAll: async (req, res) => {
     try {
       const { meetupId } = await validator(req.params, 'requestId');
-      const { rows, rowCount } = await questionQuery.getAll(meetupId);
-      if (rowCount > 0) res.status(200).json(success(200, rows));
-      else {
-        res.status(200).send({
-          status: 200,
-          message: `there are no questions for meetup with id: ${meetupId}`,
-        });
-      }
+      const { rows } = await questionQuery.getAll(meetupId, req.decoded.user);
+      res.status(200).json(success(200, rows));
     } catch (error) {
       createError(500, res);
     }
